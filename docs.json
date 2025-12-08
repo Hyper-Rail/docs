@@ -1,17 +1,22 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Hyperrail - Documentation",
+  "appearance": {"default": "dark", "strict": true},
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#B5FD85",
+    "light": "#B5FD85",
+    "dark": "#B5FD85"
   },
-  "favicon": "/favicon.svg",
+  "fonts": {
+  "family": "IBM Plex Sans"
+},
+"styling": {"codeblocks": "dark"},
+  "favicon": "/favicon.ico",
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Documentation",
         "groups": [
           {
             "group": "Getting started",
@@ -67,37 +72,24 @@
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/hyperrail-logo.svg",
+    "dark": "/logo/hyperrail-logo.svg"
   },
   "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
-      }
-    ],
-    "primary": {
+     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Get Started",
+      "href": "https://app.spotflow.co/"
+    }
+  },
+   "background": {
+    "decoration": "grid",
+    "color": {
+      "light": "#ffffff",
+       "dark": "#000"
     }
   },
   "contextual": {
@@ -112,6 +104,7 @@
      "vscode"
    ]
   },
+  
   "footer": {
     "socials": {
       "x": "https://x.com/mintlify",
