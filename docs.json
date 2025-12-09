@@ -40,7 +40,7 @@
             "pages": [
               "Liquidity Disbursement",
               "Hyperrail Wallets",
-              "Trades",
+              "Exchange",
               "Settlements",
               "Transactions",
               "Your Team Members",
@@ -97,8 +97,8 @@
             ]
           },
           {
-            "group": "Liquidity Trades",
-            "icon": "briefcase",
+            "group": "Exchange",
+            "icon": "arrow-left-arrow-right",
             "pages": [
               "api-reference/endpoint/get",
               "api-reference/endpoint/create",
