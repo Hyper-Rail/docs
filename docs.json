@@ -20,34 +20,39 @@
         "groups": [
           {
             "group": "Getting started",
+            "icon": "play",
             "pages": [
               "index",
-              "quickstart",
-              "development"
+              "KYB Verification"
             ]
           },
           {
-            "group": "Customization",
+            "group": "How We Operate",
+            "icon": "building",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "Merchants",
+              "Liquidity Providers"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "Features",
+            "icon": "star",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
+              "Single Disbursement",
+              "Spotflow Wallets",
+              "Trades",
+              "Settlements",
+              "Transactions",
+              "Your Team Members",
+              "Account Management"
             ]
           },
           {
-            "group": "AI tools",
+            "group": "Expert Desks",
+            "icon": "user-tie",
             "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "Support Channels",
+              "FAQ"
             ]
           }
         ]
