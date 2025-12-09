@@ -38,8 +38,8 @@
             "group": "Features",
             "icon": "star",
             "pages": [
-              "Single Disbursement",
-              "Spotflow Wallets",
+              "Liquidity Disbursement",
+              "Hyperrail Wallets",
               "Trades",
               "Settlements",
               "Transactions",
@@ -67,7 +67,38 @@
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Hyperrail Wallets",
+            "icon": "wallet",
+            "pages": [
+              "api-reference/endpoint/get",
+              "api-reference/endpoint/create",
+              "api-reference/endpoint/delete",
+              "api-reference/endpoint/webhook"
+            ]
+          },
+          {
+            "group": "Hyperrail Quotes",
+            "icon": "",
+            "pages": [
+              "api-reference/endpoint/get",
+              "api-reference/endpoint/create",
+              "api-reference/endpoint/delete",
+              "api-reference/endpoint/webhook"
+            ]
+          },
+          {
+            "group": "Liquidity Disbursement",
+            "icon": "money-bill",
+            "pages": [
+              "api-reference/endpoint/get",
+              "api-reference/endpoint/create",
+              "api-reference/endpoint/delete",
+              "api-reference/endpoint/webhook"
+            ]
+          },
+          {
+            "group": "Liquidity Trades",
+            "icon": "briefcase",
             "pages": [
               "api-reference/endpoint/get",
               "api-reference/endpoint/create",
@@ -75,6 +106,7 @@
               "api-reference/endpoint/webhook"
             ]
           }
+
         ]
       }
     ]
