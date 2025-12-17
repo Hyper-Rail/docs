@@ -439,6 +439,90 @@
         }
       }
     },
+    "/trade-pairs/supported/chain": {
+      "get": {
+        "description": "Get trade for supported chain",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Returns supported chain",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+     "/trade-pairs/supported/currencies/stables": {
+      "get": {
+        "description": "Get trade for supported stable currency",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Returns supported stable currency",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/trade-pairs/supported/currencies/fiat": {
+      "get": {
+        "description": "Get trade for supported fiat currency",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Returns supported fiat currency",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/trade-pairs/currency": {
       "get": {
         "description": "Get trade for exchange currency",
@@ -630,6 +714,12 @@
           }
         }
       },
+      "StringListResponse": {
+  "type": "array",
+  "items": {
+    "type": "string"
+  }
+},
 
       "RateConfigurationResponse": {
         "type": "object",

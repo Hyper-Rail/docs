@@ -35,7 +35,7 @@
           },
           {
             "group": "Hyperrail Quotes",
-            "icon": "",
+            "icon": "money-bill",
             "pages": [
               "api-reference/hyperrail-quote/create-quote",
               "api-reference/hyperrail-quote/get-quote-id",
@@ -51,7 +51,10 @@
               "api-reference/exchange/get-trade",
               "api-reference/exchange/get-trade-id",
               "api-reference/exchange/get-supported-trade-currency",
-               "api-reference/exchange/get-trade-currency"
+               "api-reference/exchange/get-trade-currency",
+               "api-reference/exchange/get-supported-chain",
+              "api-reference/exchange/get-supported-stable-currency",
+              "api-reference/exchange/get-supported-fiat-currency"
             ]
           }
 
