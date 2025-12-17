@@ -16,48 +16,6 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Documentation",
-        "groups": [
-          {
-            "group": "Getting started",
-            "icon": "play",
-            "pages": [
-              "index",
-              "KYB Verification"
-            ]
-          },
-          {
-            "group": "How We Operate",
-            "icon": "building",
-            "pages": [
-              "Merchants",
-              "Liquidity Providers"
-            ]
-          },
-          {
-            "group": "Features",
-            "icon": "star",
-            "pages": [
-              "Liquidity Disbursement",
-              "Hyperrail Wallets",
-              "Exchange",
-              "Settlements",
-              "Transactions",
-              "Your Team Members",
-              "Account Management"
-            ]
-          },
-          {
-            "group": "Expert Desks",
-            "icon": "user-tie",
-            "pages": [
-              "Support Channels",
-              "FAQ"
-            ]
-          }
-        ]
-      },
-      {
         "tab": "API reference",
         "groups": [
           {
@@ -70,40 +28,30 @@
             "group": "Hyperrail Wallets",
             "icon": "wallet",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/hyperrail-wallet/get",
+              "api-reference/hyperrail-wallet/get-balance-id",
+              "api-reference/hyperrail-wallet/get-balance-currency"
             ]
           },
           {
             "group": "Hyperrail Quotes",
             "icon": "",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
-            ]
-          },
-          {
-            "group": "Liquidity Disbursement",
-            "icon": "money-bill",
-            "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/hyperrail-quote/create-quote",
+              "api-reference/hyperrail-quote/get-quote-id",
+              "api-reference/hyperrail-quote/get-quote-payment-id",
+              "api-reference/hyperrail-quote/edit-quote-id"
             ]
           },
           {
             "group": "Exchange",
             "icon": "arrow-left-arrow-right",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/exchange/create-trade",
+              "api-reference/exchange/get-trade",
+              "api-reference/exchange/get-trade-id",
+              "api-reference/exchange/get-supported-trade-currency",
+               "api-reference/exchange/get-trade-currency"
             ]
           }
 

@@ -1,8 +1,8 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
+    "title": "Hyperrail",
+    "description": "Hyperrail documentation",
     "license": {
       "name": "MIT"
     },
@@ -10,7 +10,8 @@
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
+      "description": "Development server",
+      "url": "https://dev-api.hyperail.io/api/v1"
     }
   ],
   "security": [
@@ -19,29 +20,19 @@
     }
   ],
   "paths": {
-    "/plants": {
+    "/balances": {
       "get": {
-        "description": "Returns all plants from the system that the user has access to",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
+        "description": "Returns all balances ",
+        "parameters": [],
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "Returns all balances",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Plant"
+                    "$ref": "#/components/schemas/BalanceListResponse"
                   }
                 }
               }
@@ -85,6 +76,433 @@
           },
           "400": {
             "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/balances/{accountId}": {
+      "get": {
+        "description": "Returns all balance by account ID ",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the account id.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns all balance by account ID ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/BalanceListResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/balances/currency/{currency}": {
+      "get": {
+        "description": "Returns all balance by account ID ",
+        "parameters": [
+          {
+            "name": "currency",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the account currency.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns all balance by account ID ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/BalanceListResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quotes": {
+      "post": {
+        "description": "This endpoint is used to create quotes.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sourceCurrency": {
+                    "type": "string",
+                    "example": "NGN",
+                    "description": "According, to our currently supported currencies, this is in NGN and GHS."
+                  },
+                  "destinationCurrency": {
+                    "type": "string",
+                    "example": "USDT"
+                  },
+                  "destinationNetwork": {
+                    "type": "string",
+                    "example": "BASE",
+                    "description": "The current network we support BASE, POLYGON, ETHEREUM"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "format": "int32",
+                    "description": "Amount should be in our supported currency i.e NGN and GHS for now."
+                  },
+                  "preferredMerchant": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Create quotes for exchange ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/QuoteResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quotes/{id}": {
+      "get": {
+        "description": "Returns a specific quotes by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of a quotes ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a specific quote",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quotes/payments/{id}": {
+      "get": {
+        "description": "Get Payment information and checkout details for an on-going quote session",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of a quotes ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a payment specific quote",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/quotes/complete/{id}": {
+      "put": {
+        "description": "ID of an existing quote session for approval",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDestinationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns a payment specific quote",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/trade-pairs": {
+      "get": {
+        "description": "Get trade for exchange",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Returns exchange trade",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateConfigurationListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "This endpoint create a new trade preference for a given currency",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RateConfigurationListResponse"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Create quotes for exchange ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateConfigurationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/trade-pairs/{id}": {
+      "get": {
+        "description": "Get trade for exchange ID",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Returns exchange trade ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateConfigurationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/trade-pairs/currency": {
+      "get": {
+        "description": "Get trade for exchange currency",
+        "parameters": [
+          {
+            "name": "source ",
+            "in": "query",
+            "required": true,
+            "description": "Source Currency",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "destination  ",
+            "in": "query",
+            "required": true,
+            "description": "Destination Currency",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns exchange trade ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RateConfigurationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/trade-pairs/supported": {
+      "get": {
+        "description": "Get supported currency",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Returns supported currency",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NetworkListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
             "content": {
               "application/json": {
                 "schema": {
@@ -155,9 +573,7 @@
   "components": {
     "schemas": {
       "Plant": {
-        "required": [
-          "name"
-        ],
+        "required": ["name"],
         "type": "object",
         "properties": {
           "name": {
@@ -170,15 +586,419 @@
           }
         }
       },
+      "BalanceListResponse": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "c1fba25a-a36b-479c-b17d-64dbaf3ba32c"
+          },
+          "currency": {
+            "type": "string",
+            "example": "GHS"
+          },
+          "balance": {
+            "type": "number",
+            "format": "float",
+            "example": 3.0
+          },
+          "availableBalance": {
+            "type": "number",
+            "format": "float",
+            "example": 3.0
+          }
+        }
+      },
+      "NetworkListResponse": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "example": "USDT"
+            },
+            "network": {
+              "type": "string",
+              "example": "BASE"
+            },
+            "type": {
+              "type": "string",
+              "example": "CRYPTO"
+            }
+          }
+        }
+      },
+
+      "RateConfigurationResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "partnerId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "balanceId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "sourceCurrency": {
+            "type": "string",
+            "example": "NGN"
+          },
+          "destinationCurrency": {
+            "type": "string",
+            "example": "USDT"
+          },
+          "destinationNetwork": {
+            "type": "string",
+            "example": "BASE"
+          },
+          "rate": {
+            "type": "number",
+            "format": "float",
+            "example": 1450.55
+          },
+          "rateThreshold": {
+            "type": "number",
+            "format": "float",
+            "example": 1200
+          },
+          "liquidityThreshold": {
+            "type": "number",
+            "format": "float",
+            "example": 50000000
+          },
+          "status": {
+            "type": "string",
+            "example": "ACTIVE"
+          }
+        }
+      },
+      "UpdateDestinationRequest": {
+        "type": "object",
+        "properties": {
+          "destination": {
+            "type": "object",
+            "properties": {
+              "bank": {
+                "type": "object",
+                "properties": {
+                  "accountName": {
+                    "type": "string",
+                    "example": "John Doe"
+                  },
+                  "accountNumber": {
+                    "type": "string",
+                    "example": "8037592839"
+                  },
+                  "bankCode": {
+                    "type": "string",
+                    "example": "39838"
+                  }
+                }
+              },
+              "blockChain": {
+                "type": "object",
+                "properties": {
+                  "address": {
+                    "type": "string",
+                    "example": "0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "RateConfigurationListResponse": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid",
+              "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            },
+            "partnerId": {
+              "type": "string",
+              "format": "uuid",
+              "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            },
+            "balanceId": {
+              "type": "string",
+              "format": "uuid",
+              "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            },
+            "sourceCurrency": {
+              "type": "string",
+              "example": "NGN"
+            },
+            "destinationCurrency": {
+              "type": "string",
+              "example": "USDT"
+            },
+            "destinationNetwork": {
+              "type": "string",
+              "example": "BASE"
+            },
+            "rate": {
+              "type": "number",
+              "format": "float",
+              "example": 1450.55
+            },
+            "rateThreshold": {
+              "type": "number",
+              "format": "float",
+              "example": 1200
+            },
+            "liquidityThreshold": {
+              "type": "number",
+              "format": "float",
+              "example": 50000000
+            },
+            "status": {
+              "type": "string",
+              "example": "ACTIVE"
+            }
+          }
+        }
+      },
+
+      "QuoteResponse": {
+        "type": "object",
+        "properties": {
+          "quoteId": {
+            "type": "string",
+            "example": "qte_123456"
+          },
+          "merchantId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "sourceCurrency": {
+            "type": "string",
+            "example": "NGN"
+          },
+          "destinationCurrency": {
+            "type": "string",
+            "example": "USDT"
+          },
+          "destinationNetwork": {
+            "type": "string",
+            "example": "BASE"
+          },
+          "rate": {
+            "type": "number",
+            "format": "float",
+            "example": 1540.25
+          },
+          "providerId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "providerBalanceId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "amount": {
+            "type": "number",
+            "format": "float",
+            "example": 20
+          },
+          "receiveAmount": {
+            "type": "number",
+            "format": "float",
+            "example": 12.98
+          },
+          "totalAmount": {
+            "type": "number",
+            "format": "float",
+            "example": 20.5
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-12-17T13:20:41.005Z"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-12-17T13:20:41.005Z"
+          },
+          "hyperRailReference": {
+            "type": "string",
+            "example": "HR-REF-239012"
+          },
+          "status": {
+            "type": "string",
+            "example": "PENDING"
+          },
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "bankPayIn": {
+                "type": "object",
+                "properties": {
+                  "accountName": {
+                    "type": "string",
+                    "example": "John Doe"
+                  },
+                  "accountNumber": {
+                    "type": "string",
+                    "example": "0123456789"
+                  },
+                  "bankName": {
+                    "type": "string",
+                    "example": "Access Bank"
+                  }
+                }
+              },
+              "cryptoPayIn": {
+                "type": "object",
+                "properties": {
+                  "addressId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                  },
+                  "address": {
+                    "type": "string",
+                    "example": "0xabc123..."
+                  },
+                  "addressType": {
+                    "type": "string",
+                    "example": "EVM"
+                  },
+                  "expectedAmount": {
+                    "type": "number",
+                    "format": "float",
+                    "example": 20
+                  },
+                  "externalReference": {
+                    "type": "string",
+                    "example": "EXT-REF-001"
+                  },
+                  "status": {
+                    "type": "string",
+                    "example": "AWAITING_PAYMENT"
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-12-17T13:20:41.005Z"
+                  },
+                  "expiresAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-12-17T14:20:41.005Z"
+                  },
+                  "virtualAccountId": {
+                    "type": "string",
+                    "example": "VA-001"
+                  },
+                  "derivationIndex": {
+                    "type": "integer",
+                    "example": 0
+                  },
+                  "warningMessage": {
+                    "type": "string",
+                    "example": "Send exact amount only"
+                  }
+                }
+              }
+            }
+          },
+          "fees": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "Processing Fee"
+                },
+                "amount": {
+                  "type": "number",
+                  "format": "float",
+                  "example": 0.5
+                },
+                "feeType": {
+                  "type": "string",
+                  "example": "FLAT"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CreateRateConfigurationRequest": {
+        "type": "object",
+        "properties": {
+          "sourceCurrency": {
+            "type": "string",
+            "example": "NGN"
+          },
+          "destinationCurrency": {
+            "type": "string",
+            "example": "USDT"
+          },
+          "destinationNetwork": {
+            "type": "string",
+            "example": "BASE"
+          },
+          "rateConfigurationType": {
+            "type": "string",
+            "enum": ["manual", "auto"],
+            "example": "manual"
+          },
+          "rate": {
+            "type": "number",
+            "format": "float",
+            "example": 1450.55
+          },
+          "liquidityThreshold": {
+            "type": "string",
+            "example": "50,000,000.00",
+            "description": "Maximum liquidity limit before rate adjustment"
+          },
+          "rateThreshold": {
+            "type": "number",
+            "format": "float",
+            "example": 1200
+          },
+          "status": {
+            "type": "string",
+            "example": "ACTIVE"
+          }
+        },
+        "required": [
+          "sourceCurrency",
+          "destinationCurrency",
+          "destinationNetwork",
+          "rateConfigurationType",
+          "rate",
+          "status"
+        ]
+      },
       "NewPlant": {
         "allOf": [
           {
             "$ref": "#/components/schemas/Plant"
           },
           {
-            "required": [
-              "id"
-            ],
+            "required": ["id"],
             "type": "object",
             "properties": {
               "id": {
@@ -191,10 +1011,7 @@
         ]
       },
       "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
+        "required": ["error", "message"],
         "type": "object",
         "properties": {
           "error": {
