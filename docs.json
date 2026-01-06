@@ -4,7 +4,7 @@
   "name": "Hyperrail - Documentation",
   "appearance": {"default": "dark", "strict": true},
   "colors": {
-    "primary": "#B5FD85",
+    "primary": "#000000",
     "light": "#B5FD85",
     "dark": "#B5FD85"
   },
@@ -25,7 +25,7 @@
             ]
           },
           {
-            "group": "Hyperrail Wallets",
+            "group": "Wallets",
             "icon": "wallet",
             "pages": [
               "api-reference/hyperrail-wallet/get",
@@ -34,7 +34,7 @@
             ]
           },
           {
-            "group": "Hyperrail Quotes",
+            "group": "Quotes",
             "icon": "money-bill",
             "pages": [
               "api-reference/hyperrail-quote/create-quote",
@@ -44,17 +44,17 @@
             ]
           },
           {
-            "group": "Exchange",
+            "group": "Trade Pairs",
             "icon": "arrow-left-arrow-right",
             "pages": [
-              "api-reference/exchange/create-trade",
-              "api-reference/exchange/get-trade",
-              "api-reference/exchange/get-trade-id",
-              "api-reference/exchange/get-supported-trade-currency",
-               "api-reference/exchange/get-trade-currency",
-               "api-reference/exchange/get-supported-chain",
-              "api-reference/exchange/get-supported-stable-currency",
-              "api-reference/exchange/get-supported-fiat-currency"
+              "api-reference/trade-pair/create-trade",
+              "api-reference/trade-pair/get-trade",
+              "api-reference/trade-pair/get-trade-id",
+              "api-reference/trade-pair/get-supported-trade-currency",
+               "api-reference/trade-pair/get-trade-currency",
+               "api-reference/trade-pair/get-supported-chain",
+              "api-reference/trade-pair/get-supported-stable-currency",
+              "api-reference/trade-pair/get-supported-fiat-currency"
             ]
           }
 
@@ -67,11 +67,12 @@
     "dark": "/logo/hyperrail-logo.svg"
   },
   "navbar": {
-     "primary": {
-      "type": "button",
-      "label": "Get Started",
-      "href": "https://app.spotflow.co/"
-    }
+    "links": [
+      {
+        "label": "Get Started",
+       "href": "https://app.spotflow.co/"
+      }
+    ]
   },
    "background": {
     "decoration": "grid",

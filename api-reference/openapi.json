@@ -188,19 +188,10 @@
                     "type": "string",
                     "example": "USDT"
                   },
-                  "destinationNetwork": {
-                    "type": "string",
-                    "example": "BASE",
-                    "description": "The current network we support BASE, POLYGON, ETHEREUM"
-                  },
                   "amount": {
                     "type": "number",
                     "format": "int32",
                     "description": "Amount should be in our supported currency i.e NGN and GHS for now."
-                  },
-                  "preferredMerchant": {
-                    "type": "string",
-                    "format": "uuid"
                   }
                 }
               }
@@ -389,7 +380,7 @@
         },
         "responses": {
           "200": {
-            "description": "Create quotes for exchange ",
+            "description": "Create trade pair configurations ",
             "content": {
               "application/json": {
                 "schema": {
@@ -727,44 +718,54 @@
           "id": {
             "type": "string",
             "format": "uuid",
-            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "description": "The unique identifier of the rate configuration."
+
           },
           "partnerId": {
             "type": "string",
             "format": "uuid",
-            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "description": "The unique identifier of the partner ID."
           },
           "balanceId": {
             "type": "string",
             "format": "uuid",
-            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "description": "The unique identifier of the balance ID."
           },
           "sourceCurrency": {
             "type": "string",
-            "example": "NGN"
+            "example": "NGN",
+            "description": "The source currency for the trade pair"
           },
           "destinationCurrency": {
             "type": "string",
-            "example": "USDT"
+            "example": "USDT",
+            "description": "The destination currency for the trade pair"
           },
           "destinationNetwork": {
             "type": "string",
-            "example": "BASE"
+            "example": "BASE",
+            "description": "The network for the destination currency"
           },
           "rate": {
             "type": "number",
             "format": "float",
-            "example": 1450.55
+            "example": 1450.55,
+            "description": "The exchange rate between source and destination currency"
           },
           "rateThreshold": {
             "type": "number",
             "format": "float",
-            "example": 1200
+            "example": 1200,
+            "description": "The rate threshold for automatic rate adjustments"
           },
           "liquidityThreshold": {
             "type": "number",
             "format": "float",
-            "example": 50000000
+            "example": 50000000,
+            "description": "Maximum liquidity limit before rate adjustment"
           },
           "status": {
             "type": "string",
