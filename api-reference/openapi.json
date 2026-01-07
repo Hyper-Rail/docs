@@ -190,10 +190,15 @@
                   },
                   "amount": {
                     "type": "number",
-                    "format": "int32",
-                    "description": "Amount should be in our supported currency i.e NGN and GHS for now."
+                    "format": "int32"
+                  },
+                  "destinationNetwork": {
+                    "type": "string",
+                    "example": "BASE",
+                    "description": "The network for the destination currency"
                   }
-                }
+                },
+                "required": ["sourceCurrency", "destinationCurrency", "amount"]
               }
             }
           }
@@ -373,7 +378,60 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RateConfigurationListResponse"
+                "type": "object",
+                "properties": {
+                  "sourceCurrency": {
+                    "type": "string",
+                    "example": "NGN"
+                  },
+                  "destinationCurrency": {
+                    "type": "string",
+                    "example": "USDT"
+                  },
+                  "rateConfigurationType": {
+                    "type": "string",
+                    "enum": ["manual", "percentage", "plus"],
+                    "example": "manual",
+                    "description": "Type of rate configuration - manual or automatic"
+                  },
+                  "rate": {
+                    "type": "number",
+                    "format": "float",
+                    "example": 1450.55,
+                    "description": "The exchange rate between source and destination currency"
+
+                  },
+                  "rateThreshold": {
+                    "type": "number",
+                    "format": "float",
+                    "example": 1200,
+                    "description": "The rate threshold for automatic rate adjustments"
+                  },
+                  "liquidityThreshold": {
+                    "type": "number",
+                    "format": "float",
+                    "example": 50000000,
+                    "description": "Maximum liquidity limit before rate adjustment"
+                  },
+                  "status": {
+                    "type": "string",
+                    "example": "active"
+                  },
+                  "destinationNetwork": {
+                    "type": "string",
+                    "example": "BASE"
+                  }
+                },
+                "required": [
+                  "sourceCurrency",
+                  "destinationCurrency",
+                  "rateConfigurationType",
+                  "rate",
+                  "status",
+                  "liquidityThreshold",
+                  "rateThreshold"
+                ]
+
               }
             }
           }
@@ -458,7 +516,7 @@
         }
       }
     },
-     "/trade-pairs/supported/currencies/stables": {
+    "/trade-pairs/supported/currencies/stables": {
       "get": {
         "description": "Get trade for supported stable currency",
         "parameters": [],
@@ -706,11 +764,11 @@
         }
       },
       "StringListResponse": {
-  "type": "array",
-  "items": {
-    "type": "string"
-  }
-},
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
 
       "RateConfigurationResponse": {
         "type": "object",
@@ -720,7 +778,6 @@
             "format": "uuid",
             "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
             "description": "The unique identifier of the rate configuration."
-
           },
           "partnerId": {
             "type": "string",
