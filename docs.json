@@ -16,16 +16,48 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "API reference",
+        "tab": "Documentation",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Getting Started",
             "pages": [
-              "api-reference/introduction"
+              "documentation/introduction",
+              "documentation/kyb-verification"
             ]
           },
           {
-            "group": "Wallets",
+            "group": "Features",
+            "pages": [
+              "documentation/features/offramp-transaction",
+              "documentation/features/onramp-transaction",
+              "documentation/features/currency-exchange-fiat",
+              "documentation/features/team-members",
+              "documentation/features/account-management"
+            ]
+          },
+          {
+            "group": "Expert Desk",
+            "icon": "user-tie",
+            "pages": [
+              "documentation/support-channel/faq"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API reference",
+        "groups": [
+          {
+            "group": "API Reference",
+            "icon": "history",
+            "pages": [
+              "api-reference/introduction",
+              "api-reference/authentication",
+              "api-reference/error-codes"
+            ]
+          },
+          {
+            "group": " Wallets (Fiat)",
             "icon": "wallet",
             "pages": [
               "api-reference/hyperrail-wallet/get",
@@ -34,13 +66,45 @@
             ]
           },
           {
-            "group": "Quotes",
+            "group": "Exchange",
             "icon": "money-bill",
             "pages": [
               "api-reference/hyperrail-quote/create-quote",
               "api-reference/hyperrail-quote/get-quote-id",
               "api-reference/hyperrail-quote/get-quote-payment-id",
               "api-reference/hyperrail-quote/edit-quote-id"
+            ]
+          },
+          {
+            "group": "Dynamic Accounts",
+            "icon": "vault",
+            "pages": [
+              "api-reference/dynamic-accounts/create-dynamic-account",
+              "api-reference/dynamic-accounts/dynamic-account-id",
+              "api-reference/dynamic-accounts/list-dynamic-account"
+            ]
+          },
+          {
+            "group": "Single Disbursements",
+            "icon": "paper-plane",
+            "pages": [
+              "api-reference/transfer-api/create-single-transfer",
+              "api-reference/transfer-api/list-banks",
+              "api-reference/transfer-api/transfer-resolve-account",
+              "api-reference/transfer-api/list-branches",
+              "api-reference/transfer-api/transfer-by-reference"
+            ]
+          },
+           {
+            "group": "Bulk Disbursements",
+            "icon": "money-check",
+            "pages": [
+              "api-reference/transfer-api/create-bulk-transfer",
+              "api-reference/transfer-api/bulk-transfer-id",
+              "api-reference/transfer-api/bulk-transfer-categories",
+              "api-reference/transfer-api/bulk-transfers",
+              "api-reference/transfer-api/bulk-transfers-by-id",
+              "api-reference/transfer-api/validate-bulk-transfer"
             ]
           },
           {
@@ -60,6 +124,10 @@
 
         ]
       }
+
+
+
+
     ]
   },
   "logo": {
