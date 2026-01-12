@@ -37,7 +37,6 @@
           },
           {
             "group": "Expert Desk",
-            "icon": "user-tie",
             "pages": [
               "documentation/support-channel/faq"
             ]
