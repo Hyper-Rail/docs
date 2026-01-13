@@ -29,18 +29,70 @@ These transactions use **available platform liquidity** to execute conversions a
 
 <Steps>
   <Step title="Login">
-    Login to your HyperRail account and head over to trade
+
+   <img 
+  src="/images/assest/auth/login.png" 
+  alt="Main dashboard interface"
+  className="rounded-lg border"
+/>
+    Login to your HyperRail account
+
+   <img 
+  src="/images/assest/auth/trade1.png" 
+  alt="Main dashboard interface"
+  className="rounded-lg border"
+/>
+
+Select the **Trade** on the sidebar and click on the **Trade button** at the top-left side
+
   </Step>
   <Step title="Select Assets">
+
+   <img 
+  src="/images/assest/auth/trade2.png" 
+  alt="Main dashboard interface"
+  className="rounded-lg border"
+/>
     Select the source fiat currency, the destination stablecoin, and the amount you want to convert.
   </Step>
 
   <Step title="Review Rate">
+
+     <img 
+  src="/images/assest/auth/trade4.png" 
+  alt="Main dashboard interface"
+  className="rounded-lg border"
+/>
+
     HyperRail displays the current exchange rate and expected stablecoin amount.
   </Step>
 
+  <Step title="Fuding Source">
+
+     <img 
+  src="/images/assest/auth/trade5.png" 
+  alt="Main dashboard interface"
+  className="rounded-lg border"
+/>
+
+   We have two types of funding source:
+   1. **Balance**: You can fund using your HyperRail wallet
+   2. **Fund Externally**: You can fund with an external account
+
+ <img 
+  src="/images/assest/auth/trade6.png" 
+  alt="Main dashboard interface"
+  className="rounded-lg border"
+/>
+
+   We have two types of destination:
+   1. **HyperRail**: You can recieve funds to your HyperRail wallet 
+   2. **External Account**: You can recieve funds to an external account
+
+  </Step>
+
   <Step title="Confirm Conversion">
-    Confirm the transaction to lock the rate and begin processing.
+    Confirm the transaction to lock the rate by filling in your OTP.
   </Step>
 
   <Step title="Receive Stablecoins">
@@ -58,9 +110,9 @@ Each on-ramp transaction moves through the following statuses:
 
 - `pending` – Fiat deposit processing
 - `successful` – Stablecoins credited
-- `failed` – Transaction unsuccessful
-- `cancelled` – Transaction cancelled
-
+- `expired` – Transaction expired
+- `insufficient-balance` – insufficient wallet balance
+- `failed` – Transaction failed
 ---
 
 <Tip>
