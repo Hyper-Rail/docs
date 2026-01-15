@@ -118,20 +118,6 @@
               "api-reference/transfer-api/bulk-transfers-by-id",
               "api-reference/transfer-api/validate-bulk-transfer"
             ]
-          },
-          {
-            "group": "Trade Pairs",
-            "icon": "arrow-left-arrow-right",
-            "pages": [
-              "api-reference/trade-pair/create-trade",
-              "api-reference/trade-pair/get-trade",
-              "api-reference/trade-pair/get-trade-id",
-              "api-reference/trade-pair/get-supported-trade-currency",
-               "api-reference/trade-pair/get-trade-currency",
-               "api-reference/trade-pair/get-supported-chain",
-              "api-reference/trade-pair/get-supported-stable-currency",
-              "api-reference/trade-pair/get-supported-fiat-currency"
-            ]
           }
 
         ]
@@ -177,4 +163,6 @@
      "vscode"
    ]
   }
+    
+
 }

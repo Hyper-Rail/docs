@@ -23,7 +23,19 @@
     "/balances": {
       "get": {
         "description": "Returns all balances ",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "x-service-source",
+            "in": "header",
+            "required": true,
+            "description": "Identifies the calling service",
+            "schema": {
+              "type": "string",
+              "default": "hyperrails",
+              "example": "hyperrails"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Returns all balances",
@@ -343,6 +355,1015 @@
         }
       }
     },
+
+    "/transfers/bulk": {
+      "post": {
+        "description": "You can use this endpoint to perform bulk bank account transfer to multiple bank accounts.",
+        "operationId": "CreateBulkTransfer",
+        "parameters": [
+          {
+            "name": "x-service-source",
+            "in": "header",
+            "required": true,
+            "description": "Identifies the calling service",
+            "schema": {
+              "type": "string",
+              "default": "hyperrails",
+              "example": "hyperrails"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "CSV file containing bulk transfer data. Must be a .csv file."
+                  },
+                  "category": {
+                    "type": "string",
+                    "description": "Specify a unique category of your choice for your company to track a transaction for later reconciliation."
+                  },
+                  "currency": {
+                    "type": "string",
+                    "description": "Select the currency for the transfer. This is in our supported currency which is currently only NGN and GHS.",
+                    "enum": ["NGN", "GHS"]
+                  },
+                  "narration": {
+                    "type": "string",
+                    "description": "This is optional information for you to give details about the reason for the transfer"
+                  }
+                },
+                "required": ["file", "category", "currency", "narration"]
+              },
+              "encoding": {
+                "file": {
+                  "contentType": "text/csv"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Bulk transfer created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransferDetailsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error401"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid CSV or missing fields.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "Get details of all bulk transfer files you have uploaded.",
+        "operationId": "listBulkTransfers",
+        "parameters": [
+          {
+            "name": "x-service-source",
+            "in": "header",
+            "required": true,
+            "description": "Identifies the calling service",
+            "schema": {
+              "type": "string",
+              "default": "hyperrails",
+              "example": "hyperrails"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page number for pagination (default is 0).",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "description": "Number of items per page for pagination (default is 10).",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "required": false,
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "required": false,
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON array of bulk disbursements objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "content": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/TransferDetailsResponse"
+                        }
+                      },
+                      "pageNumber": { "type": "integer" },
+                      "pageSize": { "type": "integer" },
+                      "totalElements": { "type": "integer" },
+                      "totalPages": { "type": "integer" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionError401"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not Found - No subscriptions found for the given plan ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transfers/bulk/{id}": {
+      "get": {
+        "description": "Get details of an uploaded bulk disbursement by its id.",
+        "operationId": "BulkTransferID",
+        "parameters": [
+          {
+            "name": "x-service-source",
+            "in": "header",
+            "required": true,
+            "description": "Identifies the calling service",
+            "schema": {
+              "type": "string",
+              "default": "hyperrails",
+              "example": "hyperrails"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "This is the specific id used to get the individual transfer details in the uploaded bulk disbursement file.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON array of bulk disbursement details objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransferDetailsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error401"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not Found - No subscriptions found for the given plan ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transfers/bulk/categories": {
+      "get": {
+        "description": "Get details of an uploaded bulk disbursement by the categories you created with.",
+        "operationId": "BulkTransferCategories",
+        "parameters": [
+          {
+            "name": "x-service-source",
+            "in": "header",
+            "required": true,
+            "description": "Identifies the calling service",
+            "schema": {
+              "type": "string",
+              "default": "hyperrails",
+              "example": "hyperrails"
+            }
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "required": false,
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON array of bulk disbursement details objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "example": "string"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error401"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not Found - No subscriptions found for the given plan ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transfers/bulk/{id}/transfers": {
+      "get": {
+        "description": "Get details of all bulk transfer files you have uploaded.",
+        "operationId": "listBulkTransfersByID",
+        "parameters": [
+          {
+            "name": "x-service-source",
+            "in": "header",
+            "required": true,
+            "description": "Identifies the calling service",
+            "schema": {
+              "type": "string",
+              "default": "hyperrails",
+              "example": "hyperrails"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "This is the specific id used to get the individual transfer details in the uploaded bulk disbursement file.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page number for pagination (default is 0).",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page number for pagination (default is 0).",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "description": "Number of items per page for pagination (default is 10).",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "required": false,
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "required": false,
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON array of bulk disbursements objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "content": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TransferDetailsResponse"
+                      }
+                    },
+                    "pageNumber": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "pageSize": {
+                      "type": "integer",
+                      "example": 10
+                    },
+                    "totalElements": {
+                      "type": "integer",
+                      "example": 100
+                    },
+                    "totalPages": {
+                      "type": "integer",
+                      "example": 10
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionError401"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not Found - No subscriptions found for the given plan ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transfers/bulk/validate": {
+      "post": {
+        "description": "Use this endpoint to confirm your bulk disbursement CSV file has all the necessary details needed and won't fail when uploaded for the bulk transfer transaction.",
+        "operationId": "ValidateBulkTransfer",
+        "parameters": [
+          {
+            "name": "x-service-source",
+            "in": "header",
+            "required": true,
+            "description": "Identifies the calling service",
+            "schema": {
+              "type": "string",
+              "default": "hyperrails",
+              "example": "hyperrails"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "Upload the file content and must in CSV format.",
+                    "format": "binary"
+                  }
+                },
+                "required": ["file"]
+              },
+              "example": {
+                "file": "string"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "A JSON array of create bulk disbursement objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "failedRequests": {
+                      "type": "array",
+                      "default": []
+                    },
+                    "totalRequests": {
+                      "type": "number",
+                      "format": "int32"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error401"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not Found - No subscriptions found for the given plan ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transfers": {
+      "post": {
+        "description": "You can use this endpoint to perform bank account transfer from your main account",
+        "operationId": "CreateSingleDisbursement",
+        "parameters": [
+          {
+            "name": "x-service-source",
+            "in": "header",
+            "required": true,
+            "description": "Identifies the calling service",
+            "schema": {
+              "type": "string",
+              "default": "hyperrails",
+              "example": "hyperrails"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reference": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "amount": {
+                    "type": "integer",
+                    "format": "float"
+                  },
+                  "currency": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "object",
+                    "properties": {
+                      "accountNumber": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "destination": {
+                    "type": "object",
+                    "properties": {
+                      "accountNumber": {
+                        "type": "string"
+                      },
+                      "accountName": {
+                        "type": "string"
+                      },
+                      "bankCode": {
+                        "type": "string"
+                      },
+                      "branchCode": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "narrations": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "reference",
+                  "destination",
+                  "source",
+                  "amount",
+                  "currency",
+                  "type"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "A JSON array of create single disbursement objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransferDetailsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error401"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not Found - No subscriptions found for the given plan ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transfers/banks/{currency}": {
+      "get": {
+        "description": "Get details of all bulk transfer files you have uploaded.",
+        "operationId": "TransferBank",
+        "parameters": [
+          {
+            "name": "currency",
+            "in": "path",
+            "required": true,
+            "description": "Currently we support NGN or GHS",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-service-source",
+            "in": "header",
+            "required": true,
+            "description": "Identifies the calling service",
+            "schema": {
+              "type": "string",
+              "default": "hyperrails",
+              "example": "hyperrails"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON array of bank list objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "bankCode": {
+                        "type": "string",
+                        "example": "PB-56234"
+                      },
+                      "bankName": {
+                        "type": "string",
+                        "example": "Nombank"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionError401"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not Found - No subscriptions found for the given plan ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transfers/resolve-account": {
+      "get": {
+        "description": "Get details of all bulk transfer files you have uploaded.",
+        "operationId": "ResolveAccount",
+        "parameters": [
+          {
+            "name": "x-service-source",
+            "in": "header",
+            "required": true,
+            "description": "Identifies the calling service",
+            "schema": {
+              "type": "string",
+              "default": "hyperrails",
+              "example": "hyperrails"
+            }
+          },
+          {
+            "name": "accountNumber",
+            "in": "query",
+            "required": true,
+            "description": "This is the account number you want to get/validate.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bankCode",
+            "in": "query",
+            "required": true,
+            "description": "This is the bank code of the account number on our system.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "required": true,
+            "description": "Select the currency for the payment charge. This is in our supported currency which is currently only NGN. Please note that only NGN accounts works with resolve bank accounts.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON array of resolve transfers objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "accountName": {
+                      "type": "string",
+                      "example": "string"
+                    },
+                    "accountNumber": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionError401"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not Found - No subscriptions found for the given plan ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transfers/reference/{reference}": {
+      "get": {
+        "description": "Get details of a particular transfer by its reference id.",
+        "operationId": "TransactionReference",
+        "parameters": [
+          {
+            "name": "x-service-source",
+            "in": "header",
+            "required": true,
+            "description": "Identifies the calling service",
+            "schema": {
+              "type": "string",
+              "default": "hyperrails",
+              "example": "hyperrails"
+            }
+          },
+          {
+            "name": "reference",
+            "in": "path",
+            "required": true,
+            "description": "This is the reference id of the transfer that you made on your account using what's in the 'reference' and not 'spotflowReference.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransferDetailsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionError401"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not Found - No subscriptions found for the given plan ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transfers/banks/{bank-code}/branches": {
+      "get": {
+        "description": "Retrieves a list of supported branches for a for transfers in the specified mode and selected currency",
+        "operationId": "BranchesBankCode",
+        "parameters": [
+          {
+            "name": "x-service-source",
+            "in": "header",
+            "required": true,
+            "description": "Identifies the calling service",
+            "schema": {
+              "type": "string",
+              "default": "hyperrails",
+              "example": "hyperrails"
+            }
+          },
+          {
+            "name": "bankCode",
+            "in": "query",
+            "required": true,
+            "description": "This is the bank code of the account number on our system.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON array of bank branches objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "bankCode": {
+                      "type": "string",
+                      "example": "string"
+                    },
+                    "bankName": {
+                      "type": "string",
+                      "example": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionError401"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not Found - No subscriptions found for the given plan ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/trade-pairs": {
       "get": {
         "description": "Get trade for exchange",
@@ -399,7 +1420,6 @@
                     "format": "float",
                     "example": 1450.55,
                     "description": "The exchange rate between source and destination currency"
-
                   },
                   "rateThreshold": {
                     "type": "number",
@@ -431,7 +1451,6 @@
                   "liquidityThreshold",
                   "rateThreshold"
                 ]
-
               }
             }
           }
@@ -647,57 +1666,210 @@
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
+
+    "/virtual-accounts/temporary": {
+      "post": {
+        "description": "This endpoint is used to create a dynamic account to receive payments.",
+        "operationId": "DynamicAccountCreation",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
+            "name": "x-service-source",
+            "in": "header",
             "required": true,
+            "description": "Identifies the calling service",
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string",
+              "default": "hyperrails",
+              "example": "hyperrails"
             }
           }
         ],
-        "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
-      "post": {
-        "description": "Information about a new plant added to the store",
         "requestBody": {
-          "description": "Plant added to the store",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "type": "object",
+                "properties": {
+                  "currency": {
+                    "type": "string",
+                    "example": "NGN",
+                    "description": "According, to our currently supported currencies, this is in NGN and GHS."
+                  },
+                  "accountName": {
+                    "type": "string",
+                    "example": "Quantum Technologies",
+                    "description": "Your desired naming for your account."
+                  },
+                  "amount": {
+                    "type": "number",
+                    "format": "int32",
+                    "description": "Amount should be in the subunit of our supported currency i.e NGN and GHS for now."
+                  },
+                  "expiresIn": {
+                    "type": "number",
+                    "format": "int32",
+                    "description": "This is optional to add. By default, the time it takes for a virtual account to expire is 30 mins. However, you can customize the time to lesser as you desire."
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
+            "description": "A JSON array of dynamic account objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DynamicDetailsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error401"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not Found - No subscriptions found for the given plan ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/virtual-accounts/{id}": {
+      "get": {
+        "description": "Get details of your created virtual account by its ID.",
+        "operationId": "DynamicAccountID",
+        "parameters": [
+          {
+            "name": "x-service-source",
+            "in": "header",
+            "required": true,
+            "description": "Identifies the calling service",
+            "schema": {
+              "type": "string",
+              "default": "hyperrails",
+              "example": "hyperrails"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "This is the unique ID generated upon creation of your dynamic account in either NGN or GHS.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON array of dynamic details objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DynamicDetailsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error401"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not Found - No subscriptions found for the given plan ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/virtual-accounts": {
+      "get": {
+        "description": "This retrieves and lists all the active dynamic accounts you created.",
+        "operationId": "ListDynamicAccount",
+        "parameters": [
+          {
+            "name": "x-service-source",
+            "in": "header",
+            "required": true,
+            "description": "Identifies the calling service",
+            "schema": {
+              "type": "string",
+              "default": "hyperrails",
+              "example": "hyperrails"
+            }
+          },
+          {
+            "name": "accountNumber",
+            "in": "query",
+            "required": true,
+            "description": "This filters by the account number created for the virtual accounts.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON array of dynamic details objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DynamicDetailsResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error401"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not Found - No subscriptions found for the given plan ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
           }
         }
       }
@@ -827,6 +1999,37 @@
           "status": {
             "type": "string",
             "example": "ACTIVE"
+          }
+        }
+      },
+      "DynamicDetailsResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "c1fba25a-a36b-479c-b17d-64dbaf3ba32c"
+          },
+          "accountNumber": {
+            "type": "string",
+            "example": "7706438396"
+          },
+          "accountName": {
+            "type": "string",
+            "example": "Quantum Technologies"
+          },
+          "bankName": {
+            "type": "string",
+            "example": "Testbank MFB"
+          },
+          "mode": {
+            "type": "string",
+            "enum": ["live", "test"],
+            "example": "live"
+          },
+          "lifeCycle": {
+            "type": "string",
+            "example": "temporary"
           }
         }
       },
