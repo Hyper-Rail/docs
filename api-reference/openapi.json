@@ -1,8 +1,8 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Hyperrail",
-    "description": "Hyperrail documentation",
+    "title": "HyperRail",
+    "description": "HyperRail documentation",
     "license": {
       "name": "MIT"
     },
@@ -31,8 +31,8 @@
             "description": "Identifies the calling service",
             "schema": {
               "type": "string",
-              "default": "hyperrails",
-              "example": "hyperrails"
+              "default": "HyperRails",
+              "example": "HyperRails"
             }
           }
         ],
@@ -142,7 +142,7 @@
     },
     "/balances/currency/{currency}": {
       "get": {
-        "description": "Returns all balance by account ID ",
+        "description": "Returns all balance by currency ",
         "parameters": [
           {
             "name": "currency",
@@ -319,7 +319,7 @@
     },
     "/quotes/complete/{id}": {
       "put": {
-        "description": "ID of an existing quote session for approval",
+        "description": "Update ID of an existing quote session for approval",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -368,8 +368,8 @@
             "description": "Identifies the calling service",
             "schema": {
               "type": "string",
-              "default": "hyperrails",
-              "example": "hyperrails"
+              "default": "HyperRails",
+              "example": "HyperRails"
             }
           }
         ],
@@ -453,8 +453,8 @@
             "description": "Identifies the calling service",
             "schema": {
               "type": "string",
-              "default": "hyperrails",
-              "example": "hyperrails"
+              "default": "HyperRails",
+              "example": "HyperRails"
             }
           },
           {
@@ -595,8 +595,8 @@
             "description": "Identifies the calling service",
             "schema": {
               "type": "string",
-              "default": "hyperrails",
-              "example": "hyperrails"
+              "default": "HyperRails",
+              "example": "HyperRails"
             }
           },
           {
@@ -655,8 +655,8 @@
             "description": "Identifies the calling service",
             "schema": {
               "type": "string",
-              "default": "hyperrails",
-              "example": "hyperrails"
+              "default": "HyperRails",
+              "example": "HyperRails"
             }
           },
           {
@@ -719,8 +719,8 @@
             "description": "Identifies the calling service",
             "schema": {
               "type": "string",
-              "default": "hyperrails",
-              "example": "hyperrails"
+              "default": "HyperRails",
+              "example": "HyperRails"
             }
           },
           {
@@ -890,8 +890,8 @@
             "description": "Identifies the calling service",
             "schema": {
               "type": "string",
-              "default": "hyperrails",
-              "example": "hyperrails"
+              "default": "HyperRails",
+              "example": "HyperRails"
             }
           }
         ],
@@ -972,8 +972,8 @@
             "description": "Identifies the calling service",
             "schema": {
               "type": "string",
-              "default": "hyperrails",
-              "example": "hyperrails"
+              "default": "HyperRails",
+              "example": "HyperRails"
             }
           }
         ],
@@ -1094,8 +1094,8 @@
             "description": "Identifies the calling service",
             "schema": {
               "type": "string",
-              "default": "hyperrails",
-              "example": "hyperrails"
+              "default": "HyperRails",
+              "example": "HyperRails"
             }
           }
         ],
@@ -1158,8 +1158,8 @@
             "description": "Identifies the calling service",
             "schema": {
               "type": "string",
-              "default": "hyperrails",
-              "example": "hyperrails"
+              "default": "HyperRails",
+              "example": "HyperRails"
             }
           },
           {
@@ -1246,8 +1246,8 @@
             "description": "Identifies the calling service",
             "schema": {
               "type": "string",
-              "default": "hyperrails",
-              "example": "hyperrails"
+              "default": "HyperRails",
+              "example": "HyperRails"
             }
           },
           {
@@ -1306,8 +1306,8 @@
             "description": "Identifies the calling service",
             "schema": {
               "type": "string",
-              "default": "hyperrails",
-              "example": "hyperrails"
+              "default": "HyperRails",
+              "example": "HyperRails"
             }
           },
           {
@@ -1679,8 +1679,8 @@
             "description": "Identifies the calling service",
             "schema": {
               "type": "string",
-              "default": "hyperrails",
-              "example": "hyperrails"
+              "default": "HyperRails",
+              "example": "HyperRails"
             }
           }
         ],
@@ -1762,8 +1762,8 @@
             "description": "Identifies the calling service",
             "schema": {
               "type": "string",
-              "default": "hyperrails",
-              "example": "hyperrails"
+              "default": "HyperRails",
+              "example": "HyperRails"
             }
           },
           {
@@ -1823,8 +1823,8 @@
             "description": "Identifies the calling service",
             "schema": {
               "type": "string",
-              "default": "hyperrails",
-              "example": "hyperrails"
+              "default": "HyperRails",
+              "example": "HyperRails"
             }
           },
           {
@@ -2188,7 +2188,7 @@
             "format": "date-time",
             "example": "2025-12-17T13:20:41.005Z"
           },
-          "hyperRailReference": {
+          "HyperRailReference": {
             "type": "string",
             "example": "HR-REF-239012"
           },
