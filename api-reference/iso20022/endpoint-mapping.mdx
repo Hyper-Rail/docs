@@ -1,0 +1,371 @@
+---
+title: Endpoint Mapping
+icon: map
+---
+
+## 1. Real-Time Rate Query
+
+**REST Endpoint**
+
+`GET /v1/partners/rates/rates/markers?from=NGN&to=USDT`
+
+**ISO 20022 Message Type**
+
+pacs.094.001.01 - ForeignExchangeTradeStatusAndDetails (FX Rate Request)
+
+<CodeGroup dropdown>
+
+```xml rateRequestExample.xml
+GET /v1/partners/rates/rates/markers?from=NGN&to=USDT 
+Accept: application/xml
+
+Request Body:
+<?xml version="1.0" encoding="UTF-8"?> 
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.094.001.01"> 
+<FxTradInstrn>
+<GrpHdr> 
+<MsgId>RATE_REQ_20250319_001</MsgId> 
+<CreDtTm>2025-03-19T14:30:00Z</CreDtTm> 
+<NbOfTxs>1</NbOfTxs> 
+</GrpHdr> 
+<TradInf>
+<TradgSdId> 
+<UnqId> 
+<Id>MERCHANT_ID_123</Id>
+</UnqId> 
+</TradgSdId> 
+<TradgPty> 
+<BuyCcy>USDT</BuyCcy>
+<SellCcy>NGN</SellCcy> 
+</TradgPty> </TradInf> 
+</FxTradInstrn>
+</Document>
+```
+
+```JSON rateRequestExample.json
+GET /v1/partners/rates/rates/markers?from=NGN&to=USDT
+Accept: application/json 
+
+```
+
+</CodeGroup>
+
+<CodeGroup dropdown>
+
+```xml rateResponseExample.xml
+GET /v1/partners/rates/rates/markers?from=NGN&to=USDT
+Accept: application/xml
+
+
+Response Body: 
+<?xml version="1.0" encoding="UTF-8"?> 
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.095.001.01">
+<FxTradInstrn>
+<GrpHdr> 
+<MsgId>RATE_RES_20250319_001</MsgId> 
+<CreDtTm>2025-03-19T14:30:00Z</CreDtTm> 
+</GrpHdr> 
+<TradInf> 
+<TradgSdId>
+<UnqId> 
+<Id>HYPERRAIL</Id> 
+</UnqId>
+ </TradgSdId>
+<XchgRate>1650.00</XchgRate> 
+<FxXchgDtls> 
+<TxTp>SPOT</TxTp>
+<TradDt>2025-03-19</TradDt> 
+<VldtyPrd> 
+<FrTm>2025-03-19T14:30:00Z</FrTm> 
+<ToTm>2025-03-19T14:30:30Z</ToTm>
+</VldtyPrd> 
+</FxXchgDtls> 
+<TradgPty>
+<BuyCcy>USDT</BuyCcy> 
+<SellCcy>NGN</SellCcy> 
+</TradgPty>
+<SplmtryData> 
+<PlcAndNm>AvailableLiquidity</PlcAndNm> 
+<Envlp>
+<Amt Ccy="NGN">100000.00</Amt>
+</Envlp> 
+</SplmtryData>
+</TradInf>
+</FxTradInstrn> 
+</Document>
+
+```
+
+```JSON rateResponseExample.json
+GET /v1/partners/rates/rates/markers?from=NGN&to=USDT
+Accept: application/json 
+
+Response Body: 
+{
+"rate": 1650.00, 
+"from_currency": "NGN",
+"to_currency": "USDT",
+ "timestamp": "2025-03-19T14:30:00Z",
+"available_liquidity": 100000.00, 
+"ttl_seconds": 30 
+}
+```
+
+</CodeGroup>
+
+#### Field Mapping
+
+| JSON Field | ISO 20022 Path | Description |
+| :--- | :--- | :--- |
+| **rate** |TradInf/XchgRate | Exchange rate |
+| **from_currency** | TradInf/TradgPty/SellCcy | Source currency |
+| **to_currency** | TradInf/TradgPty/BuyCcy | Destination currency |
+| **ttl_seconds** | FxXchgDtls/VldtyPrd | Validity period (TTL) |
+| **available_liquidity** | SplmtryData/Envlp/Amt  | Available liquidity amount |
+
+
+## 2. Order Intent
+
+**REST Endpoint**
+
+`POST /partners/marketplace/intent`
+
+**ISO 20022 Message Type**
+
+pacs.094.001.01 - ForeignExchangeTradeStatusAndDetails (FX Rate Request)
+
+<CodeGroup dropdown>
+
+```xml intentRequestExample.xml
+POST /partners/marketplace/intent
+Accept: application/xml
+
+Request Body:
+<?xml version="1.0" encoding="UTF-8"?> 
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.094.001.01"> 
+<FxTradInstrn>
+<GrpHdr> 
+<MsgId>INTENT_20250319_001</MsgId> 
+<CreDtTm>2025-03-19T14:30:00Z</CreDtTm> 
+<NbOfTxs>1</NbOfTxs> 
+</GrpHdr> 
+<TradInf>
+<TradgSdId> 
+<UnqId> 
+<Id>MERCHANT_ID_123</Id>
+</UnqId> 
+</TradgSdId> 
+<TradDt>2025-03-19</TradDt>
+<XchgRate>1650.00</XchgRate> 
+<TradgPty> 
+<BuyCcy>USDT</BuyCcy>
+<SellCcy>NGN</SellCcy> 
+<SellAmt Ccy="NGN">10000000.00</SellAmt>
+</TradgPty> 
+<InstdAmt Ccy="NGN">10000000.00</InstdAmt> 
+</TradInf>
+</FxTradInstrn> 
+</Document>
+
+```
+
+```JSON intentRequestExample.json
+POST /partners/marketplace/intent
+Accept: application/json 
+
+{ 
+    "preferred_rate": 1650.00,
+     "volume": 10000000.00, 
+     "source_currency": "NGN", 
+     "destination_currency": "USDT"
+}
+
+```
+
+</CodeGroup>
+
+<CodeGroup dropdown>
+
+```xml intentResponseExample.xml
+POST /partners/marketplace/intent
+Accept: application/xml
+
+
+Response Body: 
+<?xml version="1.0" encoding="UTF-8"?> 
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.095.001.01">
+<FxTradInstrn>
+<GrpHdr>
+<MsgId>intent_abc123</MsgId> 
+<CreDtTm>2025-03-19T14:30:00Z</CreDtTm> 
+</GrpHdr> 
+<TradInf>
+<TradgSdId>
+<UnqId> 
+<Id>quote_def456</Id> 
+</UnqId> 
+</TradgSdId>
+<XchgRate>1650.00</XchgRate> 
+<FxXchgDtls> 
+<TxTp>SPOT</TxTp>
+<TradDt>2025-03-19</TradDt> 
+<VldtyPrd> 
+<FrTm>2025-03-19T14:30:00Z</FrTm> 
+<ToTm>2025-03-19T14:35:00Z</ToTm>
+</VldtyPrd> 
+</FxXchgDtls> 
+<TradgPty>
+<BuyCcy>USDT</BuyCcy>
+<BuyAmt Ccy="USDT">6060.61</BuyAmt>
+<SellCcy>NGN</SellCcy> 
+<SellAmt Ccy="NGN">10000000.00</SellAmt>
+</TradgPty> 
+<SplmtryData> 
+<PlcAndNm>MatchedProviders</PlcAndNm>
+<Envlp> 
+<PrvdrId>lp_xyz</PrvdrId> 
+<AvlblVol Ccy="NGN">10000000.00</AvlblVol> 
+</Envlp> 
+</SplmtryData>
+</TradInf>
+</FxTradInstrn> 
+</Document>
+
+```
+
+```JSON intentResponseExample.json
+POST /partners/marketplace/intent
+Accept: application/json 
+
+Response Body: 
+{ 
+"intent_id": "intent_abc123", 
+"liquidity_available": true,
+"matched_providers": 
+[ 
+    { 
+        "provider_id": "lp_xyz",
+        "available_volume": 10000000.00,
+         "offered_rate": 1650.00 
+    } 
+],
+         "quote_id": "quote_def456", 
+         "status": "matched", 
+         "expires_at": "2025-03-19T14:35:00Z" 
+}
+
+
+```
+
+</CodeGroup>
+
+## 3. Liquidity Pool
+
+**REST Endpoint**
+
+`GET /partners/marketplace/listings`
+
+**ISO 20022 Message Type**
+
+pacs.094.001.01 - ForeignExchangeTradeStatusAndDetails (Liquidity Query)
+
+<CodeGroup dropdown>
+
+```xml liquidityPoolResponseExample.xml
+GET /partners/marketplace/listings
+Accept: application/xml
+
+
+Response Body: 
+<?xml version="1.0" encoding="UTF-8"?> 
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.095.001.01"> 
+<FxTradInstrn>
+<GrpHdr> 
+<MsgId>POOL_LIST_20250319_001</MsgId> 
+<CreDtTm>2025-03-19T14:30:00Z</CreDtTm> 
+<NbOfTxs>2</NbOfTxs> 
+</GrpHdr> 
+<TradInf>
+<TradgSdId> 
+<UnqId> 
+<Id>lp_001</Id>
+<Nm>Provider A</Nm> 
+</UnqId> 
+</TradgSdId> 
+<XchgRate>1650.25</XchgRate>
+<TradgPty> 
+<BuyCcy>USDT</BuyCcy> 
+<SellCcy>NGN</SellCcy>
+</TradgPty> 
+<SplmtryData>
+<PlcAndNm>AvailableLiquidity</PlcAndNm> 
+<Envlp> 
+<Amt Ccy="NGN">100000000.00</Amt> 
+<MinAmt Ccy="NGN">1000.00</MinAmt>
+<MaxAmt Ccy="NGN">50000000.00</MaxAmt> 
+</Envlp> 
+</SplmtryData>
+</TradInf> 
+<TradInf> 
+<TradgSdId> 
+<UnqId>
+<Id>lp_002</Id> 
+<Nm>Provider B</Nm> 
+</UnqId>
+</TradgSdId> 
+<XchgRate>1651.00</XchgRate> 
+<TradgPty>
+<BuyCcy>USDT</BuyCcy>
+<SellCcy>NGN</SellCcy> 
+</TradgPty>
+<SplmtryData> 
+<PlcAndNm>AvailableLiquidity</PlcAndNm> 
+<Envlp>
+<Amt Ccy="NGN">75000000.00</Amt> 
+<MinAmt Ccy="NGN">5000.00</MinAmt>
+<MaxAmt Ccy="NGN">25000000.00</MaxAmt>
+</Envlp> 
+</SplmtryData>
+</TradInf> 
+</FxTradInstrn> 
+</Document>
+
+```
+
+```JSON liquidityPoolResponseExample.json
+GET /partners/marketplace/listings
+Accept: application/json 
+
+Response Body: 
+{ 
+    "pools": 
+    [ 
+        { 
+            "provider_id": "lp_001", 
+            "provider_name": "Provider A", 
+            "currency_pair": "NGN/USDT", 
+            "available_liquidity": 100000000.00, 
+            "current_rate": 1650.25, 
+            "min_order": 1000.00,
+            "max_order": 50000000.00 
+            }, 
+            { 
+                "provider_id": "lp_002",
+                "provider_name": "Provider B", 
+                "currency_pair": "NGN/USDT",
+                "available_liquidity": 75000000.00, 
+                "current_rate": 1651.00,
+                "min_order": 5000.00, 
+                "max_order": 25000000.00 
+            } 
+    ], 
+                "page": 1,
+                "total_pages": 1, 
+                "total_liquidity": 175000000.00 
+        }
+
+```
+
+</CodeGroup>
+
+---

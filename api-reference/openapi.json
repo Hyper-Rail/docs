@@ -180,7 +180,7 @@
         }
       }
     },
-    "/quotes": {
+    "/partners/marketplace/quote": {
       "post": {
         "description": "This endpoint is used to create quotes.",
         "parameters": [],
@@ -241,7 +241,196 @@
         }
       }
     },
-    "/quotes/{id}": {
+
+     "/partners/marketplace/express/quote": {
+      "post": {
+        "description": "This endpoint is used to create quotes.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sourceCurrency": {
+                    "type": "string",
+                    "example": "NGN",
+                    "description": "According, to our currently supported currencies, this is in NGN and GHS."
+                  },
+                  "destinationCurrency": {
+                    "type": "string",
+                    "example": "USDT"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "format": "int32"
+                  },
+                  "destinationNetwork": {
+                    "type": "string",
+                    "example": "BASE",
+                    "description": "The network for the destination currency"
+                  }
+                },
+                "required": ["sourceCurrency", "destinationCurrency", "amount"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Create quotes for exchange ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/QuoteResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/partners/marketplace/intent": {
+      "post": {
+        "description": "This endpoint is used to create quotes.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sourceCurrency": {
+                    "type": "string",
+                    "example": "NGN",
+                    "description": "According, to our currently supported currencies, this is in NGN and GHS."
+                  },
+                  "destinationCurrency": {
+                    "type": "string",
+                    "example": "USDT"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "format": "int32"
+                  },
+                  "destinationNetwork": {
+                    "type": "string",
+                    "example": "BASE",
+                    "description": "The network for the destination currency"
+                  }
+                },
+                "required": ["sourceCurrency", "destinationCurrency", "amount"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Create quotes for exchange ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/QuoteResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+
+    "/partners/marketplace/quote/{id}/accept": {
+      "post": {
+        "description": "This endpoint is used to create quotes.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sourceCurrency": {
+                    "type": "string",
+                    "example": "NGN",
+                    "description": "According, to our currently supported currencies, this is in NGN and GHS."
+                  },
+                  "destinationCurrency": {
+                    "type": "string",
+                    "example": "USDT"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "format": "int32"
+                  },
+                  "destinationNetwork": {
+                    "type": "string",
+                    "example": "BASE",
+                    "description": "The network for the destination currency"
+                  }
+                },
+                "required": ["sourceCurrency", "destinationCurrency", "amount"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Create quotes for exchange ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/QuoteResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+
+    "/partners/marketplace/quote/{id}": {
       "get": {
         "description": "Returns a specific quotes by ID",
         "parameters": [
@@ -279,7 +468,8 @@
         }
       }
     },
-    "/quotes/payments/{id}": {
+
+    "/partners/marketplace/quote/{id}/complete": {
       "get": {
         "description": "Get Payment information and checkout details for an on-going quote session",
         "parameters": [
@@ -317,7 +507,8 @@
         }
       }
     },
-    "/quotes/complete/{id}": {
+
+    "/partners/marketplace/quote/{id}/add": {
       "put": {
         "description": "Update ID of an existing quote session for approval",
         "parameters": [],
@@ -331,6 +522,162 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "Returns a payment specific quote",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+     "/partners/marketplace/quote/{id}/cancel": {
+      "put": {
+        "description": "Update ID of an existing quote session for approval",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDestinationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns a payment specific quote",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+     "/partners/marketplace/quote/{id}/remove/{itemId}": {
+      "put": {
+        "description": "Update ID of an existing quote session for approval",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDestinationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns a payment specific quote",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+     "/partners/rates/rates/markers": {
+      "get": {
+        "description": "Get Payment information and checkout details for an on-going quote session",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of a quotes ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a payment specific quote",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/partners/marketplace/listings": {
+      "get": {
+        "description": "Get Payment information and checkout details for an on-going quote session",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of a quotes ID.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Returns a payment specific quote",

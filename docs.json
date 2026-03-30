@@ -25,7 +25,6 @@
                 "group": "Getting Started",
                 "icon": "rocket",
                 "pages": [
-                 "introduction",
                  "documentation/onboarding"
                 ]
               },
@@ -66,6 +65,16 @@
               "api-reference/introduction",
               "api-reference/authentication",
               "api-reference/error-codes"
+
+            ]
+          },
+          {
+            "group": " ISO20022 Compliance",
+            "icon": "wallet",
+            "pages": [
+              "api-reference/iso20022/content-negotiation",
+              "api-reference/iso20022/endpoint-mapping",
+              "api-reference/iso20022/testing"
             ]
           },
           {
@@ -82,9 +91,28 @@
             "icon": "money-bill",
             "pages": [
               "api-reference/hyperrail-quote/create-quote",
+              "api-reference/hyperrail-quote/create-express-quote",
+              "api-reference/hyperrail-quote/create-payment-intent",
+              "api-reference/hyperrail-quote/accept-quote",
               "api-reference/hyperrail-quote/get-quote-id",
-              "api-reference/hyperrail-quote/get-quote-payment-id",
-              "api-reference/hyperrail-quote/edit-quote-id"
+              "api-reference/hyperrail-quote/get-complete-quote-id",
+              "api-reference/hyperrail-quote/edit-quote",
+              "api-reference/hyperrail-quote/cancel-quote",
+              "api-reference/hyperrail-quote/delete-quote-item"
+            ]
+          },
+          {
+            "group": "Rates",
+            "icon": "arrow-up-right-dots",
+            "pages": [
+              "api-reference/rate/get-rate"
+            ]
+          },
+          {
+            "group": "Listings",
+            "icon": "boxes",
+            "pages": [
+              "api-reference/listings/liquidity-providers"
             ]
           },
           {
