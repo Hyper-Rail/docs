@@ -100,13 +100,6 @@
             ]
           },
           {
-            "group": "Rates",
-            "icon": "arrow-up-right-dots",
-            "pages": [
-              "api-reference/rate/get-rate"
-            ]
-          },
-          {
             "group": "Listings",
             "icon": "boxes",
             "pages": [
