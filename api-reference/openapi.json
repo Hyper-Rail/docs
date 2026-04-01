@@ -2674,14 +2674,12 @@
           "sourceCurrency": {
             "type": "string",
             "description": "Source currency code (NGN, GHS)",
-            "example": "NGN",
-            "enum": ["NGN", "GHS"]
+            "example": "NGN"
           },
           "destinationCurrency": {
             "type": "string",
             "description": "Destination currency code (USDT, USDC)",
-            "example": "USDT",
-            "enum": ["USDT", "USDC"]
+            "example": "USDT"
           },
           "totalAmount": {
             "type": "string",
@@ -2716,14 +2714,12 @@
           "sourceCurrency": {
             "type": "string",
             "description": "Source currency code (NGN, GHS)",
-            "example": "NGN",
-            "enum": ["NGN", "GHS"]
+            "example": "NGN"
           },
           "destinationCurrency": {
             "type": "string",
             "description": "Destination currency code (USDT, USDC)",
-            "example": "USDT",
-            "enum": ["USDT", "USDC"]
+            "example": "USDT"
           },
           "amount": {
             "type": "number",
