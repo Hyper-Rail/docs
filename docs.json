@@ -72,9 +72,7 @@
             "group": " ISO20022 Compliance",
             "icon": "wallet",
             "pages": [
-              "api-reference/iso20022/content-negotiation",
-              "api-reference/iso20022/endpoint-mapping",
-              "api-reference/iso20022/testing"
+              "api-reference/iso20022/endpoint-mapping"
             ]
           },
           {

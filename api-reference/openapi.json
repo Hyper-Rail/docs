@@ -182,54 +182,42 @@
     },
     "/partners/marketplace/quote": {
       "post": {
-        "description": "This endpoint is used to create quotes.",
-        "parameters": [],
+        "summary": "Create Multi-Provider Quote",
+        "description": "Create a quote with multiple provider allocation support. Allows partial fulfillment across providers.",
+        "tags": ["Quotes"],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "sourceCurrency": {
-                    "type": "string",
-                    "example": "NGN",
-                    "description": "According, to our currently supported currencies, this is in NGN and GHS."
-                  },
-                  "destinationCurrency": {
-                    "type": "string",
-                    "example": "USDT"
-                  },
-                  "amount": {
-                    "type": "number",
-                    "format": "int32"
-                  },
-                  "destinationNetwork": {
-                    "type": "string",
-                    "example": "BASE",
-                    "description": "The network for the destination currency"
-                  }
-                },
-                "required": ["sourceCurrency", "destinationCurrency", "amount"]
+                "$ref": "#/components/schemas/MultiProviderQuoteRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Create quotes for exchange ",
+            "description": "Quote created successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/QuoteResponse"
-                  }
+                  "$ref": "#/components/schemas/QuoteResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Unexpected error",
+            "description": "Bad request - Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
             "content": {
               "application/json": {
                 "schema": {
@@ -244,42 +232,23 @@
 
      "/partners/marketplace/express/quote": {
       "post": {
-        "description": "This endpoint is used to create quotes.",
+        "summary": "Create Express Quote",
+        "description": "Create an express quote with automatic best-rate provider selection and immediate execution.",
+        "tags": ["Quotes"],
         "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "sourceCurrency": {
-                    "type": "string",
-                    "example": "NGN",
-                    "description": "According, to our currently supported currencies, this is in NGN and GHS."
-                  },
-                  "destinationCurrency": {
-                    "type": "string",
-                    "example": "USDT"
-                  },
-                  "amount": {
-                    "type": "number",
-                    "format": "int32"
-                  },
-                  "destinationNetwork": {
-                    "type": "string",
-                    "example": "BASE",
-                    "description": "The network for the destination currency"
-                  }
-                },
-                "required": ["sourceCurrency", "destinationCurrency", "amount"]
+                "$ref": "#/components/schemas/ExpressQuoteRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Create quotes for exchange ",
+            "description": "Express quote created successfully ",
             "content": {
               "application/json": {
                 "schema": {
@@ -291,7 +260,17 @@
             }
           },
           "400": {
-            "description": "Unexpected error",
+            "description": "Bad request - Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API key",
             "content": {
               "application/json": {
                 "schema": {
@@ -305,403 +284,460 @@
     },
 
     "/partners/marketplace/intent": {
-      "post": {
-        "description": "This endpoint is used to create quotes.",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "sourceCurrency": {
-                    "type": "string",
-                    "example": "NGN",
-                    "description": "According, to our currently supported currencies, this is in NGN and GHS."
-                  },
-                  "destinationCurrency": {
-                    "type": "string",
-                    "example": "USDT"
-                  },
-                  "amount": {
-                    "type": "number",
-                    "format": "int32"
-                  },
-                  "destinationNetwork": {
-                    "type": "string",
-                    "example": "BASE",
-                    "description": "The network for the destination currency"
-                  }
-                },
-                "required": ["sourceCurrency", "destinationCurrency", "amount"]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Create quotes for exchange ",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/QuoteResponse"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
+  "post": {
+    "summary": "Create Marketplace Intent",
+    "description": "Initiates a quote request for a currency exchange, specifying the amount and direction (source or destination).",
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "required": ["sourceCurrency", "destinationCurrency", "amount", "amountDirection"],
+            "properties": {
+              "sourceCurrency": {
+                "type": "string",
+                "example": "NGN",
+                "description": "The ISO currency code you are sending."
+              },
+              "destinationCurrency": {
+                "type": "string",
+                "example": "USDT",
+                "description": "The currency or token you wish to receive."
+              },
+              "amount": {
+                "type": "number",
+                "example": 20000,
+                "description": "The quantity to be exchanged."
+              },
+              "rate": {
+                "type": "number",
+                "example": 20000,
+                "description": "The proposed exchange rate."
+              },
+              "amountDirection": {
+                "type": "string",
+                "enum": ["source", "destination"],
+                "example": "destination",
+                "description": "Indicates if the 'amount' field refers to the source or destination currency."
               }
             }
           }
         }
       }
     },
-
+    "responses": {
+      "200": {
+        "description": "Quote created successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/QuoteResponse"
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "Validation Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  }
+},
 
     "/partners/marketplace/quote/{id}/accept": {
-      "post": {
-        "description": "This endpoint is used to create quotes.",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "sourceCurrency": {
-                    "type": "string",
-                    "example": "NGN",
-                    "description": "According, to our currently supported currencies, this is in NGN and GHS."
-                  },
-                  "destinationCurrency": {
-                    "type": "string",
-                    "example": "USDT"
-                  },
-                  "amount": {
-                    "type": "number",
-                    "format": "int32"
-                  },
-                  "destinationNetwork": {
-                    "type": "string",
-                    "example": "BASE",
-                    "description": "The network for the destination currency"
-                  }
-                },
-                "required": ["sourceCurrency", "destinationCurrency", "amount"]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Create quotes for exchange ",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/QuoteResponse"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
+  "post": {
+    "summary": "Accept Marketplace Quote",
+    "description": "Finalize and accept a specific quote by providing the settlement destination details (Bank or Blockchain).",
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "The unique identifier of the quote to be accepted.",
+        "schema": {
+          "type": "string",
+          "format": "uuid",
+          "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/AcceptQuoteRequest"
           }
         }
       }
     },
+    "responses": {
+      "200": {
+        "description": "Quote accepted successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/QuoteResponse"
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "Invalid request or expired quote",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  }
+},
 
 
     "/partners/marketplace/quote/{id}": {
-      "get": {
-        "description": "Returns a specific quotes by ID",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "The unique identifier of a quotes ID.",
+  "get": {
+    "summary": "Retrieve Quote Details",
+    "description": "Returns the full details of a specific marketplace quote, including allocation results, payment metadata (Bank or Crypto), and chat history timestamps.",
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "The unique identifier (UUID) of the quote.",
+        "schema": {
+          "type": "string",
+          "format": "uuid",
+          "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Detailed quote information retrieved successfully",
+        "content": {
+          "application/json": {
             "schema": {
-              "type": "string"
+              "$ref": "#/components/schemas/QuoteResponse"
             }
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns a specific quote",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/QuoteResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
+        }
+      },
+      "400": {
+        "description": "Invalid ID provided or unexpected error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
             }
           }
         }
       }
-    },
+    }
+  }
+},
 
-    "/partners/marketplace/quote/{id}/complete": {
-      "get": {
-        "description": "Get Payment information and checkout details for an on-going quote session",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "The unique identifier of a quotes ID.",
+   "/partners/marketplace/quote/{id}/complete": {
+  "get": {
+    "summary": "Retrieve Completed Quote Details",
+    "description": "Fetches the final status and payment instructions for a completed marketplace quote session.",
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "The unique identifier (UUID) of the quote.",
+        "schema": {
+          "type": "string",
+          "format": "uuid",
+          "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Finalized quote details retrieved successfully",
+        "content": {
+          "application/json": {
             "schema": {
-              "type": "string"
+              "$ref": "#/components/schemas/QuoteResponse"
             }
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns a payment specific quote",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/QuoteResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
+        }
+      },
+      "400": {
+        "description": "Bad Request - Invalid ID or session state",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
             }
           }
         }
       }
-    },
+    }
+  }
+},
 
     "/partners/marketplace/quote/{id}/add": {
-      "put": {
-        "description": "Update ID of an existing quote session for approval",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateDestinationRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Returns a payment specific quote",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/QuoteResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
+  "put": {
+    "summary": "Add Pool Allocation to Quote",
+    "description": "Updates an existing quote session by adding or modifying the pool allocation details, including amount and direction.",
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "The unique identifier (UUID) of the quote session.",
+        "schema": {
+          "type": "string",
+          "format": "uuid",
+          "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/AddPoolRequest"
           }
         }
       }
     },
+    "responses": {
+      "200": {
+        "description": "Pool allocation added successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/QuoteResponse"
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "Invalid pool details or quote state",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  }
+},
 
      "/partners/marketplace/quote/{id}/cancel": {
-      "put": {
-        "description": "Update ID of an existing quote session for approval",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateDestinationRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Returns a payment specific quote",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/QuoteResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
+  "put": {
+    "summary": "Cancel Quote Session",
+    "description": "Cancels an active or pending quote session. Once cancelled, the quote can no longer be accepted or completed.",
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "The unique identifier (UUID) of the quote to be cancelled.",
+        "schema": {
+          "type": "string",
+          "format": "uuid",
+          "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
         }
       }
-    },
-
-     "/partners/marketplace/quote/{id}/remove/{itemId}": {
-      "put": {
-        "description": "Update ID of an existing quote session for approval",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateDestinationRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Returns a payment specific quote",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/QuoteResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-
-     "/partners/rates/rates/markers": {
-      "get": {
-        "description": "Get Payment information and checkout details for an on-going quote session",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "The unique identifier of a quotes ID.",
+    ],
+    "responses": {
+      "200": {
+        "description": "Quote successfully cancelled",
+        "content": {
+          "application/json": {
             "schema": {
-              "type": "string"
+              "$ref": "#/components/schemas/QuoteResponse"
             }
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns a payment specific quote",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/QuoteResponse"
-                }
+        }
+      },
+      "400": {
+        "description": "Bad Request - Invalid ID or quote cannot be cancelled in its current state",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  }
+},
+
+    "/partners/marketplace/quote/{id}/remove/{itemId}": {
+    "put": {
+      "summary": "Remove Item from Quote",
+      "description": "Removes a specific allocation or item from an existing quote session using the quote ID and item ID.",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The unique identifier (UUID) of the quote session.",
+          "schema": {
+            "type": "string",
+            "format": "uuid",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          }
+        },
+        {
+          "name": "itemId",
+          "in": "path",
+          "required": true,
+          "description": "The unique identifier of the item/allocation to remove.",
+          "schema": {
+            "type": "string",
+            "format": "uuid",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Item removed successfully, returns updated quote state",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuoteResponse"
               }
             }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
+          }
+        },
+        "400": {
+          "description": "Invalid ID or item not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Error"
               }
             }
           }
         }
       }
-    },
+    }
+  },
+
+     "/partners/rates/rates/makers": {
+  "get": {
+    "summary": "Retrieve exchange rate markers",
+    "description": "Fetches the current exchange rate, including the source (e.g., ADMIN_OVERRIDE) and the UTC timestamp of the calculation.",
+    "responses": {
+      "200": {
+        "description": "Successfully retrieved the rate marker",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/GetRateResponse"
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "Unexpected error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  }
+},
 
     "/partners/marketplace/listings": {
-      "get": {
-        "description": "Get Payment information and checkout details for an on-going quote session",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "The unique identifier of a quotes ID.",
+  "get": {
+    "description": "Get marketplace listings for the authenticated client",
+    "parameters": [
+      {
+        "name": "page",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer"
+        },
+        "description": "Page number (0‑indexed)"
+      },
+      {
+        "name": "size",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "integer"
+        },
+        "description": "Page size"
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Returns a paginated list of marketplace listings",
+        "content": {
+          "application/json": {
             "schema": {
-              "type": "string"
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MarketplaceListing"
+                  }
+                },
+                "pageNumber": {
+                  "type": "integer"
+                },
+                "pageSize": {
+                  "type": "integer"
+                },
+                "totalElements": {
+                  "type": "integer"
+                },
+                "totalPages": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "content",
+                "pageNumber",
+                "pageSize",
+                "totalElements",
+                "totalPages"
+              ]
             }
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns a payment specific quote",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/QuoteResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
+        }
+      },
+      "400": {
+        "description": "Bad request or validation error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
             }
           }
         }
       }
-    },
+    }
+  }
+},
 
     "/transfers/bulk": {
       "post": {
@@ -2471,173 +2507,544 @@
         }
       },
 
-      "QuoteResponse": {
+      "GetRateResponse": {
+  "type": "object",
+  "description": "Represents the current exchange rate between two currencies as determined by the system.",
+  "required": [
+    "from",
+    "to",
+    "rate",
+    "source",
+    "timestamp"
+  ],
+  "properties": {
+    "from": {
+      "type": "string",
+      "description": "The ISO 4217 source currency code.",
+      "example": "NGN"
+    },
+    "to": {
+      "type": "string",
+      "description": "The ISO 4217 target currency code.",
+      "example": "GHS"
+    },
+    "rate": {
+      "type": "number",
+      "format": "double",
+      "description": "The conversion multiplier used to calculate the destination amount from the source amount.",
+      "example": 0.0098
+    },
+    "source": {
+      "type": "string",
+      "description": "The internal mechanism or entity that provided this specific rate.",
+      "example": "ADMIN_OVERRIDE"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The UTC timestamp indicating when this rate was last synchronized or updated.",
+      "example": "2026-03-25T14:24:41.683753Z"
+    }
+  }
+},
+
+      "MarketplaceListing": {
         "type": "object",
         "properties": {
-          "quoteId": {
+          "id": {
             "type": "string",
             "example": "qte_123456"
           },
-          "merchantId": {
+          "clientId": {
             "type": "string",
             "format": "uuid",
             "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
           },
-          "sourceCurrency": {
+          "name:": {
             "type": "string",
-            "example": "NGN"
+            "example": "S-eac7326"
           },
-          "destinationCurrency": {
+          "pair": {
             "type": "string",
-            "example": "USDT"
-          },
-          "destinationNetwork": {
-            "type": "string",
-            "example": "BASE"
+            "example": "NGN_USDT"
           },
           "rate": {
             "type": "number",
             "format": "float",
             "example": 1540.25
           },
-          "providerId": {
+          "availableBalance": {
+            "type": "number",
+            "format": "float",
+            "example": 2000
+          },
+          "negotiationLimit:": {
+            "type": "number",
+            "format": "float",
+            "example": 1000
+          },
+          "poolAccountId:": {
             "type": "string",
             "format": "uuid",
             "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
           },
-          "providerBalanceId": {
+          "poolType:": {
+            "type": "string",
+            "example": "funded or unfunded"
+          }
+              },
+              "required": [
+          "id",
+          "clientId",
+          "name",
+          "pair",
+          "rate",
+          "availableBalance",
+          "negotiationLimit",
+          "poolAccountId",
+          "poolType"
+        ]
+      },
+      "MultiProviderQuoteRequest": {
+        "type": "object",
+        "required": ["sourceCurrency", "destinationCurrency", "totalAmount", "fulfillmentType"],
+        "properties": {
+          "sourceCurrency": {
+            "type": "string",
+            "description": "Source currency code (NGN, GHS)",
+            "example": "NGN",
+            "enum": ["NGN", "GHS"]
+          },
+          "destinationCurrency": {
+            "type": "string",
+            "description": "Destination currency code (USDT, USDC)",
+            "example": "USDT",
+            "enum": ["USDT", "USDC"]
+          },
+          "totalAmount": {
+            "type": "string",
+            "description": "Total amount to exchange (can include commas)",
+            "example": "50,000"
+          },
+          "fulfillmentType": {
+            "type": "string",
+            "description": "Fulfillment strategy",
+            "enum": ["partial", "full", "best_execution"],
+            "example": "partial"
+          },
+          "providers": {
+            "type": "array",
+            "description": "Optional provider allocation preferences",
+            "items": {
+              "$ref": "#/components/schemas/ProviderAllocation"
+            }
+          },
+          "destinationNetwork": {
+            "type": "string",
+            "description": "Blockchain network for settlement",
+            "example": "BASE",
+            "enum": ["BASE", "ETHEREUM", "POLYGON"]
+          }
+        }
+      },
+      "ExpressQuoteRequest": {
+        "type": "object",
+        "required": ["sourceCurrency", "destinationCurrency", "amount"],
+        "properties": {
+          "sourceCurrency": {
+            "type": "string",
+            "description": "Source currency code (NGN, GHS)",
+            "example": "NGN",
+            "enum": ["NGN", "GHS"]
+          },
+          "destinationCurrency": {
+            "type": "string",
+            "description": "Destination currency code (USDT, USDC)",
+            "example": "USDT",
+            "enum": ["USDT", "USDC"]
+          },
+          "amount": {
+            "type": "number",
+            "description": "Amount to exchange",
+            "example": 50000,
+            "minimum": 1
+          },
+          "destinationNetwork": {
+            "type": "string",
+            "description": "Blockchain network for settlement",
+            "example": "BASE",
+            "enum": ["BASE", "ETHEREUM", "POLYGON"]
+          }
+        }
+      },
+      "ProviderAllocation": {
+        "type": "object",
+        "required": ["poolId"],
+        "properties": {
+          "poolId": {
             "type": "string",
             "format": "uuid",
+            "description": "Liquidity pool identifier",
             "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
           },
           "amount": {
             "type": "number",
-            "format": "float",
-            "example": 20
+            "description": "Amount to allocate to this provider (0 for auto-allocation)",
+            "example": 0,
+            "default": 0
           },
-          "receiveAmount": {
-            "type": "number",
-            "format": "float",
-            "example": 12.98
-          },
-          "totalAmount": {
-            "type": "number",
-            "format": "float",
-            "example": 20.5
-          },
-          "expiresAt": {
+          "amountDirection": {
             "type": "string",
-            "format": "date-time",
-            "example": "2025-12-17T13:20:41.005Z"
+            "description": "Direction of amount (BUY/SELL)",
+            "enum": ["BUY", "SELL", "string"],
+            "example": "BUY"
+          }
+        }
+      },
+      "AcceptQuoteRequest": {
+  "type": "object",
+  "required": ["accountId", "destination"],
+  "properties": {
+    "accountId": {
+      "type": "string",
+      "format": "uuid",
+      "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    },
+    "destination": {
+      "type": "object",
+      "properties": {
+        "bank": {
+          "type": "object",
+          "properties": {
+            "accountName": { "type": "string", "example": "John Doe" },
+            "accountNumber": { "type": "string", "example": "8037592839" },
+            "bankCode": { "type": "string", "example": "39838" }
+          }
+        },
+        "blockChain": {
+          "type": "object",
+          "properties": {
+            "address": { "type": "string", "example": "0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5" }
+          }
+        }
+      }
+    }
+  }
+      },
+      "AddPoolRequest": {
+  "type": "object",
+  "required": ["poolId", "amount", "amountDirection"],
+  "properties": {
+    "poolId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The unique identifier of the liquidity pool.",
+      "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    },
+    "amount": {
+      "type": "number",
+      "description": "The amount to be allocated.",
+      "example": 0
+    },
+    "amountDirection": {
+      "type": "string",
+      "enum": ["source", "destination"],
+      "description": "Specifies if the amount refers to the source or destination currency.",
+      "example": "source"
+    }
+  }
+},
+      "QuoteResponse": {
+        "type": "object",
+        "properties": {
+          "quoteId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique quote identifier",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "status": {
+            "type": "string",
+            "description": "Quote status",
+            "enum": ["pending", "awaiting_payment", "completed", "expired", "cancelled"],
+            "example": "pending"
+          },
+          "source": {
+            "type": "string",
+            "description": "Source currency",
+            "example": "NGN"
+          },
+          "destination": {
+            "type": "string",
+            "description": "Destination currency",
+            "example": "USDT"
+          },
+          "chain": {
+            "type": "string",
+            "description": "Blockchain network",
+            "example": "BASE"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Requested amount",
+            "example": 50000
+          },
+          "totalSourceAmount": {
+            "type": "number",
+            "description": "Total amount in source currency",
+            "example": 50000
+          },
+          "totalDestinationAmount": {
+            "type": "number",
+            "description": "Total amount in destination currency",
+            "example": 31.65
+          },
+          "clientId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client identifier"
+          },
+          "mode": {
+            "type": "string",
+            "description": "Operating mode",
+            "enum": ["live", "sandbox"],
+            "example": "live"
+          },
+          "ttl": {
+            "type": "integer",
+            "description": "Time to live in seconds",
+            "example": 300
+          },
+          "allocationResult": {
+            "$ref": "#/components/schemas/AllocationResult"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/QuoteMetadata"
+          },
+          "chatMetadata": {
+            "$ref": "#/components/schemas/ChatMetadata"
+          }
+        }
+      },
+      "AllocationResult": {
+        "type": "object",
+        "properties": {
+          "totalSourceAmount": {
+            "type": "number",
+            "description": "Total source amount across all allocations",
+            "example": 50000
+          },
+          "weightedAverageRate": {
+            "type": "number",
+            "description": "Weighted average exchange rate",
+            "example": 1580.50
+          },
+          "totalDestinationAmount": {
+            "type": "number",
+            "description": "Total destination amount across all allocations",
+            "example": 31.65
+          },
+          "allocations": {
+            "type": "array",
+            "description": "Individual provider allocations",
+            "items": {
+              "$ref": "#/components/schemas/Allocation"
+            }
+          }
+        }
+      },
+      "Allocation": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Allocation identifier"
+          },
+          "clientId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Client identifier"
+          },
+          "poolId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Liquidity pool identifier"
+          },
+          "poolAccountId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Pool account identifier"
+          },
+          "allocatedAmount": {
+            "type": "number",
+            "description": "Amount allocated from this provider",
+            "example": 31.65
+          },
+          "sourceAmount": {
+            "type": "number",
+            "description": "Source amount for this allocation",
+            "example": 50000
+          },
+          "rate": {
+            "type": "number",
+            "description": "Exchange rate for this allocation",
+            "example": 1580.50
+          },
+          "reference": {
+            "type": "string",
+            "description": "Allocation reference code",
+            "example": "REF-001"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional allocation metadata",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "QuoteMetadata": {
+        "type": "object",
+        "properties": {
+          "bankPayIn": {
+            "$ref": "#/components/schemas/BankPayInDetails"
+          },
+          "cryptoPayIn": {
+            "$ref": "#/components/schemas/CryptoPayInDetails"
+          }
+        }
+      },
+      "BankPayInDetails": {
+        "type": "object",
+        "properties": {
+          "accountName": {
+            "type": "string",
+            "description": "Bank account name",
+            "example": "Spotflow Ltd"
+          },
+          "accountNumber": {
+            "type": "string",
+            "description": "Bank account number",
+            "example": "0123456789"
+          },
+          "bankName": {
+            "type": "string",
+            "description": "Bank name",
+            "example": "Access Bank"
+          },
+          "reference": {
+            "type": "string",
+            "description": "Payment reference",
+            "example": "PAY-REF-001"
+          }
+        }
+      },
+      "CryptoPayInDetails": {
+        "type": "object",
+        "properties": {
+          "addressId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Address identifier"
+          },
+          "address": {
+            "type": "string",
+            "description": "Blockchain wallet address",
+            "example": "0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5"
+          },
+          "chain": {
+            "type": "string",
+            "description": "Blockchain network",
+            "example": "BASE"
+          },
+          "token": {
+            "type": "string",
+            "description": "Token symbol",
+            "example": "USDT"
+          },
+          "addressType": {
+            "type": "string",
+            "description": "Address type",
+            "example": "deposit"
+          },
+          "expectedAmount": {
+            "type": "number",
+            "description": "Expected deposit amount",
+            "example": 50000
+          },
+          "externalReference": {
+            "type": "string",
+            "description": "External reference ID"
+          },
+          "status": {
+            "type": "string",
+            "description": "Address status",
+            "enum": ["active", "pending", "expired"],
+            "example": "active"
           },
           "createdAt": {
             "type": "string",
             "format": "date-time",
-            "example": "2025-12-17T13:20:41.005Z"
+            "description": "Address creation timestamp",
+            "example": "2026-04-01T10:55:46.254Z"
           },
-          "HyperRailReference": {
+          "expiresAt": {
             "type": "string",
-            "example": "HR-REF-239012"
+            "format": "date-time",
+            "description": "Address expiration timestamp",
+            "example": "2026-04-01T10:55:46.256Z"
           },
-          "status": {
+          "virtualAccountId": {
             "type": "string",
-            "example": "PENDING"
+            "description": "Virtual account identifier"
           },
-          "metadata": {
-            "type": "object",
-            "properties": {
-              "bankPayIn": {
-                "type": "object",
-                "properties": {
-                  "accountName": {
-                    "type": "string",
-                    "example": "John Doe"
-                  },
-                  "accountNumber": {
-                    "type": "string",
-                    "example": "0123456789"
-                  },
-                  "bankName": {
-                    "type": "string",
-                    "example": "Access Bank"
-                  }
-                }
-              },
-              "cryptoPayIn": {
-                "type": "object",
-                "properties": {
-                  "addressId": {
-                    "type": "string",
-                    "format": "uuid",
-                    "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-                  },
-                  "address": {
-                    "type": "string",
-                    "example": "0xabc123..."
-                  },
-                  "addressType": {
-                    "type": "string",
-                    "example": "EVM"
-                  },
-                  "expectedAmount": {
-                    "type": "number",
-                    "format": "float",
-                    "example": 20
-                  },
-                  "externalReference": {
-                    "type": "string",
-                    "example": "EXT-REF-001"
-                  },
-                  "status": {
-                    "type": "string",
-                    "example": "AWAITING_PAYMENT"
-                  },
-                  "createdAt": {
-                    "type": "string",
-                    "format": "date-time",
-                    "example": "2025-12-17T13:20:41.005Z"
-                  },
-                  "expiresAt": {
-                    "type": "string",
-                    "format": "date-time",
-                    "example": "2025-12-17T14:20:41.005Z"
-                  },
-                  "virtualAccountId": {
-                    "type": "string",
-                    "example": "VA-001"
-                  },
-                  "derivationIndex": {
-                    "type": "integer",
-                    "example": 0
-                  },
-                  "warningMessage": {
-                    "type": "string",
-                    "example": "Send exact amount only"
-                  }
-                }
-              }
-            }
+          "derivationIndex": {
+            "type": "integer",
+            "description": "HD wallet derivation index",
+            "example": 0
           },
-          "fees": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "type": "string",
-                  "example": "Processing Fee"
-                },
-                "amount": {
-                  "type": "number",
-                  "format": "float",
-                  "example": 0.5
-                },
-                "feeType": {
-                  "type": "string",
-                  "example": "FLAT"
-                }
-              }
-            }
+          "warningMessage": {
+            "type": "string",
+            "description": "Warning message for user"
+          }
+        }
+      },
+      "ChatMetadata": {
+        "type": "object",
+        "description": "Metadata for chat-based quote negotiation",
+        "properties": {
+          "conversationId": {
+            "type": "string",
+            "description": "Chat conversation identifier"
+          },
+          "chatQuoteId": {
+            "type": "string",
+            "description": "Chat-specific quote identifier"
+          },
+          "listingId": {
+            "type": "string",
+            "description": "Listing identifier"
+          },
+          "initialListingRate": {
+            "type": "string",
+            "description": "Initial rate from listing"
+          },
+          "negotiationStartedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Negotiation start timestamp"
+          },
+          "quoteSentAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Quote sent timestamp"
+          },
+          "acceptedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Quote acceptance timestamp"
           }
         }
       },
@@ -2709,15 +3116,23 @@
         ]
       },
       "Error": {
-        "required": ["error", "message"],
+        "required": ["code", "message"],
         "type": "object",
         "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
+          "code": {
+            "type": "string",
+            "description": "Error code",
+            "example": "INVALID_CURRENCY"
           },
           "message": {
-            "type": "string"
+            "type": "string",
+            "description": "Error message",
+            "example": "Invalid source currency. Supported: NGN, GHS"
+          },
+          "details": {
+            "type": "object",
+            "description": "Additional error details",
+            "additionalProperties": true
           }
         }
       }
@@ -2725,7 +3140,9 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "scheme": "bearer"
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "API key authentication using Bearer token"
       }
     }
   }
