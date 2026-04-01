@@ -1,0 +1,86 @@
+---
+title: Testing and Validation
+icon: flask
+---
+
+## XSD Schema Validation
+
+All ISO 20022 XML messages should be validated against official XSD schemas
+available from the ISO 20022 website.
+
+### Required XSD Schemas
+• pacs.094.001.01.xsd
+
+• pacs.095.001.01.xsd
+
+• pacs.009.001.08.xsd
+
+• pacs.002.001.10.xsd
+
+• pacs.008.001.08.xsd
+
+• camt.054.001.08.xsd
+
+<CodeGroup>
+
+```py pythonValidationExample.py
+
+from lxml import etree
+
+def validate_iso20022_xml(xml_string, xsd_path):
+    """Validate ISO 20022 XML against XSD schema"""
+    try:
+        # Parse XSD schema
+        with open(xsd_path, 'rb') as schema_file:
+            schema_root = etree.XML(schema_file.read())
+            schema = etree.XMLSchema(schema_root)
+        
+        # Parse XML document
+        xml_doc = etree.fromstring(xml_string.encode())
+        
+        # Validate
+        is_valid = schema.validate(xml_doc)
+        
+        if not is_valid:
+            print("Validation errors:")
+            for error in schema.error_log:
+                print(f"  Line {error.line}: {error.message}")
+        
+        return is_valid
+    except Exception as e:
+        print(f"Validation failed: {e}")
+        return False
+
+# Example usage
+xml_message = """<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.094.001.01">
+  <!-- Your XML here -->
+</Document>"""
+
+is_valid = validate_iso20022_xml(
+    xml_message, 
+    '/path/to/pacs.094.001.01.xsd'
+)
+print(f"Valid ISO 20022 message: {is_valid}")
+
+```
+
+</CodeGroup>
+
+### Testing Checklist
+• Validate all XML messages against official XSD schemas
+
+• Test content negotiation with both JSON and XML formats
+
+• Verify field mappings in both directions (JSON ↔ XML)
+
+• Test all status code mappings
+
+• Verify webhook events in both JSON and XML formats
+
+• Test error scenarios and ensure proper ISO 20022 error codes
+
+• Validate on-chain settlement transaction hash formatting
+
+
+---

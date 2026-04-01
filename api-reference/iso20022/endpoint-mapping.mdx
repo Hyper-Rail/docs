@@ -1,0 +1,429 @@
+---
+title: Endpoint Mapping
+icon: map
+---
+
+## ISO 20022 FX API Mapping Reference
+- **Base URL**: `https://api.hyperrail.io/api/v1/partners/fx`
+- **Content-Type**: application/xml
+- **Authentication**: Authorization: Bearer sk_...
+
+
+
+## 1. Initiate FX Trade
+
+**Endpoint**
+
+`POST /trades`
+
+**ISO 20022 Message Type**
+
+**fxtr.014.001.05 - FXTradeInstruction**
+
+<CodeGroup>
+
+```xml tradeRequestExample.xml
+POST /trades
+Accept: application/xml
+
+Request Body:
+<?xml version="1.0" encoding="UTF-8"?>
+<fxtr:FXTradInstr xmlns:fxtr="urn:iso:std:iso:20022:tech:xsd:fxtr.014.001.05">
+  <CcyPair>
+    <BaseCcy>NGN</BaseCcy>
+    <QtdCcy>USDT</QtdCcy>
+  </CcyPair>
+  <TradAmts>
+    <TradgCcyAmt>20000</TradgCcyAmt>
+  </TradAmts>
+  <AgrdRate>
+    <XchgRate>1580.50</XchgRate>
+  </AgrdRate>
+  <AmtDrctn>BUY</AmtDrctn>
+</fxtr:FXTradInstr>
+```
+
+</CodeGroup>
+
+<CodeGroup>
+
+```xml tradeResponseExample.xml
+POST /trades
+Accept: application/xml
+
+
+Response Body: 
+<?xml version="1.0" encoding="UTF-8"?>
+<fxtr:FXTradInstrRspn xmlns:fxtr="urn:iso:std:iso:20022:tech:xsd:fxtr.014.001.05">
+  <UnqTxIdr><TxId>f47ac10b-58cc-4372-a567-0e02b2c3d479</TxId></UnqTxIdr>
+  <TradSts><Sts>NEWT</Sts></TradSts>
+  <CcyPair><BaseCcy>NGN</BaseCcy><QtdCcy>USDT</QtdCcy></CcyPair>
+  <TradAmts>
+    <TradgCcyAmt>31610000.00</TradgCcyAmt>
+    <SttlmCcyAmt>31610000.00</SttlmCcyAmt>
+    <CntrValCcyAmt>20000.00</CntrValCcyAmt>
+  </TradAmts>
+  <AllcnDtls>
+    <TtlSttlmAmt>20000.00</TtlSttlmAmt>
+    <WtdAvrgRate>1580.50</WtdAvrgRate>
+  </AllcnDtls>
+  <TTL>300</TTL>
+</fxtr:FXTradInstrRspn>
+
+```
+
+</CodeGroup>
+
+#### Field Mapping
+
+- **`BaseCcy`** = Source currency (NGN)
+- **`QtdCcy`** = Destination currency (USDT)
+- **`TradgCcyAmt`** = Trade amount
+- **`XchgRate`** = Exchange rate
+- **`TxId`** = Transaction ID
+- **`Sts`** = Status (NEWT = New Trade)
+- **`TTL`** = Time to live (seconds)
+
+
+## 2. Get FX Trade Status
+
+**Endpoint**
+
+`GET /trades/{transactionId}`
+
+**ISO 20022 Message Type**
+
+**fxtr.017.001.05 - FXTradeStatusAndDetailsNotification**
+
+<CodeGroup>
+
+```xml tradeResponseExample.xml
+GET /trades/{transactionId}
+Accept: application/xml
+
+
+Response Body: 
+<?xml version="1.0" encoding="UTF-8"?>
+<fxtr:FXTradStsAndDtlsNtfctn xmlns:fxtr="urn:iso:std:iso:20022:tech:xsd:fxtr.017.001.05">
+  <UnqTxIdr><TxId>f47ac10b-58cc-4372-a567-0e02b2c3d479</TxId></UnqTxIdr>
+  <TradSts><Sts>NEWT</Sts></TradSts>
+  <CcyPair><BaseCcy>NGN</BaseCcy><QtdCcy>USDT</QtdCcy></CcyPair>
+  <TradAmts>
+    <TradgCcyAmt>31610000.00</TradgCcyAmt>
+    <CntrValCcyAmt>20000.00</CntrValCcyAmt>
+  </TradAmts>
+  <TTL>300</TTL>
+</fxtr:FXTradStsAndDtlsNtfctn>
+
+```
+
+</CodeGroup>
+
+#### Status Codes
+
+- **`NEWT`** = New Trade (pending acceptance)
+- **`SETT`** = Settling (payment in progress)
+- **`COMP`** = Completed
+- **`CANC`** = Cancelled
+
+## 3. Cancel FX Trade
+
+**Endpoint**
+
+`PUT /trades/{transactionId}/cancellation`
+
+**ISO 20022 Message Type**
+
+**fxtr.016.001.05 - FXTradeCancellationResponse**
+
+<CodeGroup>
+
+```xml tradeResponseExample.xml
+PUT /trades/{transactionId}/cancellation
+Accept: application/xml
+
+
+Response Body: 
+<?xml version="1.0" encoding="UTF-8"?>
+<fxtr:FXTradCxlRspn xmlns:fxtr="urn:iso:std:iso:20022:tech:xsd:fxtr.016.001.05">
+  <UnqTxIdr><TxId>f47ac10b-58cc-4372-a567-0e02b2c3d479</TxId></UnqTxIdr>
+  <TradSts><Sts>CANC</Sts></TradSts>
+  <TTL>0</TTL>
+</fxtr:FXTradCxlRspn>
+
+```
+
+</CodeGroup>
+
+
+## 4.  Complete FX Trade
+
+**Endpoint**
+
+`POST /trades/{transactionId}/confirmation`
+
+**ISO 20022 Message Type**
+
+**fxtr.037.001.02 - FXTradeConfirmationStatusAdvice**
+
+<CodeGroup>
+
+```xml tradeResponseExample.xml
+POST /trades/{transactionId}/confirmation
+Accept: application/xml
+
+
+Response Body: 
+<?xml version="1.0" encoding="UTF-8"?>
+<fxtr:FXTradConfStsAdvc xmlns:fxtr="urn:iso:std:iso:20022:tech:xsd:fxtr.037.001.02">
+  <UnqTxIdr><TxId>f47ac10b-58cc-4372-a567-0e02b2c3d479</TxId></UnqTxIdr>
+  <TradSts><Sts>COMP</Sts></TradSts>
+  <SttlmInstr>
+    <BkPayInDtls>
+      <AcctNm>Spotflow Ltd</AcctNm>
+      <AcctNb>0123456789</AcctNb>
+      <BkNm>Access Bank</BkNm>
+      <Ref>PAY-REF-001</Ref>
+    </BkPayInDtls>
+  </SttlmInstr>
+</fxtr:FXTradConfStsAdvc>
+
+```
+
+</CodeGroup>
+
+
+## 5.  Accept FX Trade - Bank Settlement
+
+**Endpoint**
+
+`POST /trades/{transactionId}/accept`
+
+**ISO 20022 Message Type**
+
+**fxtr.014.001.05 - FXTradeAcceptRequest**
+
+<CodeGroup>
+
+```xml tradeRequestExample.xml
+POST /trades/{transactionId}/accept
+Accept: application/xml
+
+Request Body:
+<?xml version="1.0" encoding="UTF-8"?>
+<fxtr:FXTradAccptReq xmlns:fxtr="urn:iso:std:iso:20022:tech:xsd:fxtr.014.001.05">
+  <SttlmDstn>
+    <BkDstn>
+      <AcctNm>John Doe</AcctNm>
+      <AcctNb>8037592839</AcctNb>
+      <BkCd>39838</BkCd>
+    </BkDstn>
+  </SttlmDstn>
+</fxtr:FXTradAccptReq>
+```
+
+</CodeGroup>
+
+<CodeGroup>
+```xml tradeResponseExample.xml
+POST /trades/{transactionId}/accept
+Accept: application/xml
+
+
+Response Body: 
+<fxtr:FXTradInstrRspn xmlns:fxtr="urn:iso:std:iso:20022:tech:xsd:fxtr.014.001.05">
+  <TradSts><Sts>SETT</Sts></TradSts>
+  <SttlmInstr>
+    <BkPayInDtls>
+      <AcctNm>Spotflow Ltd</AcctNm>
+      <AcctNb>0123456789</AcctNb>
+      <BkNm>Access Bank</BkNm>
+      <Ref>PAY-REF-001</Ref>
+    </BkPayInDtls>
+  </SttlmInstr>
+</fxtr:FXTradInstrRspn>
+
+```
+
+</CodeGroup>
+
+
+## 6.  Accept FX Trade - Internal Balance Settlement
+
+**Endpoint**
+
+`POST /trades/{transactionId}/accept`
+
+**ISO 20022 Message Type**
+
+**fxtr.014.001.05 - FXTradeAcceptRequest**
+
+<CodeGroup>
+
+```xml tradeRequestExample.xml
+POST /trades/{transactionId}/accept
+Accept: application/xml
+
+
+Request Body: 
+<?xml version="1.0" encoding="UTF-8"?>
+<fxtr:FXTradAccptReq xmlns:fxtr="urn:iso:std:iso:20022:tech:xsd:fxtr.014.001.05">
+  <AcctId>c1d2e3f4-a5b6-7890-cdef-123456789012</AcctId>
+</fxtr:FXTradAccptReq>
+
+```
+
+</CodeGroup>
+
+**Response**: Same as Bank Settlement with **`TradSts/Sts = SETT`**
+
+## 7.  Accept FX Trade - Blockchain Settlement
+
+**Endpoint**
+
+`POST /trades/{transactionId}/accept`
+
+**ISO 20022 Message Type**
+
+**fxtr.014.001.05 - FXTradeAcceptRequest**
+
+<CodeGroup>
+
+```xml tradeRequestExample.xml
+POST /trades/{transactionId}/accept
+Accept: application/xml
+
+
+Request Body: 
+<?xml version="1.0" encoding="UTF-8"?>
+<fxtr:FXTradAccptReq xmlns:fxtr="urn:iso:std:iso:20022:tech:xsd:fxtr.014.001.05">
+  <SttlmDstn>
+    <BlkChnDstn>
+      <Adr>0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5</Adr>
+    </BlkChnDstn>
+  </SttlmDstn>
+</fxtr:FXTradAccptReq>
+```
+
+</CodeGroup>
+
+**Response**: Same as Bank Settlement with **`TradSts/Sts = SETT`**
+
+
+## 8. Get FX Listings
+
+**Endpoint**
+
+`GET /listings?source=NGN&destination=USDT&page=0&pageSize=10`
+
+**ISO 20022 Message Type**
+
+**reda.041.001.01 - FundProcessingPassportReport**
+
+<CodeGroup>
+
+```xml listingsResponseExample.xml
+GET /listings?source=NGN&destination=USDT&page=0&pageSize=10
+Accept: application/xml
+
+
+Response Body: 
+<?xml version="1.0" encoding="UTF-8"?>
+<FndPrcgPsptRpt xmlns="urn:iso:std:iso:20022:tech:xsd:reda.041.001.01">
+  <Pgntn>
+    <PageNumber>0</PageNumber>
+    <PageSize>10</PageSize>
+    <TotalElements>2</TotalElements>
+  </Pgntn>
+  <Listgs>
+    <Id>04426cc4-3449-46b0-9b2b-7bd9de1c4e63</Id>
+    <Nm>TTI-95AF3F5</Nm>
+    <CcyPair>NGN/USDT</CcyPair>
+    <XchgRate>1580.50</XchgRate>
+    <AvlblBal>50000.00</AvlblBal>
+    <TradsCnt>12</TradsCnt>
+    <CmpltnRate>95</CmpltnRate>
+  </Listgs>
+</FndPrcgPsptRpt>
+
+```
+
+</CodeGroup>
+
+#### Field Mapping
+
+- **`Id`** = Listing ID
+- **`Nm`** = Pool name
+- **`CcyPair`** = Currency pair
+- **`XchgRate`** = Exchange rate
+- **`AvlblBal`** = Available balance/liquidity
+- **`TradsCnt`** = Total trades count
+- **`CmpltnRate`** = Completion rate percentage
+
+## 9. Get Market Maker Rates
+
+**Endpoint**
+
+`GET /rates/makers?from=USDT&to=NGN`
+
+**ISO 20022 Message Type**
+
+**fxtr.014.001.05 - FXTradeStatusAndDetails**
+
+<CodeGroup>
+
+```xml ratesResponseExample.xml
+GET /rates/makers?from=USDT&to=NGN
+Accept: application/xml
+
+
+Response Body: 
+<?xml version="1.0" encoding="UTF-8"?>
+<FxTradStsAndDtls xmlns="urn:iso:std:iso:20022:tech:xsd:fxtr.014.001.05">
+  <SrcCcy>USDT</SrcCcy>
+  <TrgtCcy>NGN</TrgtCcy>
+  <XchgRate>1580.50</XchgRate>
+  <RateSrc>market_maker</RateSrc>
+  <TmStmp>2026-03-31T10:15:30.000Z</TmStmp>
+  <AgeSecs>45</AgeSecs>
+  <PctChg24H>-0.32</PctChg24H>
+</FxTradStsAndDtls>
+
+```
+
+</CodeGroup>
+
+#### Field Mapping
+
+- **`SrcCcy`** = Source currency
+- **`TrgtCcy`** = Target currency
+- **`XchgRate`** = Exchange rate
+- **`RateSrc`** = Rate source (market_maker)
+- **`TmStmp`** = Timestamp
+- **`AgeSecs`** = Rate age in seconds
+- **`PctChg24H`** = 24-hour percentage change
+
+
+## Quick Reference
+
+| Endpoint | Message Type | Status Codes |
+| :--- | :--- | :--- |
+| **POST /trades** |fxtr.014 | NEWT, SETT, COMP, CANC |
+| **GET /trades/{id}** | fxtr.017 | NEWT, SETT, COMP, CANC |
+| **PUT /trades/{id}/cancellation** | fxtr.016 | CANC |
+| **POST /trades/{id}/confirmation** | fxtr.037 | COMP |
+| **POST /trades/{id}/accept** | fxtr.014  | SETT |
+| **GET /listings** | reda.041 | N/A |
+| **GET /rates/makers** | fxtr.014 | N/A |
+
+
+#### Common Fields Across All Responses:
+
+- **`UnqTxIdr/TxId`** = Unique transaction identifier
+- **`TradSts/Sts`** = Trade status code
+- **`XchgRate`** = Exchange rate
+- **`CcyPair`** = Currency pair (BaseCcy/QtdCcy)
+- **`TTL`** = Time to live (seconds)
+- **`OprgMd`** = Operating mode (live/sandbox)
+
+---

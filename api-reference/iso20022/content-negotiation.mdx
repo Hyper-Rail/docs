@@ -1,0 +1,57 @@
+---
+title: Content Negotiation
+description: Learn how HyperRail supports ISO 20022 messaging standards as a Merchant or Liquidity Provider.
+icon: handshake
+---
+
+## Overview
+
+HyperRail supports ISO 20022 messaging standards for enterprise and institutional
+clients requiring standardized financial messaging formats. Our REST/JSON API is
+designed to map seamlessly to ISO 20022 message types while maintaining developer-
+friendly interfaces.
+
+## What is ISO 20022?
+ISO 20022 is an international standard for electronic data interchange between financial
+institutions. It provides a common platform for the development of messages using a
+standardized XML syntax, enabling consistent, end-to-end automation of financial
+transactions.
+
+
+## ISO 20022 Message Types
+
+| Use Case | Message Type | Purpose |
+| :--- | :--- | :--- |
+| **Rate Query** | pacs.094 | FX Rate Request |
+| **Quote Creation** | pacs.095 | FX Rate Response/Quote |
+| **Order Execution** | pacs.009 | Financial Institution Credit Transfer |
+| **Status Query** | pacs.002 | Payment Status Report |
+| **Settlement** | pacs.008 | Customer Credit Transfer |
+| **Webhooks** | camt.054 | Bank-to-Customer Debit/Credit Notification |
+
+
+## Content Negotiation
+
+HyperRail supports both REST/JSON and ISO 20022 XML formats through HTTP
+content negotiation. Clients can specify their preferred format using standard HTTP
+headers.
+
+
+**Using JSON Format (Default)**
+
+- `GET /v1/partners/rates/rates/markers Accept:
+application/json Content-Type: application/json Response: JSON format
+(default)`
+
+**Using ISO 20022 XML Format**
+
+- `GET /v1/partners/rates/rates/markers?from=NGN&to=USDT Accept: application/xml
+Content-Type: application/xml Response: ISO 20022 XML format`
+
+
+<Warning>
+💡Important: When requesting XML format, set both Accept and Content-Type headers
+to application/xml to ensure proper ISO 20022 formatting in requests and responses.
+</Warning>
+
+---
