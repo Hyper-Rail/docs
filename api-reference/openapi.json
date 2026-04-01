@@ -638,7 +638,39 @@
      "/partners/rates/rates/makers": {
   "get": {
     "summary": "Retrieve exchange rate markers",
-    "description": "Fetches the current exchange rate, including the source (e.g., ADMIN_OVERRIDE) and the UTC timestamp of the calculation.",
+    "description": "Fetches the current exchange rate and metadata. Requires source currency, target currency, and the specific network chain.",
+    "parameters": [
+      {
+        "name": "from",
+        "in": "query",
+        "required": true,
+        "description": "The source currency code (e.g., NGN).",
+        "schema": {
+          "type": "string",
+          "example": "NGN"
+        }
+      },
+      {
+        "name": "to",
+        "in": "query",
+        "required": true,
+        "description": "The target currency code (e.g., GHS).",
+        "schema": {
+          "type": "string",
+          "example": "GHS"
+        }
+      },
+      {
+        "name": "chain",
+        "in": "query",
+        "required": true,
+        "description": "The blockchain network or settlement chain (e.g., ERC20, TRON).",
+        "schema": {
+          "type": "string",
+          "example": "ERC20"
+        }
+      }
+    ],
     "responses": {
       "200": {
         "description": "Successfully retrieved the rate marker",
@@ -651,7 +683,7 @@
         }
       },
       "400": {
-        "description": "Unexpected error",
+        "description": "Missing required parameters or invalid currency/chain",
         "content": {
           "application/json": {
             "schema": {
