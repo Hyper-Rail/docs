@@ -634,10 +634,10 @@
       }
     }
   },
-"/partners/rates/rates/makers": {
+"/partners/rates": {
   "get": {
-    "summary": "Retrieve exchange rate markers",
-    "description": "Fetches the current exchange rate and metadata. Requires source currency, target currency, and the specific network chain.",
+    "summary": "Get Exchange Rate",
+    "description": "Retrieve the current exchange rate between two currencies. Optionally specify a blockchain network.",
     "parameters": [
       {
         "name": "from",
@@ -662,17 +662,17 @@
       {
         "name": "chain",
         "in": "query",
-        "required": true,
-        "description": "The blockchain network or settlement chain (e.g., ERC20, TRON).",
+        "required": false,
+        "description": "The blockchain network (optional - only for crypto currencies)",
         "schema": {
           "type": "string",
-          "example": "ERC20"
+          "example": "ETHEREUM"
         }
       }
     ],
     "responses": {
       "200": {
-        "description": "Successfully retrieved the rate marker",
+        "description": "Successfully retrieved the exchange rate",
         "content": {
           "application/json": {
             "schema": {
@@ -2543,7 +2543,6 @@
   "required": [
     "from",
     "to",
-    "chain",
     "rate",
     "source",
     "timestamp"
@@ -2567,12 +2566,12 @@
     "rate": {
       "type": "number",
       "format": "double",
-      "description": "The conversion multiplier.",
-      "example": 1442.29
+      "description": "The conversion rate/multiplier.",
+      "example": 0.0006
     },
     "source": {
       "type": "string",
-      "description": "The mechanism used to determine the rate (e.g., CONSENSUS, ADMIN_OVERRIDE).",
+      "description": "The mechanism used to determine the rate (e.g., CONSENSUS, ADMIN_OVERRIDE, MARKET_MAKER, SPOT).",
       "example": "CONSENSUS"
     },
     "timestamp": {
@@ -2590,22 +2589,6 @@
       "type": "boolean",
       "description": "Indicates if the rate was retrieved from a cache.",
       "example": false
-    },
-    "percentChange24h": {
-      "type": "number",
-      "description": "The percentage change in the rate over the last 24 hours.",
-      "example": 0
-    },
-    "metadata": {
-      "type": "object",
-      "description": "Additional provider-specific data and calculation details.",
-      "properties": {
-        "rate_busha": { "type": "string", "example": "1489.09" },
-        "rate_quidax": { "type": "string", "example": "1395.49" },
-        "medianCalculation": { "type": "string", "example": "true" },
-        "providerCount": { "type": "string", "example": "2" },
-        "contributingProviders": { "type": "string", "example": "busha, quidax" }
-      }
     }
   }
 },
