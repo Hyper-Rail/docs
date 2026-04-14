@@ -224,7 +224,7 @@
     "/partners/marketplace/quote": {
       "post": {
         "summary": "Create Multi-Provider Quote",
-        "description": "Create a quote with multiple provider allocation support. Allows partial fulfillment across providers.",
+        "description": "Create a quote with multiple provider allocation support.",
         "tags": ["Quotes"],
         "requestBody": {
           "required": true,
@@ -401,7 +401,7 @@
         "name": "id",
         "in": "path",
         "required": true,
-        "description": "The unique identifier of the quote to be accepted.",
+        "description": "The unique identifier of the order to be accepted.",
         "schema": {
           "type": "string",
           "format": "uuid",
@@ -409,16 +409,6 @@
         }
       }
     ],
-    "requestBody": {
-      "required": true,
-      "content": {
-        "application/json": {
-          "schema": {
-            "$ref": "#/components/schemas/AcceptQuoteRequest"
-          }
-        }
-      }
-    },
     "responses": {
       "200": {
         "description": "Quote accepted successfully",
@@ -2941,8 +2931,7 @@
           "fulfillmentType": {
             "type": "string",
             "description": "Fulfillment strategy",
-            "enum": ["partial", "full", "best_execution"],
-            "example": "partial"
+            "example": "full"
           },
           "providers": {
             "type": "array",
