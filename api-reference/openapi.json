@@ -634,7 +634,7 @@
       }
     }
   },
-"/partners/rates": {
+"/partners/rates/rates/makers": {
   "get": {
     "summary": "Get Exchange Rate",
     "description": "Retrieve the current exchange rate between two currencies. Optionally specify a blockchain network.",
