@@ -352,7 +352,7 @@
 },
 
     "/partners/marketplace/quote/{id}/accept": {
-  "post": {
+  "put": {
     "summary": "Accept Marketplace Quote",
     "description": "Finalize and accept a specific quote by providing the settlement destination details (Bank or Blockchain).",
     "parameters": [
@@ -447,7 +447,7 @@
 },
 
    "/partners/marketplace/quote/{id}/complete": {
-  "get": {
+  "put": {
     "summary": "Retrieve Completed Quote Details",
     "description": "Fetches the final status and payment instructions for a completed marketplace quote session.",
     "parameters": [
