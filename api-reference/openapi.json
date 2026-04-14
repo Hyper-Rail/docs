@@ -180,6 +180,47 @@
         }
       }
     },
+
+"/partners/withdrawal": {
+  "post": {
+    "summary": "Initiate Bank Withdrawal",
+    "description": "Processes a withdrawal request from a specified account to a destination bank account.",
+    "tags": ["Withdrawals"],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/WithdrawalRequest"
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Withdrawal initiated successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/WithdrawalResponse"
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "Invalid withdrawal details",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  }
+},
+
     "/partners/marketplace/quote": {
       "post": {
         "summary": "Create Multi-Provider Quote",
@@ -694,7 +735,112 @@
     }
   }
 },
-
+"/partners/marketplace/rates/stream": {
+  "get": {
+    "summary": "Stream Real-Time Exchange Rates",
+    "description": "Subscribe to real-time exchange rate updates via Server-Sent Events (SSE). The connection remains open and pushes rate updates as they occur.",
+    "tags": ["Rates", "Streaming"],
+    "parameters": [
+      {
+        "name": "from",
+        "in": "query",
+        "required": true,
+        "description": "The source currency code",
+            "schema": {
+              "type": "string",
+              "example": "NGN"
+            }
+      },
+      {
+        "name": "to",
+        "in": "query",
+        "required": true,
+        "description": "The target currency code (e.g., GHS).",
+        "schema": {
+          "type": "string",
+          "example": "GHS"
+        }
+      },
+      {
+        "name": "chain",
+        "in": "query",
+        "required": false,
+        "description": "The blockchain network (optional - only for crypto currencies)",
+        "schema": {
+          "type": "string",
+          "example": "ETHEREUM"
+        }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Successfully established SSE connection. Rate updates will be pushed continuously.",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "string",
+                  "description": "Server-Sent Events stream with rate updates",
+                  "example": "event: rate_update\ndata: {\"from\":\"NGN\",\"to\":\"USDT\",\"rate\":0.0006,\"timestamp\":\"2026-04-14T10:30:00Z\"}\n\nevent: rate_update\ndata: {\"from\":\"NGN\",\"to\":\"USDT\",\"rate\":0.00061,\"timestamp\":\"2026-04-14T10:30:15Z\"}\n\n"
+                },
+                "examples": {
+                  "streamExample": {
+                    "summary": "SSE rate updates",
+                    "value": "event: rate_update\ndata: {\"from\":\"NGN\",\"to\":\"USDT\",\"rate\":0.0006,\"timestamp\":\"2026-04-14T10:30:00Z\",\"source\":\"CONSENSUS\",\"percentChange24h\":-0.32}\n\nevent: heartbeat\ndata: {\"status\":\"connected\",\"timestamp\":\"2026-04-14T10:31:00Z\"}\n\nevent: rate_update\ndata: {\"from\":\"NGN\",\"to\":\"USDT\",\"rate\":0.00061,\"timestamp\":\"2026-04-14T10:31:05Z\",\"source\":\"CONSENSUS\",\"percentChange24h\":-0.28}\n\n"
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Content-Type": {
+                "description": "Stream content type",
+                "schema": {
+                  "type": "string",
+                  "example": "text/event-stream"
+                }
+              },
+              "Cache-Control": {
+                "description": "Caching directive",
+                "schema": {
+                  "type": "string",
+                  "example": "no-cache"
+                }
+              },
+              "Connection": {
+                "description": "Connection type",
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
+              }
+            }
+          },
+      "400": {
+            "description": "Bad request - Invalid or missing parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "code": "INVALID_CURRENCY_PAIR",
+                  "message": "Invalid currency pair. Supported pairs: NGN/USDT, GHS/USDT, NGN/GHS"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+    }
+  }
+},
     "/partners/marketplace/listings": {
   "get": {
     "description": "Get marketplace listings for the authenticated client",
@@ -1710,7 +1856,7 @@
     },
     "/transfers/banks/{bank-code}/branches": {
       "get": {
-        "description": "Retrieves a list of supported branches for a for transfers in the specified mode and selected currency",
+        "description": "Retrieves a list of supported branches for transfers in the specified mode and selected currency",
         "operationId": "BranchesBankCode",
         "parameters": [
           {
@@ -2579,19 +2725,69 @@
       "format": "date-time",
       "description": "The UTC timestamp of the rate generation.",
       "example": "2026-04-01T14:13:28.306083501Z"
-    },
-    "ageSeconds": {
-      "type": "integer",
-      "description": "The age of the rate in seconds.",
-      "example": 0
-    },
-    "cached": {
-      "type": "boolean",
-      "description": "Indicates if the rate was retrieved from a cache.",
-      "example": false
     }
   }
 },
+
+"StreamRateEvent": {
+        "type": "object",
+        "description": "Individual rate update event in the SSE stream",
+        "properties": {
+          "event": {
+            "type": "string",
+            "description": "Event type",
+            "enum": ["rate_update", "heartbeat", "error", "connection_closed"],
+            "example": "rate_update"
+          },
+          "data": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/GetRateResponse"
+              },
+              {
+                "$ref": "#/components/schemas/StreamHeartbeat"
+              },
+              {
+                "$ref": "#/components/schemas/StreamError"
+              }
+            ]
+          }
+        }
+      },
+      "StreamHeartbeat": {
+        "type": "object",
+        "description": "Heartbeat event to keep connection alive",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "connected"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T10:30:00Z"
+          }
+        }
+      },
+      "StreamError": {
+        "type": "object",
+        "description": "Error event in stream",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "RATE_UNAVAILABLE"
+          },
+          "message": {
+            "type": "string",
+            "example": "Unable to fetch rate from providers"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-04-14T10:30:00Z"
+          }
+        }
+      },
 
       "MarketplaceListing": {
         "type": "object",
@@ -2650,9 +2846,82 @@
           "poolType"
         ]
       },
+      "WithdrawalRequest": {
+  "type": "object",
+  "required": ["accountId", "accountName", "accountNumber", "amount", "bankCode"],
+  "properties": {
+    "accountId": {
+      "type": "string",
+      "format": "uuid",
+      "example": "9b5d9f75-38cf-474e-bdfc-63544893634a"
+    },
+    "accountName": {
+      "type": "string",
+      "example": "John Doe"
+    },
+    "accountNumber": {
+      "type": "string",
+      "example": "8083233781"
+    },
+    "amount": {
+      "type": "number",
+      "example": 100
+    },
+    "authCode": {
+      "type": "string",
+      "description": "Two-factor authentication code or approval token.",
+      "example": "631970"
+    },
+    "bankCode": {
+      "type": "string",
+      "example": "SPB-17646"
+    },
+    "narration": {
+      "type": "string",
+      "example": ".."
+    }
+  }
+},
+"WithdrawalResponse": {
+  "type": "object",
+  "properties": {
+    "amount": {
+      "type": "number",
+      "format": "double",
+      "example": 100.00
+    },
+    "currency": {
+      "type": "string",
+      "example": "NGN"
+    },
+    "destination": {
+      "type": "object",
+      "properties": {
+        "accountNumber": { "type": "string", "example": "8083233781" },
+        "accountName": { "type": "string", "example": "John Doe" },
+        "bankCode": { "type": "string", "example": "SPB-17646" }
+      }
+    },
+    "providerStatus": {
+      "type": "string",
+      "description": "Status of the transaction with the upstream provider.",
+      "example": "PROCESSING"
+    },
+    "reference": {
+      "type": "string",
+      "description": "Unique transaction reference.",
+      "example": "TRF-a633516c526a40c4b2ebc6e3c249c5f5"
+    },
+    "status": {
+      "type": "string",
+      "description": "Internal processing status.",
+      "example": "PROCESSING"
+    }
+  }
+},
       "MultiProviderQuoteRequest": {
         "type": "object",
-        "required": ["sourceCurrency", "destinationCurrency", "totalAmount", "fulfillmentType"],
+        "required": ["sourceCurrency", "destinationCurrency", "totalAmount", "fulfillmentType", "providers"],
         "properties": {
           "sourceCurrency": {
             "type": "string",
@@ -2677,7 +2946,7 @@
           },
           "providers": {
             "type": "array",
-            "description": "Optional provider allocation preferences",
+            "description": "Provider allocation preferences",
             "items": {
               "$ref": "#/components/schemas/ProviderAllocation"
             }

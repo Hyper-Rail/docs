@@ -76,12 +76,19 @@
             ]
           },
           {
-            "group": " Wallets (Fiat)",
+            "group": " Wallets and Balances",
             "icon": "wallet",
             "pages": [
               "api-reference/hyperrail-wallet/get",
               "api-reference/hyperrail-wallet/get-balance-id",
               "api-reference/hyperrail-wallet/get-balance-currency"
+            ]
+          },
+          {
+            "group": "Payout",
+            "icon": "money-bill",
+            "pages": [
+              "api-reference/payout/withdrawal"
             ]
           },
           {
@@ -103,7 +110,8 @@
             "group": "Rates",
             "icon": "arrow-up-right-dots",
             "pages": [
-              "api-reference/rate/get-rate"
+              "api-reference/rate/get-rate",
+              "api-reference/rate/rate-stream"
             ]
           },
           {
