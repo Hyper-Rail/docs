@@ -750,16 +750,6 @@
           "type": "string",
           "example": "GHS"
         }
-      },
-      {
-        "name": "chain",
-        "in": "query",
-        "required": false,
-        "description": "The blockchain network (optional - only for crypto currencies)",
-        "schema": {
-          "type": "string",
-          "example": "ETHEREUM"
-        }
       }
     ],
     "responses": {

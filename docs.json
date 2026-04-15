@@ -76,26 +76,9 @@
             ]
           },
           {
-            "group": " Wallets and Balances",
-            "icon": "wallet",
-            "pages": [
-              "api-reference/hyperrail-wallet/get",
-              "api-reference/hyperrail-wallet/get-balance-id",
-              "api-reference/hyperrail-wallet/get-balance-currency"
-            ]
-          },
-          {
-            "group": "Payout",
-            "icon": "money-bill",
-            "pages": [
-              "api-reference/payout/withdrawal"
-            ]
-          },
-          {
             "group": "Exchange",
             "icon": "money-bill",
             "pages": [
-              "api-reference/hyperrail-quote/create-quote",
               "api-reference/hyperrail-quote/create-express-quote",
               "api-reference/hyperrail-quote/create-payment-intent",
               "api-reference/hyperrail-quote/accept-quote",
@@ -120,29 +103,6 @@
               "api-reference/dynamic-accounts/create-dynamic-account",
               "api-reference/dynamic-accounts/dynamic-account-id",
               "api-reference/dynamic-accounts/list-dynamic-account"
-            ]
-          },
-          {
-            "group": "Single Disbursements",
-            "icon": "paper-plane",
-            "pages": [
-              "api-reference/transfer-api/create-single-transfer",
-              "api-reference/transfer-api/list-banks",
-              "api-reference/transfer-api/transfer-resolve-account",
-              "api-reference/transfer-api/list-branches",
-              "api-reference/transfer-api/transfer-by-reference"
-            ]
-          },
-           {
-            "group": "Bulk Disbursements",
-            "icon": "money-check",
-            "pages": [
-              "api-reference/transfer-api/create-bulk-transfer",
-              "api-reference/transfer-api/bulk-transfer-id",
-              "api-reference/transfer-api/bulk-transfer-categories",
-              "api-reference/transfer-api/bulk-transfers",
-              "api-reference/transfer-api/bulk-transfers-by-id",
-              "api-reference/transfer-api/validate-bulk-transfer"
             ]
           }
 
