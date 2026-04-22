@@ -20,7 +20,7 @@
     }
   ],
   "paths": {
-    "/balances": {
+    "/partners/balances": {
       "get": {
         "description": "Returns all balances ",
         "parameters": [
@@ -99,7 +99,7 @@
         }
       }
     },
-    "/balances/{accountId}": {
+    "/partners/balances/{accountId}": {
       "get": {
         "description": "Returns all balance by account ID ",
         "parameters": [
@@ -140,7 +140,7 @@
         }
       }
     },
-    "/balances/currency/{currency}": {
+    "/partners/balances/currency/{currency}": {
       "get": {
         "description": "Returns all balance by currency ",
         "parameters": [
