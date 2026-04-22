@@ -76,6 +76,16 @@
             ]
           },
           {
+            "group": "Wallets and Balances",
+            "icon": "wallet",
+            "pages": [
+              "api-reference/hyperrail-wallet/get",
+              "api-reference/hyperrail-wallet/get-balance-id",
+              "api-reference/hyperrail-wallet/get-balance-currency"
+            ]
+
+          },
+          {
             "group": "Exchange",
             "icon": "money-bill",
             "pages": [
