@@ -2290,7 +2290,7 @@
         }
       }
     },
-    "/accounts/{id}": {
+    "/virtual-accounts/{id}": {
       "get": {
         "description": "Get details of your created virtual account by its ID.",
         "operationId": "DynamicAccountID",
@@ -2351,7 +2351,7 @@
         }
       }
     },
-    "/accounts": {
+    "/virtual-accounts": {
       "get": {
         "description": "This retrieves and lists all the active dynamic accounts you created.",
         "operationId": "ListDynamicAccount",
