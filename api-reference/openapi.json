@@ -2288,9 +2288,70 @@
             }
           }
         }
+      },
+      "get": {
+        "description": "This retrieves and lists all the active dynamic accounts you created.",
+        "operationId": "ListDynamicAccount",
+        "parameters": [
+          {
+            "name": "x-service-source",
+            "in": "header",
+            "required": true,
+            "description": "Identifies the calling service",
+            "schema": {
+              "type": "string",
+              "default": "HyperRails",
+              "example": "HyperRails"
+            }
+          },
+          {
+            "name": "accountNumber",
+            "in": "query",
+            "required": true,
+            "description": "This filters by the account number created for the virtual accounts.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON array of dynamic details objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DynamicDetailsResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error401"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not Found - No subscriptions found for the given plan ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          }
+        }
       }
     },
-    "/virtual-accounts/{id}": {
+    "/accounts/{id}": {
       "get": {
         "description": "Get details of your created virtual account by its ID.",
         "operationId": "DynamicAccountID",
