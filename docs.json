@@ -86,6 +86,14 @@
 
           },
           {
+            "group": "Rates",
+            "icon": "arrow-up-right-dots",
+            "pages": [
+              "api-reference/rate/get-rate",
+              "api-reference/rate/rate-stream"
+            ]
+          },
+          {
             "group": "Exchange",
             "icon": "money-bill",
             "pages": [
