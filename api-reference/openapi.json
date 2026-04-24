@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "description": "Development server",
+      "description": "Live server",
       "url": "https://api.hyperrail.io/api/v1"
     }
   ],
