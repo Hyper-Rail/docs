@@ -11,7 +11,7 @@
   "servers": [
     {
       "description": "Development server",
-      "url": "https://api.hyperail.io/api/v1"
+      "url": "https://api.hyperrail.io/api/v1"
     }
   ],
   "security": [
