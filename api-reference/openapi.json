@@ -2207,7 +2207,7 @@
       }
     },
 
-    "/virtual-accounts/temporary": {
+    "/accounts": {
       "post": {
         "description": "This endpoint is used to create a dynamic account to receive payments.",
         "operationId": "DynamicAccountCreation",
@@ -2290,7 +2290,7 @@
         }
       }
     },
-    "/virtual-accounts/{id}": {
+    "/accounts/{id}": {
       "get": {
         "description": "Get details of your created virtual account by its ID.",
         "operationId": "DynamicAccountID",
@@ -2351,7 +2351,7 @@
         }
       }
     },
-    "/virtual-accounts": {
+    "/accounts": {
       "get": {
         "description": "This retrieves and lists all the active dynamic accounts you created.",
         "operationId": "ListDynamicAccount",
