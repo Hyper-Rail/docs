@@ -111,7 +111,8 @@
             "group": "Payout",
             "icon": "money-bill",
             "pages": [
-              "api-reference/payout/withdrawal"
+              "api-reference/payout/withdrawal",
+              "api-reference/payout/wallet-payout"
             ]
           },
           {

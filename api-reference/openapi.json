@@ -192,7 +192,39 @@
         "application/json": {
           "schema": {
             "$ref": "#/components/schemas/WithdrawalRequest"
-          }
+          },
+          "examples": {
+                "ngnPayout": {
+                  "summary": "Nigerian Naira payout",
+                  "value": {
+                    "reference": "payout-001",
+                    "amount": 10000,
+                    "currency": "NGN",
+                    "destination": {
+                      "accountNumber": "0123456789",
+                      "accountName": "Jane Doe",
+                      "bankCode": "058",
+                      "branchCode": "001"
+                    },
+                    "narration": "Vendor payout April"
+                  }
+                },
+                "ghsPayout": {
+                  "summary": "Ghana Cedis payout",
+                  "value": {
+                    "reference": "payout-002",
+                    "amount": 50000,
+                    "currency": "GHS",
+                    "destination": {
+                      "accountNumber": "0987654321",
+                      "accountName": "John Smith",
+                      "bankCode": "030100",
+                      "branchCode": "001"
+                    },
+                    "narration": "Salary payment"
+                  }
+                }
+              }
         }
       }
     },
@@ -203,20 +235,112 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/WithdrawalResponse"
-            }
+            },
+            "example": {
+                  "reference": "payout-001",
+                  "hyperrailReference": "HPR-TRSF-3a1b2c3d4e5f",
+                  "amount": 10000,
+                  "fee": 50,
+                  "currency": "NGN",
+                  "destination": {
+                    "accountNumber": "0123456789",
+                    "accountName": "Jane Doe",
+                    "bankCode": "058",
+                    "branchCode": "001",
+                    "bankName": "GTBank"
+                  },
+                  "narration": "Vendor payout April",
+                  "status": "initiated",
+                  "createdAt": "2026-04-24T10:30:00Z",
+                  "estimatedCompletionAt": "2026-04-24T10:35:00Z"
+                }
           }
         }
       },
       "400": {
-        "description": "Invalid withdrawal details",
+        "description": "Bad request - Invalid withdrawal details",
         "content": {
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/Error"
-            }
+            },
+            "examples": {
+                  "insufficientBalance": {
+                    "summary": "Insufficient balance",
+                    "value": {
+                      "code": "INSUFFICIENT_BALANCE",
+                      "message": "Account balance (5000 NGN) is less than requested amount (10000 NGN) plus fees (50 NGN)"
+                    }
+                  },
+                  "invalidBankCode": {
+                    "summary": "Invalid bank code",
+                    "value": {
+                      "code": "INVALID_BANK_CODE",
+                      "message": "Bank code '999' is not a valid Nigerian bank code"
+                    }
+                  },
+                  "invalidAccountNumber": {
+                    "summary": "Invalid account number",
+                    "value": {
+                      "code": "INVALID_ACCOUNT_NUMBER",
+                      "message": "Account number must be 10 digits for Nigerian banks"
+                    }
+                  },
+                  "duplicateReference": {
+                    "summary": "Duplicate reference",
+                    "value": {
+                      "code": "DUPLICATE_REFERENCE",
+                      "message": "Payout with reference 'payout-001' already exists"
+                    }
+                  },
+                  "accountNameMismatch": {
+                    "summary": "Account name verification failed",
+                    "value": {
+                      "code": "NAME_MISMATCH",
+                      "message": "Provided account name 'Jane Doe' does not match bank records 'Jane D. Doe'"
+                    }
+                  }
+                }
+
           }
         }
-      }
+      },
+      "401": {
+            "description": "Unauthorized - Invalid or missing authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable entity - Amount below minimum threshold",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "code": "AMOUNT_TOO_LOW",
+                  "message": "Minimum withdrawal amount is 100 NGN"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service unavailable - Bank service temporarily unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "code": "SERVICE_UNAVAILABLE"                }
+              }
+            }
+          }
     }
   }
 },
@@ -392,6 +516,141 @@
   }
 },
 
+"/partners/wallets/payouts": {
+  "post": {
+        "summary": "Initiate Wallet Withdrawal",
+        "description": "Processes a withdrawal request from a partner wallet to an on-chain blockchain address. Supports USDC, USDT withdrawals on Ethereum, Polygon, and Base networks.",
+        "tags": ["Withdrawals"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayoutRequest"
+              },
+              "examples": {
+                "usdcWithdrawal": {
+                  "summary": "USDC withdrawal on Ethereum",
+                  "value": {
+                    "reference": "wallet-payout-001",
+                    "chain": "ethereum",
+                    "asset": "usdc",
+                    "amount": 100,
+                    "toAddress": "0x742d35Cc6634C0532925a3b844Bc9e7595f0beB0"
+                  }
+                },
+                "usdtWithdrawal": {
+                  "summary": "USDT withdrawal on Polygon",
+                  "value": {
+                    "reference": "wallet-payout-002",
+                    "chain": "polygon",
+                    "asset": "usdt",
+                    "amount": 50,
+                    "toAddress": "0x742d35Cc6634C0532925a3b844Bc9e7595f0beB0"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Withdrawal initiated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayoutResponse"
+                },
+                "example": {
+                  "reference": "wallet-payout-001",
+                  "withdrawalId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                  "walletId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                  "chain": "ethereum",
+                  "token": "usdc",
+                  "amount": 100,
+                  "estimatedFee": 2.5,
+                  "toAddress": "0x742d35Cc6634C0532925a3b844Bc9e7595f0beB0",
+                  "status": "PENDING",
+                  "transactionHash": null
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid withdrawal details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "insufficientBalance": {
+                    "summary": "Insufficient balance",
+                    "value": {
+                      "code": "INSUFFICIENT_BALANCE",
+                      "message": "Wallet balance (50 USDC) is less than requested amount (100 USDC) plus fees"
+                    }
+                  },
+                  "invalidAddress": {
+                    "summary": "Invalid address",
+                    "value": {
+                      "code": "INVALID_ADDRESS",
+                      "message": "toAddress is not a valid Ethereum address"
+                    }
+                  },
+                  "duplicateReference": {
+                    "summary": "Duplicate reference",
+                    "value": {
+                      "code": "DUPLICATE_REFERENCE",
+                      "message": "Withdrawal with reference 'wallet-payout-001' already exists"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found - Wallet not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "code": "WALLET_NOT_FOUND",
+                  "message": "No active wallet found for partner"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable entity - Withdrawal below minimum threshold",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "code": "AMOUNT_TOO_LOW",
+                  "message": "Minimum withdrawal amount is 10 USDC"
+                }
+              }
+            }
+          }
+        }
+}
+},
+
     "/partners/marketplace/quote/{id}/accept": {
   "put": {
     "summary": "Accept Marketplace Quote",
@@ -401,7 +660,7 @@
         "name": "id",
         "in": "path",
         "required": true,
-        "description": "The unique identifier of the order to be accepted.",
+        "description": "The unique quote identifier of the order to be accepted.",
         "schema": {
           "type": "string",
           "format": "uuid",
@@ -419,7 +678,7 @@
                   "accountId": {
                     "type": "string",
                     "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                    "description": "The unique account identifier of the order to be accepted."
+                    "description": "The unique pool account identifier of the order to be accepted."
                   }
                 }
               }
@@ -2904,6 +3163,290 @@
           "poolType"
         ]
       },
+
+"PayoutRequest": {
+        "type": "object",
+        "required": ["reference", "chain", "asset", "amount", "toAddress"],
+        "properties": {
+          "reference": {
+            "type": "string",
+            "description": "Unique idempotency reference for this withdrawal. Used to prevent duplicate withdrawals.",
+            "example": "wallet-payout-001",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "chain": {
+            "type": "string",
+            "description": "Blockchain network for the withdrawal",
+            "example": "ethereum",
+            "enum": ["ethereum", "polygon", "base", "arbitrum", "optimism"]
+          },
+          "asset": {
+            "type": "string",
+            "description": "Token/asset to withdraw",
+            "example": "usdc",
+            "enum": ["usdc", "usdt"]
+          },
+          "amount": {
+            "type": "number",
+            "description": "Amount to withdraw (in token units, not subunits). Minimum: 10",
+            "example": 100,
+            "minimum": 10
+          },
+          "toAddress": {
+            "type": "string",
+            "description": "Destination blockchain address (must be valid EVM address)",
+            "example": "0x742d35Cc6634C0532925a3b844Bc9e7595f0beB0",
+            "pattern": "^0x[a-fA-F0-9]{40}$"
+          },
+          "memo": {
+            "type": "string",
+            "description": "Optional memo/note for the withdrawal",
+            "example": "Payment to supplier",
+            "maxLength": 255
+          }
+        }
+      },
+"PayoutResponse": {
+        "type": "object",
+        "properties": {
+          "reference": {
+            "type": "string",
+            "description": "Unique reference provided in the request",
+            "example": "wallet-payout-001"
+          },
+          "withdrawalId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "System-generated withdrawal identifier",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "walletId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Partner wallet identifier",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "chain": {
+            "type": "string",
+            "description": "Blockchain network",
+            "example": "ethereum",
+            "enum": ["ethereum", "polygon", "base", "arbitrum", "optimism"]
+          },
+          "token": {
+            "type": "string",
+            "description": "Token being withdrawn",
+            "example": "usdc",
+            "enum": ["usdc", "usdt"]
+          },
+          "amount": {
+            "type": "number",
+            "description": "Withdrawal amount",
+            "example": 100
+          },
+          "estimatedFee": {
+            "type": "number",
+            "description": "Estimated gas fee in token units",
+            "example": 2.5
+          },
+          "toAddress": {
+            "type": "string",
+            "description": "Destination address",
+            "example": "0x742d35Cc6634C0532925a3b844Bc9e7595f0beB0"
+          },
+          "status": {
+            "type": "string",
+            "description": "Withdrawal status",
+            "enum": ["PENDING", "PROCESSING", "COMPLETED", "FAILED", "CANCELLED"],
+            "example": "PENDING"
+          },
+          "transactionHash": {
+            "type": "string",
+            "description": "Blockchain transaction hash (null until broadcast)",
+            "example": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Withdrawal creation timestamp",
+            "example": "2026-04-24T10:30:00Z"
+          },
+          "estimatedCompletionAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Estimated completion time",
+            "example": "2026-04-24T10:35:00Z"
+          }
+        }
+      },
+"BankWithdrawalRequest":{
+  "type": "object",
+        "required": ["reference", "amount", "currency", "destination"],
+        "properties": {
+          "reference": {
+            "type": "string",
+            "description": "Unique idempotency reference for this payout. Used to prevent duplicate transfers.",
+            "example": "payout-001",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "amount": {
+            "type": "integer",
+            "description": "Amount to transfer in subunits (kobo for NGN, pesewas for GHS). Minimum: 100",
+            "example": 10000,
+            "minimum": 100
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency code for the transfer",
+            "example": "NGN",
+            "enum": ["NGN", "GHS"]
+          },
+          "destination": {
+            "$ref": "#/components/schemas/BankDestination"
+          },
+          "narration": {
+            "type": "string",
+            "description": "Transfer description/narration (appears on bank statement)",
+            "example": "Vendor payout April",
+            "maxLength": 100
+          },
+          "saveRecipient": {
+            "type": "boolean",
+            "description": "Save recipient details for future use",
+            "example": false,
+            "default": false
+          },
+          "recipientAlias": {
+            "type": "string",
+            "description": "Friendly name for saved recipient (required if saveRecipient is true)",
+            "example": "Jane - Vendor",
+            "maxLength": 50
+          }
+        }
+      },
+      "BankDestination": {
+        "type": "object",
+        "required": ["accountNumber", "accountName", "bankCode"],
+        "properties": {
+          "accountNumber": {
+            "type": "string",
+            "description": "Recipient bank account number (10 digits for Nigerian banks)",
+            "example": "0123456789",
+            "pattern": "^[0-9]{10}$"
+          },
+          "accountName": {
+            "type": "string",
+            "description": "Account holder name (must match bank records)",
+            "example": "Jane Doe",
+            "minLength": 2,
+            "maxLength": 100
+          },
+          "bankCode": {
+            "type": "string",
+            "description": "Bank code (3 digits for Nigerian banks, 6 digits for Ghanaian banks)",
+            "example": "058"
+          },
+          "branchCode": {
+            "type": "string",
+            "description": "Bank branch code (optional for most Nigerian banks)",
+            "example": "001"
+          }
+        }
+      },
+      "BankWithdrawalResponse": {
+        "type": "object",
+        "properties": {
+          "reference": {
+            "type": "string",
+            "description": "Unique reference provided in the request",
+            "example": "payout-001"
+          },
+          "hyperrailReference": {
+            "type": "string",
+            "description": "System-generated HyperRail reference for tracking",
+            "example": "HPR-TRSF-3a1b2c3d4e5f"
+          },
+          "amount": {
+            "type": "integer",
+            "description": "Transfer amount in subunits",
+            "example": 10000
+          },
+          "fee": {
+            "type": "integer",
+            "description": "Transfer fee in subunits",
+            "example": 50
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency code",
+            "example": "NGN",
+            "enum": ["NGN", "GHS"]
+          },
+          "destination": {
+            "$ref": "#/components/schemas/BankDestinationResponse"
+          },
+          "narration": {
+            "type": "string",
+            "description": "Transfer description",
+            "example": "Vendor payout April"
+          },
+          "status": {
+            "type": "string",
+            "description": "Payout status",
+            "enum": ["initiated", "processing", "completed", "failed", "reversed"],
+            "example": "initiated"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Payout creation timestamp",
+            "example": "2026-04-24T10:30:00Z"
+          },
+          "estimatedCompletionAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Estimated completion time",
+            "example": "2026-04-24T10:35:00Z"
+          },
+          "sessionId": {
+            "type": "string",
+            "description": "Session identifier for tracking",
+            "example": "session-abc123"
+          }
+        }
+      },
+      "BankDestinationResponse": {
+        "type": "object",
+        "properties": {
+          "accountNumber": {
+            "type": "string",
+            "description": "Recipient account number",
+            "example": "0123456789"
+          },
+          "accountName": {
+            "type": "string",
+            "description": "Account holder name (verified from bank)",
+            "example": "Jane Doe"
+          },
+          "bankCode": {
+            "type": "string",
+            "description": "Bank code",
+            "example": "058"
+          },
+          "branchCode": {
+            "type": "string",
+            "description": "Branch code",
+            "example": "001"
+          },
+          "bankName": {
+            "type": "string",
+            "description": "Bank name (resolved from bank code)",
+            "example": "GTBank"
+          }
+        }
+},
       "WithdrawalRequest": {
   "type": "object",
   "required": ["accountId", "accountName", "accountNumber", "amount", "bankCode"],
