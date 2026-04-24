@@ -2579,15 +2579,6 @@
               "default": "HyperRails",
               "example": "HyperRails"
             }
-          },
-          {
-            "name": "accountNumber",
-            "in": "query",
-            "required": true,
-            "description": "This filters by the account number created for the virtual accounts.",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
