@@ -11,7 +11,7 @@
   "servers": [
     {
       "description": "Development server",
-      "url": "https://dev-api.hyperail.io/api/v1"
+      "url": "https://api.hyperail.io/api/v1"
     }
   ],
   "security": [
@@ -181,7 +181,7 @@
       }
     },
 
-"/partners/withdrawal": {
+"/partners/payouts": {
   "post": {
     "summary": "Initiate Bank Withdrawal",
     "description": "Processes a withdrawal request from a specified account to a destination bank account.",

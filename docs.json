@@ -100,6 +100,13 @@
             ]
           },
           {
+            "group": "Payout",
+            "icon": "money-bill",
+            "pages": [
+              "api-reference/payout/withdrawal"
+            ]
+          },
+          {
             "group": "Listings",
             "icon": "boxes",
             "pages": [
