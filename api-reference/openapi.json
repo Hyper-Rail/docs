@@ -1008,7 +1008,7 @@
     "tags": ["Rates", "Streaming"],
     "parameters": [
       {
-        "name": "from",
+        "name": "base",
         "in": "query",
         "required": true,
         "description": "The source currency code",
@@ -1018,7 +1018,7 @@
             }
       },
       {
-        "name": "to",
+        "name": "quote",
         "in": "query",
         "required": true,
         "description": "The target currency code (e.g., GHS).",
