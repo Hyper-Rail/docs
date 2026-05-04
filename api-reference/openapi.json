@@ -652,18 +652,9 @@
 },
 "/transfers/banks/{currency}": {
       "get": {
-        "description": "Get details of all bulk transfer files you have uploaded.",
-        "operationId": "TransferBank",
+        "description": "Retrieves a list of supported branches for transfers in the specified mode and selected currency",
+        "operationId": "BranchesBankCode",
         "parameters": [
-          {
-            "name": "currency",
-            "in": "path",
-            "required": true,
-            "description": "Currently we support NGN or GHS",
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "x-service-source",
             "in": "header",
@@ -674,26 +665,32 @@
               "default": "HyperRails",
               "example": "HyperRails"
             }
+          },
+          {
+            "name": "bankCode",
+            "in": "query",
+            "required": true,
+            "description": "This is the bank code of the account number on our system.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "A JSON array of bank list objects.",
+            "description": "A JSON array of bank branches objects.",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "bankCode": {
-                        "type": "string",
-                        "example": "PB-56234"
-                      },
-                      "bankName": {
-                        "type": "string",
-                        "example": "Nombank"
-                      }
+                  "type": "object",
+                  "properties": {
+                    "bankCode": {
+                      "type": "string",
+                      "example": "string"
+                    },
+                    "bankName": {
+                      "type": "string",
+                      "example": "string"
                     }
                   }
                 }
