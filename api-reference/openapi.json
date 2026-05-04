@@ -651,75 +651,74 @@
 }
 },
 "/transfers/banks/{currency}": {
-      "get": {
-        "description": "Retrieves a list of supported branches for transfers in the specified mode and selected currency",
-        "operationId": "BranchesBankCode",
-        "parameters": [
-          {
-            "name": "x-service-source",
-            "in": "header",
-            "required": true,
-            "description": "Identifies the calling service",
+  "get": {
+    "tags": ["Transfers"],
+    "summary": "List Supported Banks",
+    "description": "Retrieves a list of supported banks and their corresponding bank codes for a specific currency.",
+    "operationId": "getTransferBanks",
+    "parameters": [
+      {
+        "name": "currency",
+        "in": "path",
+        "required": true,
+        "description": "The currency for which you want to retrieve the bank list.",
+        "schema": {
+          "type": "string",
+          "enum": ["NGN", "GHS"],
+          "example": "NGN"
+        }
+      },
+      {
+        "name": "x-service-source",
+        "in": "header",
+        "required": true,
+        "description": "Identifies the calling service.",
+        "schema": {
+          "type": "string",
+          "default": "HyperRails",
+          "example": "HyperRails"
+        }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "A JSON array of bank objects.",
+        "content": {
+          "application/json": {
             "schema": {
-              "type": "string",
-              "default": "HyperRails",
-              "example": "HyperRails"
-            }
-          },
-          {
-            "name": "bankCode",
-            "in": "query",
-            "required": true,
-            "description": "This is the bank code of the account number on our system.",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A JSON array of bank branches objects.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "bankCode": {
-                      "type": "string",
-                      "example": "string"
-                    },
-                    "bankName": {
-                      "type": "string",
-                      "example": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized - Invalid or missing authentication token.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SubscriptionError401"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Not Found - No subscriptions found for the given plan ID.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error400"
-                }
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Bank"
               }
             }
           }
         }
+      },
+      "400": {
+        "description": "Bad Request - Invalid currency or missing headers",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "401": {
+        "description": "Unauthorized - Invalid API credentials",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
       }
-    },
+    }
+  }
+},
+
+
     "/partners/marketplace/quote/{id}/accept": {
   "put": {
     "summary": "Accept Marketplace Quote",
@@ -2158,7 +2157,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubscriptionError401"
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -2168,7 +2167,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error400"
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -3313,6 +3312,19 @@
           }
         }
       },
+      "Bank": {
+  "type": "object",
+  "properties": {
+    "bankCode": {
+      "type": "string",
+      "example": "SPB-17646"
+    },
+    "bankName": {
+      "type": "string",
+      "example": "Nombank"
+    }
+  }
+},
       "BankDestination": {
         "type": "object",
         "required": ["accountNumber", "accountName", "bankCode"],
