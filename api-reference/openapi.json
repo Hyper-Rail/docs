@@ -650,7 +650,79 @@
         }
 }
 },
-
+"/transfers/banks/{currency}": {
+      "get": {
+        "description": "Get details of all bulk transfer files you have uploaded.",
+        "operationId": "TransferBank",
+        "parameters": [
+          {
+            "name": "currency",
+            "in": "path",
+            "required": true,
+            "description": "Currently we support NGN or GHS",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-service-source",
+            "in": "header",
+            "required": true,
+            "description": "Identifies the calling service",
+            "schema": {
+              "type": "string",
+              "default": "HyperRails",
+              "example": "HyperRails"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON array of bank list objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "bankCode": {
+                        "type": "string",
+                        "example": "PB-56234"
+                      },
+                      "bankName": {
+                        "type": "string",
+                        "example": "Nombank"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionError401"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not Found - No subscriptions found for the given plan ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/partners/marketplace/quote/{id}/accept": {
   "put": {
     "summary": "Accept Marketplace Quote",
@@ -1872,79 +1944,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error401"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Not Found - No subscriptions found for the given plan ID.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error400"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/transfers/banks/{currency}": {
-      "get": {
-        "description": "Get details of all bulk transfer files you have uploaded.",
-        "operationId": "TransferBank",
-        "parameters": [
-          {
-            "name": "currency",
-            "in": "path",
-            "required": true,
-            "description": "Currently we support NGN or GHS",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "x-service-source",
-            "in": "header",
-            "required": true,
-            "description": "Identifies the calling service",
-            "schema": {
-              "type": "string",
-              "default": "HyperRails",
-              "example": "HyperRails"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A JSON array of bank list objects.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "bankCode": {
-                        "type": "string",
-                        "example": "PB-56234"
-                      },
-                      "bankName": {
-                        "type": "string",
-                        "example": "Nombank"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized - Invalid or missing authentication token.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SubscriptionError401"
                 }
               }
             }
