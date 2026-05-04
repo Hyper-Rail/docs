@@ -250,7 +250,7 @@
                     "bankName": "GTBank"
                   },
                   "narration": "Vendor payout April",
-                  "status": "initiated",
+                  "status": "processing",
                   "createdAt": "2026-04-24T10:30:00Z",
                   "estimatedCompletionAt": "2026-04-24T10:35:00Z"
                 }
@@ -3388,23 +3388,6 @@
             "description": "Payout status",
             "enum": ["initiated", "processing", "completed", "failed", "reversed"],
             "example": "initiated"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Payout creation timestamp",
-            "example": "2026-04-24T10:30:00Z"
-          },
-          "estimatedCompletionAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Estimated completion time",
-            "example": "2026-04-24T10:35:00Z"
-          },
-          "sessionId": {
-            "type": "string",
-            "description": "Session identifier for tracking",
-            "example": "session-abc123"
           }
         }
       },
@@ -3430,44 +3413,33 @@
             "type": "string",
             "description": "Branch code",
             "example": "001"
-          },
-          "bankName": {
-            "type": "string",
-            "description": "Bank name (resolved from bank code)",
-            "example": "GTBank"
           }
         }
 },
       "WithdrawalRequest": {
   "type": "object",
-  "required": ["accountId", "accountName", "accountNumber", "amount", "bankCode"],
+  "required": ["reference", "amount", "currency", "destination"],
   "properties": {
-    "accountId": {
-      "type": "string",
-      "format": "uuid",
-      "example": "9b5d9f75-38cf-474e-bdfc-63544893634a"
-    },
-    "accountName": {
-      "type": "string",
-      "example": "John Doe"
-    },
-    "accountNumber": {
-      "type": "string",
-      "example": "8083233781"
-    },
-    "amount": {
+    "reference": {
+            "type": "string",
+            "description": "Unique idempotency reference for this payout. Used to prevent duplicate transfers.",
+            "example": "payout-li",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "amount": {
       "type": "number",
       "example": 100
     },
-    "authCode": {
-      "type": "string",
-      "description": "Two-factor authentication code or approval token.",
-      "example": "631970"
-    },
-    "bankCode": {
-      "type": "string",
-      "example": "SPB-17646"
-    },
+          "currency": {
+            "type": "string",
+            "description": "Currency code for the transfer",
+            "example": "NGN",
+            "enum": ["NGN", "GHS"]
+          },
+          "destination": {
+            "$ref": "#/components/schemas/BankDestination"
+          },
     "narration": {
       "type": "string",
       "example": ".."
