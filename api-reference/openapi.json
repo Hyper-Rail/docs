@@ -458,7 +458,7 @@
         "application/json": {
           "schema": {
             "type": "object",
-            "required": ["sourceCurrency", "destinationCurrency", "amount", "amountDirection"],
+            "required": ["sourceCurrency", "destinationCurrency", "amount", "amountDirection", "rate"],
             "properties": {
               "sourceCurrency": {
                 "type": "string",
