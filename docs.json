@@ -112,7 +112,10 @@
             "icon": "money-bill",
             "pages": [
               "api-reference/payout/withdrawal",
-              "api-reference/payout/wallet-payout"
+              "api-reference/payout/wallet-payout",
+               "api-reference/payout/list-banks",
+               "api-reference/payout/resolve-account",
+               "api-reference/payout/list-branches"
             ]
           },
           {

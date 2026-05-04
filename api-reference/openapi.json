@@ -3434,8 +3434,7 @@
           "currency": {
             "type": "string",
             "description": "Currency code for the transfer",
-            "example": "NGN",
-            "enum": ["NGN", "GHS"]
+            "example": "NGN"
           },
           "destination": {
             "$ref": "#/components/schemas/BankDestination"
