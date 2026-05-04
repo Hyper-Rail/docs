@@ -12,7 +12,7 @@
   "family": "IBM Plex Sans"
 },
 "styling": {"codeblocks": "dark"},
-  "favicon": "/favicon.ico",
+  "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
       {
