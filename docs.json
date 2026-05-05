@@ -120,13 +120,6 @@
             ]
           },
           {
-            "group": "Listings",
-            "icon": "boxes",
-            "pages": [
-              "api-reference/listings/liquidity-providers"
-            ]
-          },
-          {
             "group": "Dynamic Accounts",
             "icon": "vault",
             "pages": [
