@@ -11,7 +11,7 @@
   "servers": [
     {
       "description": "Live server",
-      "url": "https://api.hyperrail.io/api/v1"
+      "url": "https://api.hyperrails.io/api/v1"
     }
   ],
   "security": [
@@ -1994,7 +1994,7 @@
           {
             "name": "currency",
             "in": "query",
-            "required": true,
+            "required": false,
             "description": "Select the currency for the payment charge. This is in our supported currency which is currently only NGN. Please note that only NGN accounts works with resolve bank accounts.",
             "schema": {
               "type": "string"
