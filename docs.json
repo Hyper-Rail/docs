@@ -49,17 +49,17 @@
             ]
           },
           {
-            "group": "Expert Desk",
-            "pages": [
-              "documentation/support-channel/faq"
-            ]
-          },
-          {
             "group": "Webhooks",
             "icon": "bell",
             "pages": [
               "documentation/webhooks/overview",
               "documentation/webhooks/payloads"
+            ]
+          },
+          {
+            "group": "Expert Desk",
+            "pages": [
+              "documentation/support-channel/faq"
             ]
           }
         ]
