@@ -737,11 +737,11 @@
       }
     ],
     "requestBody": {
+      "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": true,
                 "properties": {
                   "accountId": {
                     "type": "string",
