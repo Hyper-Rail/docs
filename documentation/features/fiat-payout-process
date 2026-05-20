@@ -1,0 +1,138 @@
+---
+title: "Fiat Payout Process"
+sidebarTitle: "Fiat Payouts"
+description: "A comprehensive guide to managing and executing outbound fiat payouts on the Hyperrails"
+icon: hand-holding-dollar
+---
+
+# Fiat Payouts Guide
+
+A fiat payout allows partners to securely disburse funds from their digital wallets directly into standard bank accounts. To ensure higher success rates, minimize failed routing, and prevent fraudulent transfers, Hyperrails orchestrates fiat payouts via a strict three-step lifecycle.
+
+## The 3-Step Payout Lifecycle
+
+Before submitting a final payout request to the network, your application backend must follow this sequential processing chain:
+
++------------------+       +-------------------------+       +--------------------+
+| 1. Get Bank Code | ----> | 2. Resolve Account Name | ----> | 3. Create Payout   |
+| (Get All Banks)  |       | (Resolve Bank Account)  |       | (Payout API)       |
++------------------+       +-------------------------+       +--------------------+
+
+### 1. Retrieve the Bank Code
+Different regions and financial systems maintain varying clearing identifiers. Before executing a transfer, you must fetch the system-supported bank mapping identifier for the transaction's target currency by using the [Get All Banks API](/api-reference/banks/get-all).
+
+### 2. Verify the Recipient's Account Name
+To ensure funds are going to the correct person, you must parse the account credentials through our verification gateway. Pass the destination account string along with the obtained `bankCode` to the [Resolve Bank Account API](/api-reference/banks/resolve) to fetch the verified account name on record with the central clearing house.
+
+### 3. Initiate the Fiat Payout Request
+Once you have collected the target **Bank Code**, **Account Number**, and verified **Account Name**, forward these details inside a single object payload to the core Payout endpoint to execute the ledger debit and route your transaction out to the clearing rail.
+
+---
+
+## 🧪 Test Mode Behavior
+
+When operating inside our sandbox or testing environment using your development secret keys (`sk_test_...`), sandbox accounts bypass live core banking network routing:
+
+* **Relaxed Validation:** Any arbitrary text string or numeric combination can be passed through for both `bankCode` and `accountNumber`.
+* **Auto-Resolution:** Sandbox requests automatically circumvent real-time resolution errors and consistently resolve to a verified identity credential assigned to **"John Doe"**.
+
+---
+
+## API Reference
+
+### Create Fiat Payout
+
+<ParamField path="POST" url="https://api.hyperrails.io/api/v1/partners/payouts">
+  Initiates an active outbound transfer sequence from your partner wallet balance to a valid clearing banking network.
+</ParamField>
+
+### Header Parameters
+
+<ResponseField name="Authorization" type="string" required>
+  Bearer token schema using your secret API key (`Bearer sk_live_...` or `Bearer sk_test_...`).
+</ResponseField>
+<ResponseField name="Content-Type" type="string" required>
+  Must be explicitly set to `application/json`.
+</ResponseField>
+
+### Request Body Schema
+
+<Expandable title="properties">
+
+<ParamField body="reference" type="string" required>
+  A distinct transaction tracing reference generated within your database system. Used for idempotent ledger reconciliation checks. Max 50 characters.
+</ParamField>
+
+<ParamField body="amount" type="number" required>
+  The absolute gross monetary value being disbursed out of your Hyperrails balance asset.
+</ParamField>
+
+<ParamField body="currency" type="string" required>
+  The ISO 3-letter target asset designation currency code string (e.g., `NGN`, `GHS`, `USD`).
+</ParamField>
+
+<ParamField body="destination" type="object" required>
+  Nested structure isolating configuration parameters explicitly tracking target beneficiary account details.
+  <Expandable title="object properties">
+    <ParamField body="accountNumber" type="string" required>
+      The core numeric clearing identification string mapping directly to the destination account instance.
+    </ParamField>
+    <ParamField body="accountName" type="string" required>
+      The legal name associated with the destination profile, matching the output fetched from the *Resolve Bank Account API*.
+    </ParamField>
+    <ParamField body="bankCode" type="string" required>
+      The distinct routing code assigned to the recipient financial institute from the *Get All Banks API* list (e.g., `SPB-1938`).
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="narration" type="string">
+  An optional descriptive string statement attached to the transaction ledger entry for recipient display context.
+</ParamField>
+
+</Expandable>
+
+---
+
+## Code Samples
+
+<CodeGroup>
+
+```bash cURL
+curl --request POST \
+  --url [https://api.hyperrails.io/api/v1/partners/payouts](https://api.hyperrails.io/api/v1/partners/payouts) \
+  --header 'Authorization: Bearer sk_test_3c7xxxxxxxxx' \
+  --header 'Content-Type: application/json' \
+  --data '
+{
+  "reference": "ref-092039",
+  "amount": 200,
+  "currency": "NGN",
+  "destination": {
+    "accountNumber": "9829832929",
+    "accountName": "John Doe",
+    "bankCode": "SPB-1938"
+  },
+  "narration": "test transfer"
+}
+'
+
+Response
+```
+{
+  "status": "success",
+  "message": "Payout initiated successfully",
+  "data": {
+    "reference": "ref-092039",
+    "amount": 200.00,
+    "currency": "NGN",
+    "status": "PENDING",
+    "fee": 10.00,
+    "destination": {
+      "accountNumber": "9829832929",
+      "accountName": "John Doe",
+      "bankCode": "SPB-1938"
+    },
+    "createdAt": "2026-05-19T16:04:21.000Z"
+    }
+}`

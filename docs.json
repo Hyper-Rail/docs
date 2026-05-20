@@ -17,9 +17,11 @@
     "tabs": [
       {
         "tab": "Documentation",
+        "icon": "scroll",
         "groups": [
           {
             "group": "Core Concepts",
+            "icon": "building",
             "pages": [
               {
                 "group": "Getting Started",
@@ -38,14 +40,23 @@
             ]
           },
           {
+            "group": "Testing",
+            "icon": "vial",
+            "pages": [
+              "testing/funding-in-test-mode"
+            ]
+          },
+          {
             "group": "Features",
+            "icon": "star",
             "pages": [
               "documentation/features/offramp-transaction",
               "documentation/features/onramp-transaction",
               "documentation/features/currency-exchange-fiat",
               "documentation/features/team-members",
               "documentation/features/account-management",
-              "documentation/features/payout-structure"
+              "documentation/features/payout-structure",
+              "documentation/features/fiat-payout-process"
             ]
           },
           {
@@ -58,6 +69,7 @@
           },
           {
             "group": "Expert Desk",
+            "icon": "user-tie",
             "pages": [
               "documentation/support-channel/faq"
             ]

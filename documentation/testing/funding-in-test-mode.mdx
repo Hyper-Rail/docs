@@ -1,0 +1,104 @@
+---
+title: "Funding in Test Mode"
+description: "Learn how to add fake funds in HyperRail's test environment using the Funding Simulator App."
+icon: "credit-card"
+---
+
+# Funding in Test Mode
+
+Before going live, HyperRail gives you a test environment where you can fund accounts and simulate real transactions without moving actual money. This guide walks you through how to use the [HyperRail Funding Simulator](https://hyperrails-test-funding-app.vercel.app/) to top up your test balances.
+
+---
+
+## What You Can Fund
+
+In test mode, there are two types of accounts you can fund:
+
+**Main account balance**
+Your primary wallet balance for different currencies. This is what powers your liquidity pools and any transactions you initiate as a merchant or exchange client.
+
+**Virtual accounts**
+Temporary accounts generated when a payment is expected—for example, when you want to fulfil transaction for an instant trade or an order. Each virtual account has a unique account number tied to that specific transaction.
+
+---
+
+## How to Fund an Account
+
+Go to the [HyperRail Funding Simulator](https://hyperrails-test-funding-app.vercel.app/) and fill in the following fields:
+
+### Account Number
+Enter the account number you want to fund. This can be:
+- Your **main pool account number**, found in the Balances section of your dashboard according to the different currencies.
+- A **virtual account number** generated for an instant trade or order
+
+### Currency
+Select the currency that matches the account you are funding. Supported currencies in test mode:
+
+| Currency | Name |
+|----------|------|
+| NGN | Nigerian Naira |
+| GHS | Ghanaian Cedi |
+| USD | United States Dollar |
+| KES | Kenyan Shilling |
+| ZAR | South African Rand |
+| XOF | West African CFA Franc |
+| XAF | Central African CFA Franc |
+| TZS | Tanzanian Shilling |
+
+> Make sure the currency you select matches the currency of the account you are funding. Funding an NGN account with USD will not reflect correctly.
+
+### Amount
+Enter the amount you want to add to the account. There is no minimum or maximum in test mode—use any amount that fits your testing scenario.
+
+### Narration *(Optional)*
+Add a short description for the top-up. This is optional and only useful for your own reference when reviewing test transactions.
+
+---
+
+## Submitting the Request
+
+Once you have filled in the details, click **Fund Account**.
+
+If the request is successful, the simulator will confirm that the account has been funded. You can then check your dashboard to see the updated balance reflected.
+
+If something goes wrong, the simulator will show an error message. The most common cause is an incorrect account number or a currency mismatch—double-check both and try again.
+
+---
+
+## Things to Note
+
+- **Test mode only.** The Funding Simulator only works in test mode. It does not process real money and cannot be used in production.
+- **No authorization needed.** The simulator does not require API keys or authentication headers. Just provide the account number, currency, and amount.
+- **Any bank details work.** In test mode, you do not need valid bank credentials. Use any combination of numbers for account fields—they will resolve automatically.
+- **Balances reset.** Test balances are not permanent. They may be cleared between testing sessions.
+
+---
+
+## What Happens After Funding
+
+Once an account is funded, you can proceed to test the relevant flow:
+
+- **Main account funded** → Test liquidity pool setup, fiat exchange, off-ramp, or on-ramp transactions
+- **Virtual account funded** → The associated order or instant trade will register the payment and move to the next stage of processing
+
+---
+
+## Troubleshooting
+
+**The balance isn't showing up on my dashboard**
+Wait a few seconds and refresh your dashboard. If it still doesn't appear, confirm that the account number and currency match exactly what is on the dashboard.
+
+**I got an error on the simulator**
+Check that:
+- The account number is correct and exists in your test environment
+- The currency matches the account currency
+- The amount field is not empty or zero
+
+**I'm not sure which account number to use**
+Find your main account number by the different currencies under **Balances** in the dashboard. For virtual accounts, the account number is shown in the transaction or order detail view when payment is pending.
+
+---
+
+## Need Help?
+
+Contact the HyperRail support team at [support@hyperrails.io](mailto:support@hyperrails.io)
