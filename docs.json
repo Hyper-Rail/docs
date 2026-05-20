@@ -43,7 +43,7 @@
             "group": "Testing",
             "icon": "vial",
             "pages": [
-              "docummentation/testing/funding-in-test-mode"
+              "documentation/testing/funding-in-test-mode"
             ]
           },
           {
@@ -56,7 +56,7 @@
               "documentation/features/team-members",
               "documentation/features/account-management",
               "documentation/features/payout-structure",
-              "documentation/features/fiat-payout-process"
+              "documentation/features/fiat-payout"
             ]
           },
           {
