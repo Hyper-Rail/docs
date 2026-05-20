@@ -1,13 +1,13 @@
 ---
 title: "Fiat Payout Process"
 sidebarTitle: "Fiat Payouts"
-description: "A comprehensive guide to managing and executing outbound fiat payouts on the Hyperrails"
+description: "A comprehensive guide to managing and executing fiat payouts on Hyperrails"
 icon: hand-holding-dollar
 ---
 
 # Fiat Payouts Guide
 
-A fiat payout allows partners to securely disburse funds from their digital wallets directly into standard bank accounts. To ensure higher success rates, minimize failed routing, and prevent fraudulent transfers, Hyperrails orchestrates fiat payouts via a strict three-step lifecycle.
+A fiat payout allows partners to securely disburse funds from their wallet balances directly into standard bank accounts. To ensure higher success rates, minimize failed routing, and prevent fraudulent transfers, Hyperrails orchestrates fiat payouts via a strict three-step lifecycle.
 
 ## The 3-Step Payout Lifecycle
 
@@ -19,10 +19,10 @@ Before submitting a final payout request to the network, your application backen
 +------------------+       +-------------------------+       +--------------------+
 
 ### 1. Retrieve the Bank Code
-Different regions and financial systems maintain varying clearing identifiers. Before executing a transfer, you must fetch the system-supported bank mapping identifier for the transaction's target currency by using the [Get All Banks API](/api-reference/banks/get-all).
+Different regions and financial systems maintain varying clearing identifiers. Before executing a transfer, you must fetch the system-supported bank mapping identifier for the transaction's target currency by using the [Get All Banks API](/api-reference/banks/get-all). This is currently for NGN and GHS.
 
 ### 2. Verify the Recipient's Account Name
-To ensure funds are going to the correct person, you must parse the account credentials through our verification gateway. Pass the destination account string along with the obtained `bankCode` to the [Resolve Bank Account API](/api-reference/banks/resolve) to fetch the verified account name on record with the central clearing house.
+To ensure funds are going to the correct person, you must parse the account credentials through our verification gateway. Pass the destination account string along with the obtained `bankCode` to the [Resolve Bank Account API](/api-reference/banks/resolve) to fetch the verified account name on record.
 
 ### 3. Initiate the Fiat Payout Request
 Once you have collected the target **Bank Code**, **Account Number**, and verified **Account Name**, forward these details inside a single object payload to the core Payout endpoint to execute the ledger debit and route your transaction out to the clearing rail.
@@ -64,7 +64,7 @@ When operating inside our sandbox or testing environment using your development 
 </ParamField>
 
 <ParamField body="amount" type="number" required>
-  The absolute gross monetary value being disbursed out of your Hyperrails balance asset.
+  The absolute total monetary value being paid out of your Hyperrails balance asset.
 </ParamField>
 
 <ParamField body="currency" type="string" required>
@@ -72,13 +72,13 @@ When operating inside our sandbox or testing environment using your development 
 </ParamField>
 
 <ParamField body="destination" type="object" required>
-  Nested structure isolating configuration parameters explicitly tracking target beneficiary account details.
+  Nested structure configuration parameters tracking target beneficiary account details.
   <Expandable title="object properties">
     <ParamField body="accountNumber" type="string" required>
-      The core numeric clearing identification string mapping directly to the destination account instance.
+      The core identification number mapping directly to the destination account.
     </ParamField>
     <ParamField body="accountName" type="string" required>
-      The legal name associated with the destination profile, matching the output fetched from the *Resolve Bank Account API*.
+      The legal name associated with the destination account, matching the output fetched from the *Resolve Bank Account API*.
     </ParamField>
     <ParamField body="bankCode" type="string" required>
       The distinct routing code assigned to the recipient financial institute from the *Get All Banks API* list (e.g., `SPB-1938`).
@@ -87,7 +87,7 @@ When operating inside our sandbox or testing environment using your development 
 </ParamField>
 
 <ParamField body="narration" type="string">
-  An optional descriptive string statement attached to the transaction ledger entry for recipient display context.
+  An optional descriptive string statement attached to the transaction for the recipient.
 </ParamField>
 
 </Expandable>
