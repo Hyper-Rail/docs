@@ -43,6 +43,7 @@
             "group": "Testing",
             "icon": "vial",
             "pages": [
+              "documentation/testing/test-mode-overview",
               "documentation/testing/funding-in-test-mode"
             ]
           },
@@ -55,8 +56,8 @@
               "documentation/features/currency-exchange-fiat",
               "documentation/features/team-members",
               "documentation/features/account-management",
-              "documentation/features/payout-structure",
-              "documentation/features/fiat-payout-process"
+              "documentation/features/fiat-payout-process",
+              "documentation/features/payout-structure"
             ]
           },
           {
