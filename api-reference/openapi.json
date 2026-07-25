@@ -2410,7 +2410,7 @@
         "description": "Get trade for exchange currency",
         "parameters": [
           {
-            "name": "source ",
+            "name": "source",
             "in": "query",
             "required": true,
             "description": "Source Currency",
@@ -2419,7 +2419,7 @@
             }
           },
           {
-            "name": "destination  ",
+            "name": "destination",
             "in": "query",
             "required": true,
             "description": "Destination Currency",
