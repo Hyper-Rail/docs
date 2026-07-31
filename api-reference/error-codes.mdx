@@ -1,12 +1,12 @@
 ---
 title: Error Codes
 icon: radiation
-description: Encountered an error? This page explains Hyperrail API error codes, what they mean, and how to resolve them.
+description: Encountered an error? This page explains Hyperrails API error codes, what they mean, and how to resolve them.
 ---
 
-## Hyperrail API Response Codes
+## Hyperrails API Response Codes
 
-Hyperrail uses standard HTTP response codes to communicate the outcome of API requests. Always inspect both the **HTTP status code** and the **response body** to fully understand what happened.
+Hyperrails uses standard HTTP response codes to communicate the outcome of API requests. Always inspect both the **HTTP status code** and the **response body** to fully understand what happened.
 
 ### Success (2xx)
 
@@ -45,7 +45,7 @@ Hyperrail uses standard HTTP response codes to communicate the outcome of API re
 ### Server Errors (5xx)
 
 - **500, 502, 503, 504**  
-  These indicate internal server errors on Hyperrail’s infrastructure.  
+  These indicate internal server errors on Hyperrails’s infrastructure.  
   ✔️ Treat the outcome as inconclusive and retry later.  
   ✔️ If persistent, contact support.
 
@@ -53,7 +53,7 @@ Hyperrail uses standard HTTP response codes to communicate the outcome of API re
 
 ## Error Handling Best Practices
 
-Beyond HTTP status codes, Hyperrail responses may include structured error objects with additional context such as error type, message, and resolution hints.
+Beyond HTTP status codes, Hyperrails responses may include structured error objects with additional context such as error type, message, and resolution hints.
 
 ### General Guidelines
 
@@ -74,8 +74,8 @@ Beyond HTTP status codes, Hyperrail responses may include structured error objec
 | **Permission Error** | API key lacks the required permissions. | Use a key with appropriate access or update role permissions. |
 | **Rate Limit Error** | Too many requests sent within a short timeframe. | Implement retries with backoff or request higher limits. |
 | **Connection Error** | Temporary network or connectivity issue. | Retry safely and rely on webhooks for final status. |
-| **Server Error** | Internal error on Hyperrail’s side. | Retry later and monitor webhook events. |
+| **Server Error** | Internal error on Hyperrails’s side. | Retry later and monitor webhook events. |
 
 ---
 
-By properly handling these errors and relying on webhooks for final state confirmation, you can build **resilient, fault-tolerant integrations** with the Hyperrail API.
+By properly handling these errors and relying on webhooks for final state confirmation, you can build **resilient, fault-tolerant integrations** with the Hyperrails API.
