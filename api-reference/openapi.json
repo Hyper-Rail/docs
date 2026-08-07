@@ -180,6 +180,49 @@
         }
       }
     },
+    "/wallets/main/balances": {
+      "get": {
+        "description": "Returns stablecoin balance for the main wallet",
+        "parameters": [
+          {
+            "name": "x-service-source",
+            "in": "header",
+            "required": true,
+            "description": "Identifies the calling service",
+            "schema": {
+              "type": "string",
+              "default": "HyperRails",
+              "example": "HyperRails"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns stablecoin balances for the main wallet",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StablecoinBalanceResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
 
 "/partners/payouts": {
   "post": {
@@ -2754,6 +2797,53 @@
           "tag": {
             "description": "Tag to specify the type",
             "type": "string"
+          }
+        }
+      },
+      "StablecoinBalanceResponse": {
+        "type": "object",
+        "properties": {
+          "walletId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "totalBalance": {
+            "type": "number",
+            "format": "float",
+            "example": 200.0
+          },
+          "totalAvailableBalance": {
+            "type": "number",
+            "format": "float",
+            "example": 200.0
+          },
+          "balances": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "accountId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "currency": {
+                  "type": "string",
+                  "example": "USDT"
+                },
+                "totalBalance": {
+                  "type": "number",
+                  "format": "float",
+                  "example": 200.0
+                },
+                "totalAvailableBalance": {
+                  "type": "number",
+                  "format": "float",
+                  "example": 200.0
+                }
+              }
+            }
           }
         }
       },
