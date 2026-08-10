@@ -103,7 +103,8 @@
             "pages": [
               "api-reference/hyperrail-wallet/get",
               "api-reference/hyperrail-wallet/get-balance-id",
-              "api-reference/hyperrail-wallet/get-balance-currency"
+              "api-reference/hyperrail-wallet/get-balance-currency",
+              "api-reference/hyperrail-wallet/get-stablecoin-balance"
             ]
 
           },
