@@ -25,13 +25,48 @@ Follow these steps to set up your webhook:
 
 ## Securing Webhooks: Trust, but Verify
 
-To protect your system from malicious requests and ensure the data is authentically from HyperRails, always validate the webhook signature and use HTTPS.
+Every webhook request includes:
 
-Every webhook request includes the following headers:
+* `x-hyperrails-webhook-id` – Unique identifier for the event.
+* `x-hyperrails-webhook-timestamp` – Unix timestamp (seconds) when the webhook was signed.
+* `x-hyperrails-signature` – HMAC-SHA512 signature, hex-encoded.
 
-- `x-hyperrails-webhook-id` – A unique identifier for the webhook event.
-- `x-hyperrails-webhook-timestamp` – The timestamp when the webhook was signed.
-- `x-hyperrails-signature` – An HMAC SHA-512 signature generated from the payload.
+### Signed content
+
+The signature is computed over the following string (fields joined by a
+single period, no extra whitespace): {webhook_id}.{timestamp}.{raw_request_body} 
+using your **Webhook Secret Key** (found at **Dashboard → Credentials → API
+Keys → Webhooks**) as the HMAC key. Test and live mode each have their own
+webhook secret and webhook URL — configure both independently if you run
+staging and production listeners.
+
+### Verification example (Node.js)
+
+```javascript
+const crypto = require('crypto');
+
+function verifyWebhook(payload, headers, webhookSecret) {
+  const signedContent = `${headers['x-hyperrails-webhook-id']}.${headers['x-hyperrails-webhook-timestamp']}.${payload}`;
+  const expectedSignature = crypto
+    .createHmac('sha512', webhookSecret)
+    .update(signedContent)
+    .digest('hex');
+
+  const timestampAgeSeconds = Math.abs(Date.now() / 1000 - Number(headers['x-hyperrails-webhook-timestamp']));
+  if (timestampAgeSeconds > 300) return false; // reject if older than 5 minutes
+
+  return crypto.timingSafeEqual(
+    Buffer.from(expectedSignature),
+    Buffer.from(headers['x-hyperrails-signature'])
+  );
+}
+```
+
+<Warning>
+  Use a constant-time comparison (`crypto.timingSafeEqual` or equivalent) —
+  never `===` — to avoid timing attacks.
+</Warning>
+
 
 When receiving a webhook:
 

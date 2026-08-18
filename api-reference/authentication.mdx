@@ -3,27 +3,60 @@ title: 'Authentication'
 icon: 'lock'
 description: 'Secure authentication is crucial for protecting your account and ensuring authorized access. All API requests require authentication with your secret key, kindly include it in the <span style={{color: "red"}}>`Authorization`</span> header for secure access.'
 ---
-### API Key Management
-HyperRails provides two types of API keys for different use cases: public keys and secret keys. You can manage these keys from your HyperRails dashboard.
+# Authentication
 
-- **Secret Keys (sk_test_ for test mode, sk_live_ for live mode)**: Used exclusively for server-to-server communications and backend integrations. These keys grant full access to your account and must be kept confidential. Never share your secret keys in public locations like code repositories (GitHub), client-side code, or other unsecured environments.
+> All API requests require authentication with your secret key, included in
+> the `Authorization` header. Requests must also include a service-identifying
+> header. Missing either will result in a `401` or `400` response.
 
-### Authentication Process
+## Base URL
+https://api.hyperrails.io/api/v1
 
-All server-side API requests to HyperRails must be authenticated using your secret key. Here's how to authenticate:
-- **Include your secret key** in the Authorization header of every request using the Bearer token format.
-- **HTTPS is mandatory**: All API requests must be made over HTTPS for secure communication. Requests made over plain HTTP will fail.
-- **Authentication Failure**: Calls made without proper authentication will result in a 401 Unauthorized status code response from the API.
+There is a single base URL for both test and live mode — the **key prefix**
+(`sk_test_` vs `sk_live_`) determines which environment your request runs
+against, not the URL.
 
-Secure your API requests by including an Authorization header in the following format:
-<p style={{color: 'red'}}>`Authorization: Bearer SECRET_KEY`</p>
+## API Key Management
 
-```yaml
+HyperRails issues three distinct credential types from
+**Dashboard → Credentials → API Keys**. Each has a separate value for test
+and live mode.
+
+| Credential | Prefix / Format | Used for | Where to send it |
+|---|---|---|---|
+| **Public Key** | `pk_test_…` / `pk_live_…` | Identifying your integration in client-side or read-only contexts (e.g. widget embeds, rate display). Safe to expose in frontend code. | Not sent as a header — used only where explicitly documented (e.g. client-side widgets). |
+| **Secret Key** | `sk_test_…` / `sk_live_…` | All server-to-server API calls. Grants full account access. **Never expose client-side.** | `Authorization: Bearer sk_live_...` header |
+| **Encryption Key** | `enc_test_…` / `enc_live_…` | Encrypting sensitive fields (e.g. bank account numbers, blockchain destination addresses) before sending them in request bodies that require field-level encryption. See [Field Encryption](/api-reference/field-encryption). | Used locally in your integration to encrypt payload fields — never transmitted as a header. |
+
+## Required Headers
+
+Every request must include:
+
+```yaml theme={"dark"}
 {
-    "Authorization": "Bearer sk_test_6988f8d1539a48ab945764ec361fa3eb"
+  "Authorization": "Bearer sk_test_6988f8d1539a48ab945764ec361fa3eb",
+  "Content-Type": "application/json",
+  "x-service-source": "YourAppName"
 }
 ```
 
-To test functionalities specific to your account, you'll need to replace this sample key with your own.
+| Header | Required | Description |
+|---|---|---|
+| `Authorization` | Yes | `Bearer <secret_key>`. |
+| `Content-Type` | Yes | Must be `application/json` (except file-upload endpoints, which use `multipart/form-data`). |
+| `x-service-source` | Yes | A free-text identifier for the calling service/application. Requests without this header are rejected with `400 Bad Request`. |
+
+## Authentication Process
+
+* **HTTPS is mandatory.** Requests over plain HTTP are rejected.
+* **Test vs. live mode** is determined entirely by which secret key prefix you use — `sk_test_` keys only affect test-mode data, `sk_live_` keys only affect live data.
+* **Authentication failure** returns `401 Unauthorized`.
+* **Missing `x-service-source`** returns `400 Bad Request`.
+
+## Rotating Keys
+
+You can regenerate any key from **Dashboard → Credentials → API Keys →
+Generate new key**. Regenerating a key immediately invalidates the previous
+one — update all integrations before rotating in production.
 
 By following these guidelines, you can ensure secure and authorized access while integrating with HyperRails’s APIs.

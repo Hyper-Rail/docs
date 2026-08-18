@@ -1,0 +1,25 @@
+---
+title: Rate Limits
+description: HyperRails rate-limits API requests per secret key to protect platform stability.
+icon: letter-boxd
+---
+
+# Rate Limits
+
+> HyperRails rate-limits API requests per secret key to protect platform
+> stability.
+
+| Scope | Limit |
+|---|---|
+| Standard endpoints | *100 requests/minute* |
+| `GET /partners/marketplace/rates/stream` (SSE) | *5 concurrent connections* |
+| `POST /transfers/bulk` | *10 requests/minute — file size limits also apply* |
+
+Every response includes:
+
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 87
+X-RateLimit-Reset: 1730000000
+
+On `429 Too Many Requests`, back off using the `Retry-After` header (seconds)
+before retrying. Do not retry immediately in a loop.

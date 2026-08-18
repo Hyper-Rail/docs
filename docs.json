@@ -40,6 +40,13 @@
             ]
           },
           {
+            "group": "Supported Currencies",
+            "icon": "money-bill",
+            "pages": [
+              "documentation/supported-currencies"
+            ]
+          },
+          {
             "group": "Testing",
             "icon": "vial",
             "pages": [
@@ -56,8 +63,13 @@
               "documentation/features/currency-exchange-fiat",
               "documentation/features/team-members",
               "documentation/features/account-management",
+              "documentation/features/profile-settings",
+              "documentation/features/merchant-settings",
+              "documentation/features/notifications",
               "documentation/features/fiat-payout-process",
-              "documentation/features/payout-structure"
+              "documentation/features/payout-structure",
+              "documentation/features/rate-limits",
+              "documentation/features/audit-logs"
             ]
           },
           {
@@ -147,6 +159,22 @@
               "api-reference/dynamic-accounts/create-dynamic-account",
               "api-reference/dynamic-accounts/dynamic-account-id",
               "api-reference/dynamic-accounts/list-dynamic-account"
+            ]
+          },
+          {
+            "group": "Trade Pairs",
+            "pages": [
+              "api-reference/trade-pairs/list-trade-pairs",
+              "api-reference/trade-pairs/create-trade-pair",
+              "api-reference/trade-pairs/get-trade-pair",
+              "api-reference/trade-pairs/get-supported-currencies",
+              "api-reference/trade-pairs/get-supported-chains"
+            ]
+          },
+          {
+            "group": "Marketplace",
+            "pages": [
+              "api-reference/hyperrail-quote/list-marketplace-listings"
             ]
           }
 
