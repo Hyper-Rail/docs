@@ -1,0 +1,39 @@
+---
+title: Supported Currencies & Networks
+description: The list of what HyperRails supports.
+icon: money-bills
+---
+
+# Supported Currencies & Networks
+
+> The authoritative, always-current list of what HyperRails supports. If
+> this page and any other page disagree, this page is correct — dashboard
+> currency-pair tickers may include preview/coming-soon pairs.
+
+## Fiat
+Wallet funding and payouts: **NGN**, **GHS**, **KES**, **ZAR**, **XOF**, **USD**, **GBP** and **EUR**.
+Fiat-to-fiat exchange (via stablecoin bridging): **NGN**, **GHS**, **KES**, **ZAR**, **XOF**, **USD**, **GBP** and **EUR**.
+Additional corridors and currencies are in controlled rollout — reach out to our support team for any requests.
+
+## Stablecoins & Crypto
+**USDT**, **USDC**.
+
+## Networks
+**Base**, **Ethereum**, **Polygon**, **Stellar**.
+
+## Check support programmatically
+Don't hardcode this list in production integrations — query it instead:
+
+```bash
+curl https://api.hyperrails.io/api/v1/trade-pairs/supported/currencies/fiat \
+  -H "Authorization: Bearer sk_live_..." \
+  -H "x-service-source: YourAppName"
+
+curl https://api.hyperrails.io/api/v1/trade-pairs/supported/currencies/stables \
+  -H "Authorization: Bearer sk_live_..." \
+  -H "x-service-source: YourAppName"
+
+curl https://api.hyperrails.io/api/v1/trade-pairs/supported/chain \
+  -H "Authorization: Bearer sk_live_..." \
+  -H "x-service-source: YourAppName"
+```

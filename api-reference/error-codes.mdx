@@ -78,4 +78,25 @@ Beyond HTTP status codes, Hyperrails responses may include structured error obje
 
 ---
 
+## Error Code Reference
+
+Every 4xx/5xx response body includes a machine-readable `code` field.
+Branch on `code`, not on the human-readable `message` (message text may
+change; code will not).
+
+| `code` | HTTP status | Meaning | Recommended action |
+|---|---|---|---|
+| `INSUFFICIENT_BALANCE` | 400 | Account/wallet balance is below the requested amount plus fees. | Check balance via `GET /partners/balances` before retrying. |
+| `INVALID_BANK_CODE` | 400 | Bank code doesn't match a supported bank for the currency. | Validate against `GET /transfers/banks/{currency}`. |
+| `INVALID_ACCOUNT_NUMBER` | 400 | Account number fails format validation for the country. | Re-check format (10 digits for NGN). |
+| `NAME_MISMATCH` | 400 | Provided account name doesn't match bank records. | Re-resolve via `GET /transfers/resolve-account` and use the returned name. |
+| `DUPLICATE_REFERENCE` | 400 | The idempotency `reference` was already used. | Reuse is safe — fetch the original result instead of retrying with a new reference. |
+| `INVALID_ADDRESS` | 400 | Destination blockchain address is malformed. | Validate as a checksummed EVM address before sending. |
+| `INVALID_CURRENCY_PAIR` | 400 | Requested currency pair isn't supported. | Check [Supported Currencies](/documentation/supported-currencies). |
+| `AMOUNT_TOO_LOW` | 422 | Amount is below the endpoint's minimum. | See per-endpoint minimums in the API reference. |
+| `WALLET_NOT_FOUND` | 404 | No active wallet exists for this partner/currency. | Create or fund a wallet first. |
+| `RATE_UNAVAILABLE` | — (stream error event) | No liquidity provider could quote this pair right now. | Retry, or fall back to `GET /partners/rates`. |
+| `SERVICE_UNAVAILABLE` | 503 | Upstream bank/chain provider is temporarily down. | Retry with backoff; rely on webhooks for final state. |
+
+
 By properly handling these errors and relying on webhooks for final state confirmation, you can build **resilient, fault-tolerant integrations** with the Hyperrails API.
