@@ -352,6 +352,120 @@
   }
 },
 
+"/partners/payouts/{reference}":{
+"get": {
+    "summary": "Get Payout Status",
+    "description": "Retrieves the status and details of a payout using the reference provided when it was created.",
+    "tags": ["Withdrawals"],
+    "parameters": [
+      {
+        "name": "reference",
+        "in": "path",
+        "required": true,
+        "description": "The unique reference assigned to the payout when it was created.",
+        "schema": {
+          "type": "string"
+        },
+        "example": "ref-lowamount"
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Payout details retrieved successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/WithdrawalResponse"
+            },
+            "examples": {
+              "failedPayout": {
+                "summary": "Failed payout",
+                "value": {
+                  "reference": "ref-lowamount",
+                  "hyperrailReference": "HPR-TRSF-dde75c6f4f3f4fd79e8fd734942ebe99",
+                  "amount": 0.88,
+                  "fee": 0.0000,
+                  "currency": "GHS",
+                  "destination": {
+                    "accountNumber": "7030012128907",
+                    "accountName": "Jane Doe",
+                    "bankCode": "SPB-45633",
+                    "bankName": "Stanbic Bank"
+                  },
+                  "narration": "Transfer",
+                  "status": "failed"
+                }
+              },
+              "processingPayout": {
+                "summary": "Processing payout",
+                "value": {
+                  "reference": "payout-001",
+                  "hyperrailReference": "HPR-TRSF-3a1b2c3d4e5f",
+                  "amount": 10000,
+                  "fee": 50,
+                  "currency": "NGN",
+                  "destination": {
+                    "accountNumber": "0123456789",
+                    "accountName": "Jane Doe",
+                    "bankCode": "058",
+                    "branchCode": "001",
+                    "bankName": "GTBank"
+                  },
+                  "narration": "Vendor payout April",
+                  "status": "processing"
+                }
+              },
+              "successfulPayout": {
+                "summary": "Successful payout",
+                "value": {
+                  "reference": "payout-002",
+                  "hyperrailReference": "HPR-TRSF-9f8e7d6c5b4a",
+                  "amount": 50000,
+                  "fee": 250,
+                  "currency": "GHS",
+                  "destination": {
+                    "accountNumber": "098765",
+                    "accountName": "John Smith",
+                    "bankCode": "030100",
+                    "branchCode": "001",
+                    "bankName": "Ecobank"
+                  },
+                  "narration": "Salary payment",
+                  "status": "successful"
+                }
+              }
+            }
+          }
+        }
+      },
+      "401": {
+        "description": "Unauthorized - Invalid or missing authentication token",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "Not found - No payout exists with the given reference",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "code": "PAYOUT_NOT_FOUND",
+              "message": "No payout found with reference 'ref-lowamount'"
+            }
+          }
+        }
+      }
+    }
+  }
+},
+
     "/partners/marketplace/quote": {
       "post": {
         "summary": "Create Multi-Provider Quote",

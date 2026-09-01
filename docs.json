@@ -148,6 +148,7 @@
             "pages": [
               "api-reference/payout/withdrawal",
               "api-reference/payout/wallet-payout",
+              "api-reference/payout/payout-status",
                "api-reference/payout/list-banks",
                "api-reference/payout/resolve-account"
             ]
@@ -164,17 +165,20 @@
           {
             "group": "Trade Pairs",
             "pages": [
-              "api-reference/trade-pairs/list-trade-pairs",
-              "api-reference/trade-pairs/create-trade-pair",
-              "api-reference/trade-pairs/get-trade-pair",
-              "api-reference/trade-pairs/get-supported-currencies",
-              "api-reference/trade-pairs/get-supported-chains"
+              "api-reference/trade-pair/create-trade",
+              "api-reference/trade-pair/get-trade",
+              "api-reference/trade-pair/get-trade-id",
+              "api-reference/trade-pair/get-trade-currency",
+              "api-reference/trade-pair/get-supported-stable-currency",
+              "api-reference/trade-pair/get-supported-trade-currency",
+              "api-reference/trade-pair/get-supported-fiat-currency",
+              "api-reference/trade-pair/get-supported-chain"
             ]
           },
           {
             "group": "Marketplace",
             "pages": [
-              "api-reference/hyperrail-quote/list-marketplace-listings"
+              "api-reference/listings/liquidity-providers"
             ]
           }
 
