@@ -135,8 +135,12 @@
               "api-reference/hyperrail-quote/create-express-quote",
               "api-reference/hyperrail-quote/create-payment-intent",
               "api-reference/hyperrail-quote/accept-quote",
+              "api-reference/hyperrail-quote/get-mmo-currencies",
+              "api-reference/hyperrail-quote/get-mmo-providers",
+              "api-reference/hyperrail-quote/get-order-status",
               "api-reference/hyperrail-quote/get-quote-id",
               "api-reference/hyperrail-quote/get-complete-quote-id",
+              "api-reference/hyperrail-quote/authorize-quote-payment",
               "api-reference/hyperrail-quote/edit-quote",
               "api-reference/hyperrail-quote/cancel-quote",
               "api-reference/hyperrail-quote/delete-quote-item"

@@ -838,12 +838,311 @@
     }
   }
 },
-
-
+"/partners/marketplace/mobile-money/currencies": {
+  "get": {
+    "summary": "List Mobile Money Currencies",
+    "description": "Returns the currencies supported for mobile money payments, along with the countries each currency is available in.",
+    "tags": ["Marketplace"],
+    "responses": {
+      "200": {
+        "description": "Currencies retrieved successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "currency": {
+                    "type": "string",
+                    "description": "ISO currency code.",
+                    "example": "XOF"
+                  },
+                  "countryCodes": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "ISO country codes where this currency is supported for mobile money.",
+                    "example": ["CI", "SN"]
+                  }
+                }
+              }
+            },
+            "example": [
+              { "currency": "XOF", "countryCodes": ["CI", "SN"] },
+              { "currency": "GHS", "countryCodes": ["GH"] }
+            ]
+          }
+        }
+      },
+      "401": {
+        "description": "Unauthorized - Invalid or missing authentication token",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
+      }
+    }
+  }
+},
+"/partners/marketplace/mobile-money/providers": {
+  "get": {
+    "summary": "List Mobile Money Providers",
+    "description": "Returns the mobile money providers available for a given currency and country.",
+    "tags": ["Marketplace"],
+    "parameters": [
+      {
+        "name": "currency",
+        "in": "query",
+        "required": true,
+        "description": "ISO currency code to filter providers by.",
+        "schema": {
+          "type": "string",
+          "example": "XOF"
+        }
+      },
+      {
+        "name": "countryCode",
+        "in": "query",
+        "required": false,
+        "description": "ISO country code. Required when the given currency is supported in more than one country.",
+        "schema": {
+          "type": "string",
+          "example": "CI"
+        }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Providers retrieved successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "description": "Mobile money provider code.",
+                    "example": "MTN_CI"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Human-readable provider name.",
+                    "example": "MTN Cote d'Ivoire"
+                  }
+                }
+              }
+            },
+            "example": [
+              { "code": "MTN_CI", "name": "MTN Cote d'Ivoire" },
+              { "code": "ORANGE_CI", "name": "Orange Money CI" }
+            ]
+          }
+        }
+      },
+      "400": {
+        "description": "Bad request - countryCode required but missing",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" },
+            "example": {
+              "code": "COUNTRY_CODE_REQUIRED",
+              "message": "countryCode is required because 'XOF' is supported in more than one country"
+            }
+          }
+        }
+      },
+      "401": {
+        "description": "Unauthorized - Invalid or missing authentication token",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
+      }
+    }
+  }
+},
+"/partners/marketplace/quote/{id}/payment/status": {
+  "get": {
+    "summary": "Get Quote Payment Status",
+    "description": "Retrieves the current status of a quote, including mobile money payment progress if applicable.",
+    "tags": ["Marketplace"],
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "The unique quote identifier.",
+        "schema": {
+          "type": "string",
+          "format": "uuid",
+          "example": "9d1c5f6a-4b2e-4d31-9f7a-1c2b3d4e5f60"
+        }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Quote payment status retrieved successfully",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/QuoteResponse" },
+            "example": {
+              "quoteId": "9d1c5f6a-4b2e-4d31-9f7a-1c2b3d4e5f60",
+              "status": "awaiting_payment",
+              "source": "XOF",
+              "destination": "USDT",
+              "amount": "20000",
+              "totalSourceAmount": "12250000",
+              "totalDestinationAmount": "20000",
+              "fee": "1500",
+              "mode": "test",
+              "ttl": 780,
+              "externalReference": "cli_be2828cf-5004-4694-8a79-47538573985b",
+              "metadata": {
+                "mobileMoneyPayIn": {
+                  "provider": "MTN_CI",
+                  "phoneNumber": "2250700000000",
+                  "attemptReference": "mm_5f2a91c4e7b8",
+                  "authorizationMode": "otp",
+                  "status": "SUCCESSFUL",
+                  "message": "Payment received",
+                  "expiresAt": "2026-09-15T12:34:56Z"
+                }
+              }
+            }
+          }
+        }
+      },
+      "401": {
+        "description": "Unauthorized - Invalid or missing authentication token",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
+      },
+      "404": {
+        "description": "Not found - No quote exists with the given id",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" },
+            "example": {
+              "code": "QUOTE_NOT_FOUND",
+              "message": "No quote found with id '9d1c5f6a-4b2e-4d31-9f7a-1c2b3d4e5f60'"
+            }
+          }
+        }
+      }
+    }
+  }
+},
+"/partners/marketplace/quote/{id}/payment/authorize": {
+  "put": {
+    "summary": "Authorize Quote Payment",
+    "description": "Submits an OTP to authorize an in-progress mobile money payment. Only used for providers that send the payer a code after payment initiation (post-auth). For providers where the payer receives the code before paying, pass the OTP directly in the accept-quote request instead.",
+    "tags": ["Marketplace"],
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "The unique quote identifier.",
+        "schema": {
+          "type": "string",
+          "format": "uuid",
+          "example": "9d1c5f6a-4b2e-4d31-9f7a-1c2b3d4e5f60"
+        }
+      }
+    ],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "otp": {
+                "type": "string",
+                "description": "The one-time PIN sent to the payer to authorize the payment.",
+                "example": "123456"
+              }
+            },
+            "required": ["otp"]
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Payment authorized and processing",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/QuoteResponse" },
+            "example": {
+              "quoteId": "9d1c5f6a-4b2e-4d31-9f7a-1c2b3d4e5f60",
+              "status": "awaiting_payment",
+              "source": "XOF",
+              "destination": "USDT",
+              "amount": "20000",
+              "totalSourceAmount": "12250000",
+              "totalDestinationAmount": "20000",
+              "fee": "1500",
+              "mode": "test",
+              "ttl": 720,
+              "externalReference": "cli_be2828cf-5004-4694-8a79-47538573985b",
+              "metadata": {
+                "mobileMoneyPayIn": {
+                  "provider": "MTN_CI",
+                  "phoneNumber": "2250700000000",
+                  "attemptReference": "mm_5f2a91c4e7b8",
+                  "authorizationMode": "otp",
+                  "status": "INPROGRESS",
+                  "message": "Payment is being processed",
+                  "expiresAt": "2026-09-15T12:34:56Z"
+                }
+              }
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "Bad request - Invalid or expired OTP",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" },
+            "example": {
+              "code": "INVALID_OTP",
+              "message": "The OTP provided is invalid or has expired"
+            }
+          }
+        }
+      },
+      "401": {
+        "description": "Unauthorized - Invalid or missing authentication token",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
+      },
+      "404": {
+        "description": "Not found - No quote exists with the given id",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
+      }
+    }
+  }
+},
     "/partners/marketplace/quote/{id}/accept": {
   "put": {
     "summary": "Accept Marketplace Quote",
-    "description": "Finalize and accept a specific quote by providing the settlement destination details (Bank or Blockchain).",
+    "description": "Finalize and accept a specific quote by providing the settlement destination details (Bank or Blockchain) and, optionally, a mobile money payment method to fund the trade.",
     "parameters": [
       {
         "name": "id",
@@ -858,25 +1157,95 @@
       }
     ],
     "requestBody": {
-  "required": true, 
-  "content": {
-    "application/json": {
-      "schema": {
-        "type": "object",
-        "properties": {
-          "accountId": {
-            "type": "string",
-            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            "description": "The unique pool account identifier of the order to be accepted."
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "accountId": {
+                "type": "string",
+                "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                "description": "The unique pool account identifier of the order to be accepted."
+              },
+              "balanceId": {
+                "type": "string",
+                "format": "uuid",
+                "description": "The unique balance identifier to fund or settle the trade against."
+              },
+              "destination": {
+                "type": "object",
+                "description": "Settlement destination details for the trade (Bank or Blockchain). See destination schema for bank/blockchain-specific fields.",
+                "$ref": "#/components/schemas/QuoteDestination"
+              },
+              "payment": {
+                "type": "object",
+                "description": "Funds the trade by mobile money. If omitted, the quote is funded by virtual account (default behavior).",
+                "properties": {
+                  "channel": {
+                    "type": "string",
+                    "enum": ["mobile_money"],
+                    "description": "The payment channel used to fund the trade.",
+                    "example": "mobile_money"
+                  },
+                  "countryCode": {
+                    "type": "string",
+                    "description": "ISO country code for the mobile money payment.",
+                    "example": "CI"
+                  },
+                  "mobileMoney": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "string",
+                        "description": "Mobile money provider code.",
+                        "example": "MTN_CI"
+                      },
+                      "phoneNumber": {
+                        "type": "string",
+                        "description": "Payer's mobile money phone number, including country code.",
+                        "example": "2250700000000"
+                      },
+                      "otp": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "One-time PIN for providers where the payer receives a code before paying. Only applicable for pre-auth (OTP-first) providers; omit or set null otherwise. For providers that send a code after initiation, use the authorize endpoint instead."
+                      }
+                    },
+                    "required": ["code", "phoneNumber"]
+                  }
+                },
+                "required": ["channel", "countryCode", "mobileMoney"]
+              }
+            },
+            "required": ["accountId"]
+          },
+          "examples": {
+            "poolAccountOnly": {
+              "summary": "Accept via virtual account (default)",
+              "value": {
+                "accountId": "0f0f2b1c-6d5f-4a4f-8f1e-2f3a4b5c6d7e"
+              }
+            },
+            "mobileMoneyPayment": {
+              "summary": "Accept and fund via mobile money",
+              "value": {
+                "accountId": "0f0f2b1c-6d5f-4a4f-8f1e-2f3a4b5c6d7e",
+                "payment": {
+                  "channel": "mobile_money",
+                  "countryCode": "CI",
+                  "mobileMoney": {
+                    "code": "MTN_CI",
+                    "phoneNumber": "2250700000000",
+                    "otp": null
+                  }
+                }
+              }
+            }
           }
-        },
-        "required": [
-          "accountId"
-        ]
+        }
       }
-    }
-  }
-},
+    },
     "responses": {
       "200": {
         "description": "Quote accepted successfully",
@@ -884,6 +1253,35 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/QuoteResponse"
+            },
+            "examples": {
+              "awaitingMobileMoneyPayment": {
+                "summary": "Awaiting mobile money payment (OTP-first provider)",
+                "value": {
+                  "quoteId": "9d1c5f6a-4b2e-4d31-9f7a-1c2b3d4e5f60",
+                  "status": "awaiting_payment",
+                  "source": "XOF",
+                  "destination": "USDT",
+                  "amount": "20000",
+                  "totalSourceAmount": "12250000",
+                  "totalDestinationAmount": "20000",
+                  "fee": "1500",
+                  "mode": "test",
+                  "ttl": 900,
+                  "externalReference": "cli_be2828cf-5004-4694-8a79-47538573985b",
+                  "metadata": {
+                    "mobileMoneyPayIn": {
+                      "provider": "MTN_CI",
+                      "phoneNumber": "2250700000000",
+                      "attemptReference": "mm_5f2a91c4e7b8",
+                      "authorizationMode": "otp",
+                      "status": "INPROGRESS",
+                      "message": "Enter the code sent to your phone",
+                      "expiresAt": "2026-09-15T12:34:56Z"
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -901,8 +1299,6 @@
     }
   }
 },
-
-
     "/partners/marketplace/quote/{id}": {
   "get": {
     "summary": "Retrieve Quote Details",
@@ -1861,8 +2257,7 @@
           }
         }
       }
-    }
-  },
+    },
   "components": {
     "schemas": {
       "StablecoinBalanceResponse": {
@@ -3163,4 +3558,5 @@
       }
     }
   }
+}
 }

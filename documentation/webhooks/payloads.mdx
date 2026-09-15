@@ -11,15 +11,53 @@ icon: "money-bill-wave"
 | **Order Successful**   | `order.successful`    | Triggered when an order is successfully processed.                                             |
 | **Quote Expired**       | `quote.expired`        | Occurs when a quote expires due to an unfulfilled order and time to live expiration.    |
 
-## **Payload Example Structure**
+## **Payload Example Structure For Both Wallet and Fiat Deposit**
 
-#### ***Order Successful***
+#### ***Order Awaiting Payment***
+
+```yaml
+{
+  "data": {
+    "quote_id": "f7ac55ac-03f3-495b-90e2-a1e69c302f9c",
+    "merchant_id": "178tgf9c-574e-4d07-83d1-7dce8a5bc90m",
+    "source_currency": "GHS",
+    "destination_currency": "USDC",
+    "chain": "stellar",
+    "reference": "HPR-4f6ec73d16144f369b68df7d27b77ha3",
+    "status": "awaiting_payment",
+    "mode": "live",
+    "amount": 1,
+    "receive_amount": 0.08438819,
+    "total_amount": 1,
+    "created_at": "2026-09-01T18:38:57.206337Z",
+    "rate": 11.85,
+    "quote_type": "quote",
+    "recipient": {
+      "type": "spotflow",
+      "account_number": "347c4ac2-85cd-47f2-9e3e-580199f61h2h"
+    },
+    "payment_instruction": {
+      "type": "bank",
+      "account_name": "HyperRails Test",
+      "account_number": "7001000128909",
+      "bank_name": "Affinity Bank",
+      "reference": "ref-d5e7c9fa8f2843e39b624c49e428692c"
+    }
+  },
+  "event": "order.awaiting_payment",
+  "id": "1cbbff3e-8783-4e9f-9caa-4494d064123b",
+  "timestamp": "2026-09-01T18:39:08.705106Z"
+}
+```
+
+
+#### ***Order Successful For Fiat***
 
 ```yaml
 {
   "data": {
     "quote_id": "1065af43-b784-4315-a3dd-d94e710395bc",
-    "merchant_id": "e7f46e55-240b-4337-b16e-6cbf6760cb70",
+    "merchant_id": "e7f46e55-240b-4337-b16e-6cbf6760nm80",
     "source_currency": "GHS",
     "name": null,
     "destination_currency": "NGN",
@@ -41,6 +79,115 @@ icon: "money-bill-wave"
     }
   },
   "event": "order.successful"
+}
+```
+
+#### ***Order Successful For Wallet***
+
+```yaml
+{
+  "data": {
+    "quote_id": "e22ce7d7-d7ae-4261-82de-77af1142111d",
+    "merchant_id": "136fff9c-574e-4d07-83d1-7dce8a5bc70f",
+    "source_currency": "NGN",
+    "destination_currency": "USDC",
+    "chain": "stellar",
+    "reference": "HPR-efeb5697d21f4ec5b3ff3b2b41e09ib3",
+    "status": "successful",
+    "mode": "live",
+    "amount": 1500,
+    "receive_amount": 1.0601,
+    "total_amount": 1500,
+    "created_at": "2026-09-03T11:22:57.778843Z",
+    "completed_at": "2026-09-03T11:25:07.801798787Z",
+    "rate": 1415,
+    "quote_type": "express",
+    "recipient": {
+      "type": "spotflow",
+      "account_number": "347c4ac2-85cd-47f2-9e3e-580199f61l9y"
+    },
+    "provider_volumes": [
+      {
+        "provider_id": "0li6f23e-8043-43cb-8468-b2837d453b03",
+        "source_amount": 1500,
+        "destination_amount": 1.06007067,
+        "rate": 1415
+      }
+    ]
+  },
+  "event": "order.successful",
+  "id": "def92d82-d2a6-4102-ab3d-3edfa670150e",
+  "timestamp": "2026-09-03T11:25:08.031065Z"
+}
+```
+
+#### ***Order Failed***
+
+```yaml
+{
+  "data": {
+    "quote_id": "f39908a0-b83b-406e-89f9-7cab5e8882c9",
+    "merchant_id": "899iff9c-574e-4d07-83d1-7dce8a5bc70f",
+    "source_currency": "NGN",
+    "name": null,
+    "destination_currency": "GHS",
+    "chain": null,
+    "reference": "HPR-ffcce225cedd40058f909a529fcd64b8",
+    "status": "failed",
+    "mode": "live",
+    "amount": 128.4,
+    "receive_amount": 1,
+    "total_amount": 128.4,
+    "created_at": "2026-09-01T18:10:33.579508Z",
+    "expires_at": "2026-09-01T19:12:23.001088547Z",
+    "rate": 128.4,
+    "quote_type": "quote",
+    "provider_volumes": [
+      {
+        "provider_id": "0c2c0020-04fe-480a-b13f-bf73112fa908",
+        "source_amount": 128.4,
+        "destination_amount": 1,
+        "rate": 128.4
+      }
+    ]
+  },
+  "event": "order.failed",
+  "id": "2ca2d64e-8bf2-4132-9582-1104e30d0bmn",
+  "timestamp": "2026-09-01T19:12:23.152103Z"
+}
+```
+
+#### ***Order Cancelled***
+
+```yaml
+{
+  "data": {
+    "quote_id": "a06b9024-33ac-40f5-b441-6b0556927f37",
+    "merchant_id": "890off9c-574e-4d07-83d1-7dce8a5bc70f",
+    "source_currency": "GHS",
+    "destination_currency": "USDC",
+    "chain": "stellar",
+    "reference": "HPR-386d34c93ac6472ab08c7ae593e5539l",
+    "status": "cancelled",
+    "mode": "live",
+    "amount": 2,
+    "receive_amount": 0.1688,
+    "total_amount": 2,
+    "created_at": "2026-09-02T14:11:32.241913Z",
+    "rate": 11.85,
+    "quote_type": "express",
+    "provider_volumes": [
+      {
+        "provider_id": "1dc6f23e-8043-43cb-8468-b2837d453m09",
+        "source_amount": 2,
+        "destination_amount": 0.16877637,
+        "rate": 11.85
+      }
+    ]
+  },
+  "event": "order.cancelled",
+  "id": "6ee9c706-fd7e-48b1-9123-35247338c780",
+  "timestamp": "2026-09-02T14:12:49.406905Z"
 }
 ```
 
@@ -67,5 +214,92 @@ icon: "money-bill-wave"
     "quote_type": "express"
   },
   "event": "quote.expired"
+}
+```
+
+#### ***Account Credit Successful (For FIAT)***
+
+```yaml
+{
+  "data": {
+    "account": {
+      "account_name": "HyperRails Test",
+      "account_number": "0211080908",
+      "id": "68352ea9-9ee6-4f5c-9f8f-158e688888h9"
+    },
+    "amount": 300,
+    "currency": "NGN",
+    "description": "MOBILE TRF TO FMB  SPHyperRails Test",
+    "fee": 0,
+    "hyperrail_reference": "HPR-CRDT-ec14d128ea524ded83defcd4d59edf56",
+    "id": "dd314bd1-6a62-4696-bd23-28b8837e34b5",
+    "merchant_id": "134vff9c-574e-4d07-83d1-7dce8a5bc70f",
+    "mode": "live",
+    "reference": "7efc5486-9632-4d11-8d34-3fd0a1a2538c",
+    "sender": {
+      "account_name": "John Doe",
+      "account_number": "0809660890",
+      "bank_name": "ACCESS BANK"
+    },
+    "source": "virtual_account",
+    "status": "successful",
+    "transaction_date": "2026-09-02T16:11:48.074Z",
+    "type": "credit"
+  },
+  "event": "account.credit_successful",
+  "id": "40c8a451-d547-472a-89ff-b0b03c9859080",
+  "timestamp": "2026-09-02T16:11:48.708674Z"
+}
+```
+
+
+#### ***Wallet Credit Successful (For Wallet/Chain Deposits)***
+
+```yaml
+{
+  "data": {
+    "asset": "usdc",
+    "chain": "stellar",
+    "narration": "Wallet deposit: 4.0 USDC on stellar",
+    "reference": "DEP-4f143b0c2fbf4043aeb456b64ee38mm9",
+    "wallet_id": "d0a444ef-1644-4e24-b960-c64940201907",
+    "total_fees": 0,
+    "source_address": "FC5LF63GRVIT5ZXXCXLPI3RX2YXKJQFZVBSAO6AUELN3YIMSWPD6Z8SG",
+    "wallet_address": "OIKQXTJ5HCKEHR45S3A7PVHZGIFKOGBRC5JGBCUUZ3XSVUCPQGE7HKPJ",
+    "credited_amount": 4,
+    "deposited_amount": 4,
+    "transaction_date": "2026-09-03T12:17:56.942Z",
+    "transaction_hash": "9e6126bcb5d6784a060ed49bdc265950d88fb7015b0983cf19d56b1f9949a1e6",
+    "hyperrail_reference": "HPR-CRP-c57078530b0645499fb52a403b955k93",
+    "transaction_explorer_url": "https://stellar.expert/explorer/public/tx/9e6126bcb5d6784a060ed49bdc265950d88fb7015b0983ki919d56b1f9949a9l0"
+  },
+  "event": "wallet.credit_successful",
+  "id": "1ba5f655-29b6-48ff-917e-a9e00ba659l9",
+  "timestamp": "2026-09-03T12:18:30Z"
+  }
+```
+
+#### ***Wallet Debit Successful (For Wallet/Chain Deposits)***
+
+```yaml
+{
+  "event": "wallet.debit_successful",
+  "id": "9l8h04d1-9a37-4c60-8f15-6d3c7b0e9a42",
+  "timestamp": "2026-09-02T14:22:12Z",
+  "data": {
+    "wallet_id": "6v4f21ea-51d8-4a63-9b07-1d2e6f4a8c33",
+    "reference": "HPR-PAY-44987",
+    "hyperrail_reference": "HR-2B7E05G1",
+    "debited_amount": 1200.000000,
+    "sent_amount": 1198.000000,
+    "total_fees": 2.000000,
+    "chain": "ethereum",
+    "asset": "usdt",
+    "wallet_address": "0x9f1a…5l78",
+    "transaction_hash": "0xa17c…19li",
+    "transaction_explorer_url": "https://etherscan.io/tx/0xa17c…19li",
+    "transaction_date": "2026-09-02T14:22:11.089Z",
+    "narration": "Wallet payout"
+  }
 }
 ```
