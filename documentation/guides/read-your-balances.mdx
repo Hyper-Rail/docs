@@ -1,0 +1,242 @@
+---
+title: Read Your Balances
+sidebarTitle: Read Your Balances
+description: Check your fiat balances across every currency, one currency at a time, or by account ID.
+icon: "scale-balanced"
+---
+
+Balances are the **fiat** side of your account — GHS, NGN, USD and the rest.
+Each currency has its own account with its own ID, and that ID is what trades
+and payouts settle into.
+
+This guide reads them four ways: everything at once, one account by ID, one
+currency by code, and the list of currencies you could hold.
+
+## What you'll need
+
+- A dashboard **JWT**. These endpoints do not take a secret key.
+
+<Warning>
+Balance endpoints authenticate with a **JWT**, not a secret key — the opposite
+of the marketplace endpoints. A secret key returns **401**:
+
+```json
+{
+  "errorCategory": "Unauthorized",
+  "errorCode": "AUTH_ERROR",
+  "errorMessage": "Invalid JWT token format.",
+  "traceId": "ab15e521-1f4f-4fa6-acb0-a55c1c31cf4b"
+}
+```
+
+The message says "format", which reads like a malformed token. It is not — it
+is the wrong *kind* of credential. A perfectly valid secret key produces this.
+</Warning>
+
+<Note>
+JWTs are short-lived — roughly 30 minutes. An expired one returns **401**
+`Expired Token`. Refresh and retry rather than treating it as a failure.
+</Note>
+
+## The shape of the flow
+
+<Steps>
+  <Step title="List every balance">
+    One call, every currency you hold.
+  </Step>
+  <Step title="Read one account by ID">
+    When you already have the account ID.
+  </Step>
+  <Step title="Read one currency by code">
+    When you know the currency but not the ID.
+  </Step>
+  <Step title="List the supported currencies">
+    What you could hold, not what you do hold.
+  </Step>
+</Steps>
+
+---
+
+## Step 1: List every balance
+
+```bash
+curl https://api.hyperrails.io/api/v1/balances \
+  -H "Authorization: Bearer YOUR_JWT"
+```
+
+The response is a **plain array**, not a paged object:
+
+```json
+[
+  { "accountId": "4e797fbe-7248-421c-bfe1-2a773ae80512", "availableBalance": 5000000000.00, "balance": 5000000000.00, "currency": "UGX" },
+  { "accountId": "d01d6101-b65d-4807-86f7-4638ca510718", "availableBalance": 5000000000.00, "balance": 5000000000.00, "currency": "KES" },
+  { "accountId": "bbbbb514-21b5-467a-a517-40a7ed346b1c", "availableBalance": 14997994788.91, "balance": 14997994788.91, "currency": "GHS" },
+  { "accountId": "0eb2090c-c046-4609-8fcc-0b7ef4dde30f", "availableBalance": 5000124342.75, "balance": 5000124342.75, "currency": "NGN" },
+  { "accountId": "175d783d-5b27-4952-bcce-de49b3b55f97", "availableBalance": 818999980000.00, "balance": 818999980000.00, "currency": "USD" },
+  { "accountId": "5a1f93b3-d367-47cf-a091-fc7f0e7a48a9", "availableBalance": 0.00, "balance": 0.00, "currency": "EUR" },
+  { "accountId": "ec74b73a-dec3-41fa-9e90-2922698f680c", "availableBalance": 0.00, "balance": 0.00, "currency": "CNY" }
+]
+```
+
+| Field | What it is |
+|---|---|
+| `accountId` | The account for that currency. Trades and payouts settle into this |
+| `currency` | ISO 4217 code, uppercase |
+| `balance` | Everything in the account |
+| `availableBalance` | What you can spend right now |
+
+<Note>
+There is no paging and no ordering you can rely on. The live response returned
+15 currencies in no obvious order — not alphabetical, not by balance. Find a
+currency by filtering on `currency`, never by array position.
+</Note>
+
+Accounts exist with a zero balance. EUR, EGP, GMD, GBP and CNY all came back at
+`0.00` — they are provisioned and ready, just empty. A zero balance is not a
+missing account.
+
+<Note>
+**Keep the `accountId`.** This is the single most useful value on the page.
+Accepting a trade requires the destination currency's `accountId` — see
+[Let a Buyer Pay for a Trade](/documentation/guides/buyer-pays-for-a-trade).
+</Note>
+
+---
+
+## Step 2: Read one account by ID
+
+```bash
+curl https://api.hyperrails.io/api/v1/balances/ACCOUNT_ID \
+  -H "Authorization: Bearer YOUR_JWT"
+```
+
+```json
+{
+  "accountId": "bbbbb514-21b5-467a-a517-40a7ed346b1c",
+  "availableBalance": 14997994788.91,
+  "balance": 14997994788.91,
+  "currency": "GHS"
+}
+```
+
+One object, same four fields as a row in Step 1. Use this to re-check a single
+account after a trade rather than pulling the whole list.
+
+---
+
+## Step 3: Read one currency by code
+
+If you know the currency but not the ID, look it up directly:
+
+```bash
+curl https://api.hyperrails.io/api/v1/balances/currency/GHS \
+  -H "Authorization: Bearer YOUR_JWT"
+```
+
+```json
+{
+  "accountId": "bbbbb514-21b5-467a-a517-40a7ed346b1c",
+  "availableBalance": 14997994788.91,
+  "balance": 14997994788.91,
+  "currency": "GHS"
+}
+```
+
+Identical to Step 2's response, including the same `accountId`. These are two
+routes to one account.
+
+<Note>
+The currency code is **case-insensitive**. `/balances/currency/ghs` and
+`/balances/currency/GHS` both work and both return `"currency": "GHS"` —
+the response always uppercases it.
+</Note>
+
+This is the more useful of the two in practice: you can hard-code `GHS` in your
+integration, while an `accountId` is specific to your account and differs
+between test and live.
+
+---
+
+## Step 4: List the supported currencies
+
+This is the catalogue — what HyperRails supports, not what you hold.
+
+```bash
+curl "https://api.hyperrails.io/api/v1/balances/currency-list?mode=test" \
+  -H "Authorization: Bearer YOUR_JWT"
+```
+
+<Warning>
+**`mode` is required**, and it is easy to miss — it is a query parameter with no
+default. Leaving it off returns **400**:
+
+```json
+{
+  "additionalDetails": { "parameter": "mode" },
+  "errorCategory": "SERVER_ERROR",
+  "errorCode": "missing_parameter",
+  "errorMessage": "Missing parameter mode",
+  "traceId": "11990c53736a4e97889372c59084983b"
+}
+```
+
+Pass `mode=test` or `mode=live`.
+</Warning>
+
+```json
+[
+  { "currency": "USD", "currencyType": "FIAT", "description": "United States Dollar", "mode": "test", "status": "ACTIVE" },
+  { "currency": "NGN", "currencyType": "FIAT", "description": "Nigerian Naira", "mode": "test", "status": "ACTIVE" },
+  { "currency": "GHS", "currencyType": "FIAT", "description": "Ghanaian Cedi", "mode": "test", "status": "ACTIVE" },
+  { "currency": "KES", "currencyType": "FIAT", "description": "Kenyan Shilling", "mode": "test", "status": "ACTIVE" },
+  { "currency": "XOF", "currencyType": "FIAT", "description": "West African CFA Franc", "mode": "test", "status": "ACTIVE" },
+  { "currency": "USDC", "currencyType": "CRYPTO", "description": "USD Coin", "mode": "test", "status": "ACTIVE" },
+  { "currency": "USDT", "currencyType": "CRYPTO", "description": "Tether", "mode": "test", "status": "ACTIVE" },
+  { "currency": "USDX", "currencyType": "CRYPTO", "description": "USD Stablecoins", "mode": "test", "status": "ACTIVE" }
+]
+```
+
+| Field | What it is |
+|---|---|
+| `currency` | The code to use elsewhere |
+| `currencyType` | `FIAT` or `CRYPTO` |
+| `description` | Human-readable name |
+| `mode` | Echoes what you asked for |
+| `status` | `ACTIVE` when usable |
+
+<Warning>
+**Test and live support different currencies.** Test mode returned 20
+currencies; live returned **5** — KES, NGN, GHS, USD, CNY. A pair that works in
+test may not exist in live. Check `mode=live` before you promise a currency to
+a customer.
+</Warning>
+
+<Note>
+The two lists disagree on wording, so do not key off `description`. GHS reads
+"Ghanaian Cedi" in both, but NGN is "Nigerian Naira" in test and "Nigerian
+Nairia" in live, and KES is "test currency" in live mode. Use `currency`.
+</Note>
+
+Note also that the catalogue is wider than what you hold. Test mode lists LSL
+and RWF as `ACTIVE`, but no account for either appeared in Step 1 — a currency
+being supported does not mean an account is provisioned for it.
+
+---
+
+## When things go wrong
+
+| What you see | What it means | What to do |
+|---|---|---|
+| **401** `Invalid JWT token format` | You sent a secret key | These endpoints need a JWT |
+| **401** `Expired Token` | The JWT aged out (~30 min) | Refresh and retry |
+| **400** `missing_parameter` `mode` | `currency-list` without `mode` | Add `?mode=test` or `?mode=live` |
+| A currency is missing from `/balances` | No account provisioned for it | Check `currency-list`; the currency may be supported but unheld |
+| Balance is `0.00` | The account exists and is empty | Not an error — fund it |
+| Currency works in test, fails in live | Live supports far fewer currencies | Check `currency-list?mode=live` |
+| `availableBalance` below `balance` | Funds held against pending activity | Spend against `availableBalance` |
+
+## What to do next
+
+- [Check What a Wallet Holds](/documentation/guides/check-what-a-wallet-holds) — the crypto side
+- [Find a Liquidity Provider](/documentation/guides/find-a-liquidity-provider) — before you trade
+- [Let a Buyer Pay for a Trade](/documentation/guides/buyer-pays-for-a-trade) — settle into one of these accounts
