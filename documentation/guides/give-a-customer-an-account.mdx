@@ -1,0 +1,365 @@
+---
+title: Give a Customer an Account
+sidebarTitle: Give a Customer an Account
+description: Create a virtual bank account a customer can pay into, then read it back and reconcile deposits.
+icon: "building-columns"
+---
+
+A virtual account is a real, payable bank account number that belongs to one of
+your customers. They pay into it by normal bank transfer, and the money lands in
+your balance for that currency.
+
+This guide creates one, reads it back, and lists what you already have.
+
+## What you'll need
+
+- A dashboard **JWT**.
+- The `accountId` of the currency balance the account should sit under. Get it
+  from [Read Your Balances](/documentation/guides/read-your-balances).
+
+<Warning>
+These endpoints authenticate with a **JWT**, not a secret key. A secret key
+returns **401** with a body that does not look like the other errors on this
+API:
+
+```json
+{
+  "status": 401,
+  "error": "Unauthorized",
+  "message": "invalid_credentials"
+}
+```
+
+Note there is no `errorCode` and no `traceId`. That flat shape is the
+signature of wrong-credentials on this route — it is easy to mistake for a
+wrong path, because a genuinely missing path returns a different, richer body:
+
+```json
+{
+  "errorCategory": "SERVER_ERROR",
+  "errorCode": "resource_not_found",
+  "errorMessage": "No static resource api/v1/partners/accounts for request '/api/v1/partners/accounts'."
+}
+```
+
+If you get `invalid_credentials`, the path is right and the credential is
+wrong. Swap the key for a JWT before you go hunting for a different endpoint.
+</Warning>
+
+## The shape of the flow
+
+<Steps>
+  <Step title="Find the parent account">
+    The currency balance the virtual account belongs to.
+  </Step>
+  <Step title="Create the account">
+    One call returns a payable account number.
+  </Step>
+  <Step title="Read it back">
+    Confirm the details you give the customer.
+  </Step>
+  <Step title="List what you have">
+    Find an existing account instead of making another.
+  </Step>
+</Steps>
+
+---
+
+## Step 1: Find the parent account
+
+Every virtual account hangs off a currency balance. Get that balance's ID:
+
+```bash
+curl https://api.hyperrails.io/api/v1/balances/currency/GHS \
+  -H "Authorization: Bearer YOUR_JWT"
+```
+
+```json
+{
+  "accountId": "bbbbb514-21b5-467a-a517-40a7ed346b1c",
+  "availableBalance": 14997994788.91,
+  "balance": 14997994788.91,
+  "currency": "GHS"
+}
+```
+
+That `accountId` is the `parentAccountId` for the next step.
+
+---
+
+## Step 2: Create the account
+
+```bash
+curl -X POST https://api.hyperrails.io/api/v1/accounts \
+  -H "Authorization: Bearer YOUR_JWT" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "accountName": "Edem Anagbah",
+    "currency": "GHS",
+    "parentAccountId": "bbbbb514-21b5-467a-a517-40a7ed346b1c"
+  }'
+```
+
+| Field | Required | What it is |
+|---|---|---|
+| `accountName` | yes | The name on the account. Show this to the customer |
+| `currency` | yes | Which currency the account collects |
+| `parentAccountId` | in practice, yes | The currency balance it settles into |
+| `accountTag` | no | Your own label. Defaults to `sub-account` |
+
+**201 Created:**
+
+```json
+{
+  "id": "a1d74d07-7dce-44b3-b0a4-fba6989aecbb",
+  "accountName": "Edem Anagbah",
+  "parentAccountId": "bbbbb514-21b5-467a-a517-40a7ed346b1c",
+  "autoSweep": false,
+  "currency": "GHS",
+  "mode": "test",
+  "accountTag": "sub-account",
+  "status": "active",
+  "createdAt": "2026-09-22T08:10:15.731553Z",
+  "updatedAt": "2026-09-22T08:10:15.756266Z",
+  "accountDetails": {
+    "provider": "MOCK",
+    "accountName": "Edem Anagbah",
+    "accountNumber": "0376107113682",
+    "bankName": "Jollof Bank",
+    "default": true,
+    "depositAddresses": [],
+    "countryCode": "GH"
+  },
+  "virtualAccounts": [
+    {
+      "provider": "MOCK",
+      "accountName": "Edem Anagbah",
+      "accountNumber": "0376107113682",
+      "bankName": "Jollof Bank",
+      "default": true,
+      "depositAddresses": [],
+      "countryCode": "GH"
+    }
+  ]
+}
+```
+
+Give the customer `accountDetails.accountNumber` and
+`accountDetails.bankName`. Keep `id` — it is how you look the account up later.
+
+<Warning>
+**Omitting `parentAccountId` fails with a misleading 404.** The field is not
+declared as required, but leaving it out returns:
+
+```json
+{
+  "errorCategory": "REQUEST_ERROR",
+  "errorCode": "not_found",
+  "errorMessage": "Resource not found",
+  "traceId": "0d3bc736578e4a1087fc54129a8f5266"
+}
+```
+
+A `404 Resource not found` on a `POST` reads like a wrong URL. It is not — the
+path is fine and the missing parent is the problem. Always send
+`parentAccountId`.
+</Warning>
+
+<Note>
+Genuine field validation returns a helpful **400** instead, naming the field:
+
+```json
+{
+  "additionalDetails": { "accountName": "Account Name is required" },
+  "errorCategory": "REQUEST_ERROR",
+  "errorCode": "validation_error",
+  "errorMessage": "Validation failed for one or more fields"
+}
+```
+
+Read `additionalDetails` — it names exactly what is wrong.
+</Note>
+
+<Warning>
+**An unsupported currency returns 500, not 400.** Sending `"currency": "ZZZ"`
+produces:
+
+```json
+{
+  "errorCategory": "SERVER_ERROR",
+  "errorCode": "internal_server_error",
+  "errorMessage": "An unexpected error occurred",
+  "traceId": "4864c7db8a574b8b96730a64e824c504"
+}
+```
+
+Do not retry on this — it will fail the same way every time. Validate the
+currency against
+[`/balances/currency-list`](/documentation/guides/read-your-balances) before you
+call. Treat a 500 here as a bad request you sent, not a transient outage.
+</Warning>
+
+<Warning>
+**Creating is not idempotent.** Every call makes a new account with a new
+number, even with identical input. There is no deduplication on
+`accountName`. Check Step 4 for an existing account before creating one, and
+store the `id` you get back — otherwise you will hand one customer several
+account numbers.
+</Warning>
+
+<Note>
+In test mode the provider is `MOCK` and the bank is `Jollof Bank`. These are
+not real banks and no real transfer will arrive. Live mode returns a real
+provider and a real bank name.
+</Note>
+
+---
+
+## Step 3: Read it back
+
+```bash
+curl https://api.hyperrails.io/api/v1/accounts/ACCOUNT_ID \
+  -H "Authorization: Bearer YOUR_JWT"
+```
+
+```json
+{
+  "id": "345d409c-91a3-4c63-a5f1-2b52a5d8756e",
+  "accountName": "Edem Anagbah GHS",
+  "parentAccountId": "bbbbb514-21b5-467a-a517-40a7ed346b1c",
+  "autoSweep": false,
+  "currency": "GHS",
+  "mode": "test",
+  "accountTag": "sub-account",
+  "status": "active",
+  "createdAt": "2026-09-18T23:24:44.358997Z",
+  "updatedAt": "2026-09-18T23:24:44.375081Z",
+  "accountDetails": {
+    "provider": "MOCK",
+    "accountName": "Edem Anagbah GHS",
+    "accountNumber": "5585920359398",
+    "bankName": "Jollof Bank",
+    "default": true,
+    "depositAddresses": [],
+    "countryCode": "GH"
+  },
+  "virtualAccounts": [
+    {
+      "provider": "MOCK",
+      "accountName": "Edem Anagbah GHS",
+      "accountNumber": "5585920359398",
+      "bankName": "Jollof Bank",
+      "default": true,
+      "depositAddresses": [],
+      "countryCode": "GH"
+    }
+  ]
+}
+```
+
+| Field | What it is |
+|---|---|
+| `id` | The account ID |
+| `accountDetails` | The default payable account — what you show the customer |
+| `virtualAccounts[]` | Every account under this record |
+| `autoSweep` | Whether balances move to the parent automatically |
+| `status` | `active` when it can receive money |
+
+<Note>
+`accountDetails` is the entry from `virtualAccounts` with `default: true`. With
+one account they are the same thing. Prefer `accountDetails` for display and
+treat `virtualAccounts` as the full set.
+</Note>
+
+---
+
+## Step 4: List what you have
+
+```bash
+curl "https://api.hyperrails.io/api/v1/accounts?size=3" \
+  -H "Authorization: Bearer YOUR_JWT"
+```
+
+```json
+{
+  "content": [
+    {
+      "id": "2cc20719-643d-4557-9c37-c2757e564110",
+      "accountName": "Edem Anagbah KES",
+      "parentAccountId": "d01d6101-b65d-4807-86f7-4638ca510718",
+      "autoSweep": false,
+      "currency": "KES",
+      "mode": "test",
+      "accountTag": "sub-account",
+      "status": "active",
+      "createdAt": "2026-09-19T00:05:37.514372Z",
+      "updatedAt": "2026-09-19T00:05:37.528179Z",
+      "accountDetails": {
+        "virtualAccountId": "3c309f39-2c8e-479f-8081-73d6e8b6066e",
+        "provider": "mock",
+        "accountName": "Edem Anagbah KES",
+        "accountNumber": "3772952427",
+        "bankName": "Jollof Bank"
+      }
+    }
+  ],
+  "pageNumber": 0,
+  "pageSize": 3,
+  "totalElements": 72,
+  "totalPages": 24
+}
+```
+
+Newest first, and paged — the live account had **72** accounts across 24 pages.
+
+<Warning>
+**The list and detail responses are not the same shape.** On the same account:
+
+| | List (`/accounts`) | Detail (`/accounts/{id}`) |
+|---|---|---|
+| `accountDetails.virtualAccountId` | present | **absent** |
+| `accountDetails.provider` | `"mock"` | `"MOCK"` |
+| `accountDetails.countryCode` | absent | present |
+| `virtualAccounts[]` | absent | present |
+
+The provider casing flips between the two. Compare it case-insensitively, and
+do not expect `virtualAccountId` from the detail call.
+</Warning>
+
+Filter by currency:
+
+```bash
+curl "https://api.hyperrails.io/api/v1/accounts?currency=GHS&size=2" \
+  -H "Authorization: Bearer YOUR_JWT"
+```
+
+`currency` and `accountTag` both genuinely narrow the results.
+
+<Warning>
+**An unrecognised query parameter is silently ignored**, not rejected. Asking
+for `?zzzz=nonsense` returns the full unfiltered list with a **200**. A filter
+that looks like it works may be doing nothing — confirm the results actually
+narrowed before trusting a parameter you have not seen documented.
+</Warning>
+
+---
+
+## When things go wrong
+
+| What you see | What it means | What to do |
+|---|---|---|
+| **401** `invalid_credentials` | You sent a secret key | Use a JWT. The path is correct |
+| **401** `Expired Token` | The JWT aged out (~30 min) | Refresh and retry |
+| **404** `resource_not_found` naming the path | That endpoint really does not exist | Check the URL |
+| **404** `not_found` on create | `parentAccountId` missing | Send the parent balance's `accountId` |
+| **400** `validation_error` | A required field is missing | Read `additionalDetails` |
+| **500** `internal_server_error` on create | Unsupported currency | Validate against `currency-list`. Do not retry |
+| Duplicate accounts for one customer | Create is not idempotent | Look the customer up first; store the `id` |
+| A filter returns everything | The parameter was ignored | Confirm the results narrowed |
+| `provider` casing differs | List and detail disagree | Compare case-insensitively |
+
+## What to do next
+
+- [Read Your Balances](/documentation/guides/read-your-balances) — where deposits land
+- [Check What a Wallet Holds](/documentation/guides/check-what-a-wallet-holds) — crypto deposit addresses
+- [Let a Buyer Pay for a Trade](/documentation/guides/buyer-pays-for-a-trade) — take payment by mobile money instead

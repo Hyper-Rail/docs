@@ -1,0 +1,320 @@
+---
+title: Find a Liquidity Provider
+sidebarTitle: Find a Liquidity Provider
+description: Check who is offering to trade your pair and at what size, read the rate, then price a quote against real liquidity.
+icon: "magnifying-glass-dollar"
+---
+
+Before you can trade a pair, someone has to be offering it. This guide finds
+who, checks how much they can fill, reads the rate, and hands you what you need
+to create a quote.
+
+The order matters. A rate existing for a pair does not mean anyone will trade
+it, and a provider being listed does not mean they can cover your size.
+
+## What you'll need
+
+- Your **secret key**.
+- A currency pair in mind.
+
+<Note>
+Listings live on the **exchange** service, rates on the **main** service:
+
+- `https://api.hyperrails.io/exchange/api/v1` — marketplace listings
+- `https://api.hyperrails.io/api/v1` — rates
+
+Listings answer on both base URLs, but treat the exchange one as canonical.
+</Note>
+
+## The shape of the flow
+
+<Steps>
+  <Step title="List who is offering">
+    See every live listing, its pair, its rate, and how much it can fill.
+  </Step>
+  <Step title="Check the published rate">
+    The reference rate for the pair.
+  </Step>
+  <Step title="Reconcile the two">
+    They will differ. Work out which one you actually get.
+  </Step>
+  <Step title="Price a quote against it">
+    Turn a listing into a real trade.
+  </Step>
+</Steps>
+
+---
+
+## Step 1: List who is offering
+
+```bash
+curl https://api.hyperrails.io/exchange/api/v1/partners/marketplace/listings \
+  -H "Authorization: Bearer YOUR_SECRET_KEY"
+```
+
+```json
+{
+  "content": [
+    {
+      "id": "83dd8321-46e6-4bb3-92a4-140c4039ef3f",
+      "clientId": "4da1f1d8-3ed1-45b3-8a9f-9d05f08bed90",
+      "name": "CH-56E8471",
+      "pair": "NGN/USD",
+      "rate": 1410,
+      "availableBalance": 99994999842.56,
+      "negotiationLimit": 0
+    },
+    {
+      "id": "12798236-1916-40c5-acc2-843adb43cdd3",
+      "clientId": "22f5ffc8-fecf-4fd8-acae-41cdb943b5b1",
+      "name": "S-eac7326",
+      "pair": "NGN/GHS",
+      "rate": 115.6,
+      "availableBalance": 3080.27,
+      "negotiationLimit": 0
+    }
+  ],
+  "pageNumber": 0,
+  "pageSize": 10,
+  "totalElements": 2,
+  "totalPages": 1
+}
+```
+
+| Field | What it is |
+|---|---|
+| `id` | The listing (pool) ID. Appears as `poolId` in a quote's allocation |
+| `clientId` | The provider behind the listing |
+| `name` | The provider's display name |
+| `pair` | The currencies, as `A/B` |
+| `rate` | The rate **this provider** is offering |
+| `availableBalance` | How much they can actually fill, in the first currency of `pair` |
+| `negotiationLimit` | `0` means the rate is take-it-or-leave-it |
+
+<Warning>
+**`availableBalance` is the real constraint, and it is often small.** The
+`NGN/GHS` listing above could fill only **3,080.27 NGN** — about 26 GHS at its
+own rate. The `NGN/USD` listing next to it had 99 billion. Two listings on the
+same screen, four orders of magnitude apart.
+
+Ask for more than a provider holds and the quote fails with **400**:
+
+```json
+{
+  "errorCategory": "SERVER_ERROR",
+  "errorCode": "bad_request",
+  "errorMessage": "Unable to fulfill requested volume at the moment.",
+  "traceId": "d0616e6ee4894354b3c9333226b26112"
+}
+```
+
+Check `availableBalance` before you size a trade, not after.
+</Warning>
+
+<Warning>
+**Liquidity is consumed as trades settle, and the list is a snapshot.** A single
+trade of 5 GHS moved the `NGN/GHS` listing from `768.27` to `190.27`. Re-read
+the listings immediately before quoting; do not cache this.
+</Warning>
+
+<Note>
+The whole marketplace was **two listings**. There is no guarantee any given
+pair has a provider at all — if your pair is absent here, no rate will save
+you.
+</Note>
+
+---
+
+## Step 2: Check the published rate
+
+```bash
+curl "https://api.hyperrails.io/api/v1/partners/rates?base=GHS&quote=NGN" \
+  -H "Authorization: Bearer YOUR_SECRET_KEY"
+```
+
+```json
+{
+  "base": "GHS",
+  "inverseRate": 0.0077657840,
+  "quote": "NGN",
+  "rate": 128.7700,
+  "timestamp": "2026-04-30T17:13:13.892233Z",
+  "weight": "QUOTE"
+}
+```
+
+| Field | What it is |
+|---|---|
+| `base` / `quote` | The pair, echoed back |
+| `rate` | Units of `quote` per unit of `base` |
+| `inverseRate` | The other direction |
+| `timestamp` | When this rate was set |
+| `weight` | Which side the rate is weighted to — `BASE` or `QUOTE` |
+
+<Warning>
+The parameters are **`base` and `quote`**, not `source` and `destination` —
+even though the quote and intent endpoints use `sourceCurrency` and
+`destinationCurrency`. Getting it wrong returns **400**:
+
+```json
+{
+  "additionalDetails": { "parameter": "base" },
+  "errorCategory": "SERVER_ERROR",
+  "errorCode": "missing_parameter",
+  "errorMessage": "Missing parameter base",
+  "traceId": "f5b2063c8250488386de092a855e99c5"
+}
+```
+
+Note it names only `base`, the first missing parameter. Fixing that one alone
+then fails on `quote`.
+</Warning>
+
+<Warning>
+**A pair with no rate returns 404 with an empty body.** Not a JSON error
+object — nothing at all. Parsing the body unconditionally will throw. Branch on
+the status code first.
+</Warning>
+
+<Note>
+`timestamp` can be months old — the GHS/NGN rate above was set in April and
+read in September. These are administered reference rates, not a live market
+feed. Do not treat the rate as fresh, and do not poll it expecting movement.
+</Note>
+
+---
+
+## Step 3: Reconcile the two
+
+This is the step that surprises people. The published rate and the rate you
+actually trade at are **different numbers**, and the published rate is not even
+symmetric:
+
+| Call | Rate |
+|---|---|
+| `?base=GHS&quote=NGN` | **128.77** |
+| `?base=NGN&quote=GHS` | **119.80** |
+| `NGN/GHS` listing | **115.60** |
+
+Three numbers for one pair. What each is for:
+
+- **The listing `rate` is what you get.** It is the provider's own price. A real
+  quote for 5 GHS → NGN allocated against the `NGN/GHS` listing at exactly
+  `115.60`, and settled 578.00 NGN.
+- **The published rate is a reference.** Use it to sanity-check and to display
+  an indicative price before you quote.
+- **Direction changes the published rate**, because each direction is
+  administered separately. `inverseRate` is the true inverse of the rate you
+  asked for — `1 / 128.77 = 0.0077657840`. It is *not* the rate for the reverse
+  pair. Never invert a rate yourself to price the other direction; ask for it.
+
+<Warning>
+Quote off the listing, not the published rate. Pricing a customer at 128.77 when
+the liquidity fills at 115.60 is a **10% error** in your favour that the trade
+will not honour.
+</Warning>
+
+The authoritative answer comes back in the quote itself, as
+`allocationResult.weightedAverageRate`. When liquidity spans several listings
+you get a blend, so read it from the quote rather than computing it.
+
+---
+
+## Step 4: Price a quote against it
+
+You now have a pair with a real provider and a size that fits inside
+`availableBalance`. Create the quote:
+
+```bash
+curl -X POST https://api.hyperrails.io/exchange/api/v1/partners/marketplace/express/quote \
+  -H "Authorization: Bearer YOUR_SECRET_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sourceCurrency": "GHS",
+    "destinationCurrency": "NGN",
+    "amount": 1,
+    "amountDirection": "source",
+    "accountId": "0eb2090c-c046-4609-8fcc-0b7ef4dde30f"
+  }'
+```
+
+The allocation tells you which listing filled it:
+
+```json
+{
+  "quoteId": "deb64d85-5d10-433d-b18e-c0740ca12640",
+  "status": "PENDING",
+  "source": "GHS",
+  "destination": "NGN",
+  "totalSourceAmount": 1.17301038,
+  "totalDestinationAmount": 115.6000,
+  "mode": "test",
+  "allocationResult": {
+    "allocations": [
+      {
+        "allocatedAmount": 115.60000042,
+        "clientId": "22f5ffc8-fecf-4fd8-acae-41cdb943b5b1",
+        "poolId": "12798236-1916-40c5-acc2-843adb43cdd3",
+        "poolAccountId": "90472efa-9e90-4eea-8a1f-03da49f330ca",
+        "poolType": "FUNDED",
+        "rate": 115.60000000,
+        "inverseRate": 0.008650519,
+        "reference": "HPR-ALO-3741e3e2d73349f781fdbc061337a086",
+        "sourceAmount": 1,
+        "status": "PENDING",
+        "weight": "BASE"
+      }
+    ],
+    "fullAllocation": true,
+    "weightedAverageRate": 115.6000,
+    "weightedAverageRateInverse": 0.0087
+  }
+}
+```
+
+Note that no `payment` block is needed to price a quote — you can get a real,
+allocated price before you have any payment details from the customer.
+
+`poolId` and `clientId` match the listing from Step 1 exactly — that is how you
+confirm you got the provider you priced against.
+
+| Field | Why it matters |
+|---|---|
+| `fullAllocation` | `true` means your whole amount was matched. Check it |
+| `weightedAverageRate` | The rate you actually got |
+| `poolId` | Ties back to the listing's `id` |
+| `allocations[]` | One entry per provider filling the trade |
+
+<Note>
+`allocations` is an array because a large trade can be split across several
+providers at different rates. `weightedAverageRate` is the blend. A
+single-provider fill, as above, has one entry and the rate matches the listing.
+</Note>
+
+<Warning>
+A rate existing does **not** mean a provider exists. GHS→USDT returns a valid
+rate of `11.55`, but quoting it returns **400** `"No providers available for the
+given intent configuration"` — there is no USDT listing in the marketplace.
+Always check Step 1 before trusting Step 2.
+</Warning>
+
+---
+
+## When things go wrong
+
+| What you see | What it means | What to do |
+|---|---|---|
+| **400** `missing_parameter` `base` | You used `source`/`destination` | Use `base` and `quote` |
+| **404** with an empty body | No rate for that pair | Branch on status before parsing |
+| **400** `Unable to fulfill requested volume` | Bigger than `availableBalance` | Re-read listings; trade smaller |
+| **400** `No providers available` | A rate exists but nobody is offering | Check the listings for your pair |
+| Your pair is not in the listings | Nobody trades it | Try a pair that is listed |
+| `fullAllocation: false` | Only part of your size was matched | Reduce the amount |
+| Rate differs from what you showed | You quoted the published rate | Quote the listing rate; confirm with `weightedAverageRate` |
+| Liquidity vanished since you looked | A trade consumed it | Re-read listings right before quoting |
+
+## What to do next
+
+- [Take a Quote in One Call](/documentation/guides/take-a-quote-in-one-call) — quote and settle in one flow
+- [Let a Buyer Pay for a Trade](/documentation/guides/buyer-pays-for-a-trade) — the full intent flow
+- [Read Your Balances](/documentation/guides/read-your-balances) — get the `accountId` a quote needs

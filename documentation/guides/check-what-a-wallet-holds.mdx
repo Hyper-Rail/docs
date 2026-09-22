@@ -1,0 +1,389 @@
+---
+title: Check What a Wallet Holds
+sidebarTitle: Check What a Wallet Holds
+description: Read a wallet's structure, its crypto balances, its deposit addresses, and its recent on-chain activity.
+icon: "wallet"
+---
+
+Wallets hold your **crypto** balances — USDC, USDT and other stablecoins — along
+with the chain addresses money arrives on. This guide reads a wallet from the
+top down: find it, check what is in it, get its deposit addresses, then look at
+what has moved.
+
+Every call here is read-only. Nothing in this guide changes a balance.
+
+## What you'll need
+
+- Your **secret key**, or a dashboard **JWT**. Wallet endpoints accept either.
+- Nothing else. Your wallets already exist — the main wallet is created with
+  your account.
+
+<Note>
+Wallets are for crypto. Your fiat balances (GHS, NGN, USD and the rest) live
+somewhere else entirely — see [Read Your Balances](/documentation/guides/read-your-balances).
+Two different systems, two different sets of endpoints.
+</Note>
+
+## The shape of the flow
+
+<Steps>
+  <Step title="List your wallets">
+    See the main wallet and every sub-wallet under it.
+  </Step>
+  <Step title="Jump straight to the main wallet">
+    A shortcut path that skips needing an ID.
+  </Step>
+  <Step title="Read the balances">
+    What each wallet holds, per currency.
+  </Step>
+  <Step title="Get the deposit addresses">
+    The chain addresses money can be sent to.
+  </Step>
+  <Step title="Read the activity">
+    What has actually moved in and out.
+  </Step>
+</Steps>
+
+---
+
+## Step 1: List your wallets
+
+```bash
+curl https://api.hyperrails.io/api/v1/wallets \
+  -H "Authorization: Bearer YOUR_SECRET_KEY"
+```
+
+```json
+{
+  "content": [
+    {
+      "walletId": "ac07cc78-7209-49ab-b3bd-28fa4b403c17",
+      "walletName": "Bloper_cryto",
+      "type": "main",
+      "mode": "test",
+      "parentWalletId": null,
+      "status": "active",
+      "createdAt": "2026-08-07T01:49:08.805539Z"
+    },
+    {
+      "walletId": "e902c3a6-5ecf-4255-9646-93a8fd552039",
+      "walletName": "Bloper_crypto",
+      "type": "sub",
+      "mode": "test",
+      "parentWalletId": "ac07cc78-7209-49ab-b3bd-28fa4b403c17",
+      "status": "active",
+      "createdAt": "2026-08-07T01:49:29.787743Z"
+    }
+  ],
+  "pageNumber": 0,
+  "pageSize": 10,
+  "totalElements": 4,
+  "totalPages": 1
+}
+```
+
+| Field | What it is |
+|---|---|
+| `walletId` | The ID every other call in this guide needs |
+| `type` | `main` or `sub`. You have exactly one `main` |
+| `parentWalletId` | `null` on the main wallet; the main wallet's ID on a sub |
+| `mode` | `test` or `live`. Your key decides which you see |
+| `status` | `active` or otherwise |
+
+The response is paged. Pass `page` and `size` to walk it:
+
+```bash
+curl "https://api.hyperrails.io/api/v1/wallets?page=0&size=2" \
+  -H "Authorization: Bearer YOUR_SECRET_KEY"
+```
+
+<Note>
+Unlike the marketplace endpoints, wallet endpoints accept **either** a secret key
+or a dashboard JWT. Both return the same data.
+</Note>
+
+---
+
+## Step 2: Jump straight to the main wallet
+
+If you only care about the main wallet, `main` works in place of an ID — no
+lookup needed:
+
+```bash
+curl https://api.hyperrails.io/api/v1/wallets/main \
+  -H "Authorization: Bearer YOUR_SECRET_KEY"
+```
+
+```json
+{
+  "walletId": "ac07cc78-7209-49ab-b3bd-28fa4b403c17",
+  "walletName": "Bloper_cryto",
+  "type": "main",
+  "mode": "test",
+  "parentWalletId": null,
+  "status": "active",
+  "createdAt": "2026-08-07T01:49:08.805539Z"
+}
+```
+
+Fetching a specific wallet by its ID returns the same shape:
+
+```bash
+curl https://api.hyperrails.io/api/v1/wallets/WALLET_ID \
+  -H "Authorization: Bearer YOUR_SECRET_KEY"
+```
+
+<Warning>
+An ID that does not exist returns **404** with `wallet_not_found`:
+
+```json
+{
+  "errorCategory": "REQUEST_ERROR",
+  "errorCode": "wallet_not_found",
+  "errorMessage": "Wallet not found",
+  "traceId": "6d1a61256ea84d2b90d2cc6962331617"
+}
+```
+
+Keep the `traceId` if you need to raise it with support.
+</Warning>
+
+---
+
+## Step 3: Read the balances
+
+`main` works here too:
+
+```bash
+curl https://api.hyperrails.io/api/v1/wallets/main/balances \
+  -H "Authorization: Bearer YOUR_SECRET_KEY"
+```
+
+```json
+{
+  "walletId": "ac07cc78-7209-49ab-b3bd-28fa4b403c17",
+  "totalBalance": 3.666667,
+  "totalAvailableBalance": 2.665712,
+  "balances": [
+    {
+      "accountId": "eae1747d-2618-4489-b7da-98821c31b615",
+      "currency": "USDC",
+      "balance": 2.665712,
+      "availableBalance": 2.665712
+    },
+    {
+      "accountId": "e7a9ae00-8b1c-4d46-af07-1210811f3192",
+      "currency": "USDT",
+      "balance": 0.000000,
+      "availableBalance": 0.000000
+    }
+  ]
+}
+```
+
+| Field | What it is |
+|---|---|
+| `balance` | Everything in the wallet |
+| `availableBalance` | What you can actually spend right now |
+| `totalBalance` | The sum across every currency in the wallet |
+| `accountId` | Identifies the per-currency account inside the wallet |
+
+<Warning>
+`balance` and `availableBalance` are **not** the same number. In the response
+above the wallet total is `3.666667` but only `2.665712` is available — the
+difference is held against pending activity. Spend against
+`availableBalance`, never `balance`.
+</Warning>
+
+Any wallet works by ID, including a sub-wallet:
+
+```bash
+curl https://api.hyperrails.io/api/v1/wallets/WALLET_ID/balances \
+  -H "Authorization: Bearer YOUR_SECRET_KEY"
+```
+
+```json
+{
+  "walletId": "e902c3a6-5ecf-4255-9646-93a8fd552039",
+  "totalBalance": 0.000000,
+  "totalAvailableBalance": 0.000000,
+  "balances": [
+    { "accountId": "1c8eb759-1dee-4d92-95fe-d4a0b75db326", "currency": "USDC", "balance": 0.000000, "availableBalance": 0.000000 },
+    { "accountId": "0a0cf75f-603f-4f4f-8c21-30a92b64e559", "currency": "USDT", "balance": 0.000000, "availableBalance": 0.000000 }
+  ]
+}
+```
+
+A sub-wallet keeps its own balances. Money in the main wallet is not spendable
+from a sub-wallet.
+
+---
+
+## Step 4: Get the deposit addresses
+
+These are the on-chain addresses money can be sent to.
+
+```bash
+curl https://api.hyperrails.io/api/v1/wallets/WALLET_ID/deposit-addresses \
+  -H "Authorization: Bearer YOUR_SECRET_KEY"
+```
+
+```json
+{
+  "walletId": "ac07cc78-7209-49ab-b3bd-28fa4b403c17",
+  "addresses": [
+    {
+      "id": "227c4474-0e06-4862-906b-d9476c7dbe65",
+      "chain": "base_sepolia",
+      "address": "0xe5599e5092cbd398fd50b4a8f8ddba4909617b82",
+      "explorerUrl": "https://sepolia.basescan.org/address/0xe5599e5092cbd398fd50b4a8f8ddba4909617b82",
+      "status": "active",
+      "createdAt": "2026-08-14T17:59:22.194204Z"
+    },
+    {
+      "id": "31dd6b57-0adf-4f6d-a75f-21cb933d2f03",
+      "chain": "ethereum_sepolia",
+      "address": "0x844219591379a76371878339b54d3a296e69dada",
+      "explorerUrl": "https://sepolia.etherscan.io/address/0x844219591379a76371878339b54d3a296e69dada",
+      "status": "active",
+      "createdAt": "2026-08-14T17:59:22.193997Z"
+    },
+    {
+      "id": "4e8e9885-ce2d-4336-9b0a-7fd0acd90f31",
+      "chain": "stellar_testnet",
+      "address": "GCNUBL637I6ZUU4KLUZTZ7WWBWCGRTF27KIXPKVD6CEKOYJOLCXRELZJ",
+      "explorerUrl": "https://stellar.expert/explorer/testnet/account/GCNUBL637I6ZUU4KLUZTZ7WWBWCGRTF27KIXPKVD6CEKOYJOLCXRELZJ",
+      "memoType": "id",
+      "memoValue": "8909609644682412843",
+      "status": "active",
+      "createdAt": "2026-08-07T01:49:08.838805Z"
+    },
+    {
+      "id": "48ea66ca-a307-4be0-addc-061718f091b0",
+      "chain": "tron_nile",
+      "address": "TBwFNumcnfhTYt5eBuvgqJaB5WeSgfTfZX",
+      "explorerUrl": "https://nile.tronscan.org/#/address/TBwFNumcnfhTYt5eBuvgqJaB5WeSgfTfZX",
+      "status": "active",
+      "createdAt": "2026-09-18T05:46:08.058008Z"
+    }
+  ]
+}
+```
+
+Three things here will catch you out.
+
+<Warning>
+**Filter on `status: "active"`.** The list returns inactive addresses alongside
+active ones — the real response above held 12 addresses across 5 chains, and
+only 5 were active. Sending to an inactive address is a good way to lose funds.
+Never show a user the first address in the array; pick the active one for the
+chain you want.
+</Warning>
+
+<Warning>
+**Stellar needs the memo.** Stellar addresses carry `memoType` and `memoValue`,
+and several wallets share the *same* Stellar address with different memos. A
+deposit sent without the memo cannot be credited to you. Always pass both.
+</Warning>
+
+<Note>
+The `chain` values are network-specific and name the **testnet** in test mode —
+`base_sepolia`, `ethereum_sepolia`, `polygon_amoy`, `stellar_testnet`,
+`tron_nile`. Live mode returns the mainnet names. Never reuse a test address in
+production.
+</Note>
+
+One address in the real response had a `chain` and a `status` but **no**
+`address` field at all — an address still being provisioned. Check the field
+exists before you use it.
+
+---
+
+## Step 5: Read the activity
+
+What has actually moved:
+
+```bash
+curl https://api.hyperrails.io/api/v1/wallets/WALLET_ID/activities \
+  -H "Authorization: Bearer YOUR_SECRET_KEY"
+```
+
+```json
+{
+  "content": [
+    {
+      "type": "SEND",
+      "walletId": "ac07cc78-7209-49ab-b3bd-28fa4b403c17",
+      "currency": "USDC",
+      "chain": "base_sepolia",
+      "amount": 1.000000,
+      "transactionDate": "2026-08-31T09:24:52.505041Z",
+      "status": "pending",
+      "sourceRecordType": "withdrawal",
+      "sourceRecordId": "481683f8-cc0c-41fc-b6e2-6f4a121d52a5"
+    },
+    {
+      "type": "RECEIVE",
+      "walletId": "ac07cc78-7209-49ab-b3bd-28fa4b403c17",
+      "currency": "USDC",
+      "amount": 2.666667,
+      "hash": "HPR-QUO-762b4f19cf064be88003307174b6842a-BATCH-COMPLETE",
+      "transactionDate": "2026-08-14T08:24:25.891828Z",
+      "status": "successful",
+      "sourceRecordType": "transaction",
+      "sourceRecordId": "79ccd644-819a-41b1-aafd-504b02925855"
+    }
+  ],
+  "pageNumber": 0,
+  "pageSize": 20,
+  "totalElements": 3,
+  "totalPages": 1
+}
+```
+
+| Field | What it is |
+|---|---|
+| `type` | `SEND` or `RECEIVE` |
+| `status` | `pending` or `successful` |
+| `hash` | The chain transaction hash, when there is one |
+| `sourceRecordType` | What caused it — `withdrawal`, `transaction` |
+| `sourceRecordId` | The ID of that record, to join against |
+
+Newest first. The default page size is 20 here, not 10 as on `/wallets`:
+
+```bash
+curl "https://api.hyperrails.io/api/v1/wallets/WALLET_ID/activities?page=0&size=2" \
+  -H "Authorization: Bearer YOUR_SECRET_KEY"
+```
+
+<Warning>
+A `pending` activity has **not** settled. It already shows in the list and is
+already reflected in the gap between `balance` and `availableBalance`, but the
+money has not landed. Reconcile on `status: "successful"` only.
+</Warning>
+
+<Note>
+Not every activity has a real chain hash. Internal movements — a trade
+settling, for instance — carry a HyperRails reference in `hash` like
+`HPR-QUO-...-BATCH-COMPLETE` rather than an on-chain hash. Do not feed those to
+a block explorer.
+</Note>
+
+---
+
+## When things go wrong
+
+| What you see | What it means | What to do |
+|---|---|---|
+| **404** `wallet_not_found` | The wallet ID is wrong, or belongs to the other mode | Re-list with `/wallets`; check your key's mode |
+| **401** `Invalid JWT token format` | A secret key sent where a JWT was needed | Wallet endpoints take either — check the path is really a wallet one |
+| Balances all zero | You are reading a sub-wallet | Sub-wallets hold their own money; try `/wallets/main/balances` |
+| No fiat in the response | Wallets are crypto-only | Use `/balances` — see [Read Your Balances](/documentation/guides/read-your-balances) |
+| Deposit never credited | Sent to an inactive address, or a Stellar deposit with no memo | Only use `status: "active"`; always send `memoValue` on Stellar |
+| Spend rejected despite a balance | You checked `balance`, not `availableBalance` | Spend against `availableBalance` |
+
+## What to do next
+
+- [Read Your Balances](/documentation/guides/read-your-balances) — the fiat side
+- [Give a Customer an Account](/documentation/guides/give-a-customer-an-account) — a payable account per customer
+- [Let a Buyer Pay for a Trade](/documentation/guides/buyer-pays-for-a-trade) — move money in

@@ -1,0 +1,405 @@
+---
+title: Take a Quote in One Call
+sidebarTitle: Take a Quote in One Call
+description: Price a trade with a single express call instead of creating an intent, then accept and complete it as usual.
+icon: "bolt"
+---
+
+The express quote collapses the pricing step. Instead of creating an intent and
+then fetching the quote it produced, you send one call and get a priced,
+allocated quote straight back.
+
+Everything after pricing is unchanged — you still accept, authorize and
+complete.
+
+## What you'll need
+
+- Your **secret key**.
+- The `accountId` you are settling into, from
+  [Read Your Balances](/documentation/guides/read-your-balances).
+- A pair with real liquidity behind it — see
+  [Find a Liquidity Provider](/documentation/guides/find-a-liquidity-provider).
+
+<Warning>
+Express quote lives on the **exchange** base URL
+(`/exchange/api/v1`), but accept, authorize, status and complete are on
+`/partners/marketplace/quote/{id}/...`. This guide shows the full path on every
+call — do not assume one prefix for the whole flow.
+</Warning>
+
+## Express vs. the intent flow
+
+<Steps>
+  <Step title="Intent flow — two calls to price">
+    `POST /partners/marketplace/intent` returns a quote with a `ttl`, and you
+    can inspect or negotiate before committing.
+  </Step>
+  <Step title="Express — one call to price">
+    `POST /partners/marketplace/express/quote` returns the same priced quote
+    directly.
+  </Step>
+  <Step title="From here they are identical">
+    Accept, authorize, poll, complete — the same four calls on the same paths.
+  </Step>
+</Steps>
+
+| | Intent flow | Express |
+|---|---|---|
+| Calls to get a priced quote | 2 | **1** |
+| Endpoint | `/partners/marketplace/intent` | `/partners/marketplace/express/quote` |
+| Returns `allocationResult` | yes | yes |
+| Returns `ttl` on the quote | yes (e.g. 899) | **no** |
+| Accept / authorize / complete | same | same |
+
+<Note>
+The real difference is the `ttl`. The intent flow hands you a quote with a
+countdown you can show a customer before they commit. Express gives you no
+`ttl` until you accept — so express suits a flow where you price and commit in
+one motion, and the intent flow suits one where a human is deciding.
+</Note>
+
+---
+
+## Step 1: Create the express quote
+
+```bash
+curl -X POST https://api.hyperrails.io/exchange/api/v1/partners/marketplace/express/quote \
+  -H "Authorization: Bearer YOUR_SECRET_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sourceCurrency": "GHS",
+    "destinationCurrency": "NGN",
+    "amount": 5,
+    "amountDirection": "source",
+    "accountId": "0eb2090c-c046-4609-8fcc-0b7ef4dde30f"
+  }'
+```
+
+| Field | Required | What it is |
+|---|---|---|
+| `sourceCurrency` | yes | What the buyer pays in |
+| `destinationCurrency` | yes | What you receive |
+| `amount` | yes | How much |
+| `amountDirection` | no | `source` or `destination`. **Defaults to `source`** |
+| `accountId` | yes | The account you settle into |
+| `externalReference` | no | Your own tracking reference |
+
+```json
+{
+  "quoteId": "806dc37d-7880-4c8a-b871-c81e48a47438",
+  "status": "PENDING",
+  "source": "GHS",
+  "destination": "NGN",
+  "amount": 5.17301038,
+  "totalSourceAmount": 5.17301038,
+  "totalDestinationAmount": 578.0,
+  "clientId": "afe5e863-f256-4244-8dd8-b6b9af7ec009",
+  "mode": "test",
+  "allocationResult": {
+    "allocations": [
+      {
+        "allocatedAmount": 578.00000208,
+        "clientId": "22f5ffc8-fecf-4fd8-acae-41cdb943b5b1",
+        "id": "b73e12e8-a41e-426d-bb63-707109f4898a",
+        "inverseRate": 0.008650519,
+        "poolAccountId": "90472efa-9e90-4eea-8a1f-03da49f330ca",
+        "poolId": "12798236-1916-40c5-acc2-843adb43cdd3",
+        "poolType": "FUNDED",
+        "rate": 115.6,
+        "reference": "HPR-ALO-1bbe8b80e32e42578b6aeb14f9276ada",
+        "sourceAmount": 5,
+        "status": "PENDING",
+        "weight": "BASE"
+      }
+    ],
+    "fullAllocation": true,
+    "totalDestinationAmount": 578.0,
+    "totalSourceAmount": 5,
+    "weightedAverageRate": 115.6,
+    "weightedAverageRateInverse": 0.0087
+  },
+  "metadata": {
+    "transactionFee": {
+      "feeType": "flat",
+      "currency": "NGN",
+      "flatFee": 20.0,
+      "percentageRate": 0.0,
+      "appliedAmount": 578.0,
+      "calculatedFee": 20.0
+    }
+  }
+}
+```
+
+Keep the `quoteId`.
+
+<Warning>
+**`amount` means the source amount here, despite what you may read elsewhere.**
+Sending `amount: 5` with `amountDirection: "source"` produced a trade of
+5 GHS in and 578 NGN out. Some reference material describes `amount` as the
+destination amount — it is not, when `amountDirection` is `source`. Set
+`amountDirection` explicitly and check `totalSourceAmount` against what you
+expect before accepting.
+</Warning>
+
+<Note>
+`amount` (5) and `totalSourceAmount` (5.17301038) differ by the `fee` of
+`0.17301038` — the buyer pays slightly more than the headline amount. The
+separate `transactionFee` of 20.00 NGN is charged on the **destination** side.
+Two fees, two currencies.
+</Note>
+
+<Warning>
+**A `payment` block is accepted here but does nothing.** You can pass the
+buyer's mobile money details to this call and it will return `200` — but the
+response has **no** `metadata.mobileMoneyPayIn` and the status is `PENDING`,
+not `AWAITING_PAYMENT`. No phone is charged. Express prices the trade; it does
+not start the payment. You still need Step 2.
+</Warning>
+
+<Warning>
+**`externalReference` is not an idempotency key at this step.** Sending the
+same reference twice produced two different quotes with two different
+`quoteId`s, both `200`. Retrying a timed-out express quote can leave you with
+duplicate quotes. Track the `quoteId` yourself and cancel any you abandon.
+</Warning>
+
+<Note>
+The pair must have real liquidity. Asking for more than a provider holds
+returns **400** `"Unable to fulfill requested volume at the moment."` — a
+different error from `"No providers available"`, which means nobody trades the
+pair at all. See
+[Find a Liquidity Provider](/documentation/guides/find-a-liquidity-provider).
+</Note>
+
+---
+
+## Step 2: Accept the quote and charge the buyer
+
+From here the flow is identical to the intent flow. Note the path drops
+`express`:
+
+```bash
+curl -X PUT https://api.hyperrails.io/exchange/api/v1/partners/marketplace/quote/QUOTE_ID/accept \
+  -H "Authorization: Bearer YOUR_SECRET_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "accountId": "0eb2090c-c046-4609-8fcc-0b7ef4dde30f",
+    "payment": {
+      "channel": "mobile_money",
+      "countryCode": "GH",
+      "mobileMoney": {
+        "code": "mtn",
+        "phoneNumber": "0244123456"
+      }
+    }
+  }'
+```
+
+<Warning>
+**Do not leave `express` in the accept path.** Calling
+`/partners/marketplace/express/quote/{id}/accept` returns **401 with a
+completely empty body** — no JSON, no error code. It looks like an auth
+failure on a perfectly good key. The accept path has no `express` segment.
+</Warning>
+
+```json
+{
+  "quoteId": "806dc37d-7880-4c8a-b871-c81e48a47438",
+  "status": "AWAITING_PAYMENT",
+  "source": "GHS",
+  "destination": "NGN",
+  "amount": 5.17301038,
+  "totalSourceAmount": 5.17301038,
+  "fee": 0.17301038,
+  "totalDestinationAmount": 578.0,
+  "mode": "test",
+  "metadata": {
+    "mobileMoneyPayIn": {
+      "provider": "mtn",
+      "providerName": "MTN",
+      "phoneNumber": "0244123456",
+      "attemptReference": "ref-02ec23bc404c4fa1842b01509be7a08f",
+      "authorizationMode": "otp",
+      "status": "inProgress",
+      "message": "Please enter the one time password sent to your phone.",
+      "expiresAt": "2026-09-22T08:27:59.881464Z"
+    }
+  },
+  "ttl": 3599
+}
+```
+
+Now the quote is `AWAITING_PAYMENT`, `mobileMoneyPayIn` has appeared, and `ttl`
+is 3599 — the countdown starts here, not at pricing.
+
+<Note>
+Mobile money on dev is **GHS only**, and provider codes are **lowercase** —
+`mtn`, `airtel`, `telecel`.
+</Note>
+
+---
+
+## Step 3: Authorize with the OTP
+
+```bash
+curl -X PUT https://api.hyperrails.io/exchange/api/v1/partners/marketplace/quote/QUOTE_ID/payment/authorize \
+  -H "Authorization: Bearer YOUR_SECRET_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "otp": "654321" }'
+```
+
+The full quote comes back. What changes is the message:
+
+```json
+{
+  "status": "AWAITING_PAYMENT",
+  "metadata": {
+    "mobileMoneyPayIn": {
+      "status": "inProgress",
+      "message": "Please complete the payment on your mtn line.",
+      "authorizationMode": "otp"
+    }
+  }
+}
+```
+
+The code was accepted. The money has not arrived yet.
+
+---
+
+## Step 4: Poll until the payment settles
+
+```bash
+curl https://api.hyperrails.io/exchange/api/v1/partners/marketplace/quote/QUOTE_ID/payment/status \
+  -H "Authorization: Bearer YOUR_SECRET_KEY"
+```
+
+```json
+{
+  "quoteId": "806dc37d-7880-4c8a-b871-c81e48a47438",
+  "status": "AWAITING_PAYMENT",
+  "totalDestinationAmount": 578.0,
+  "metadata": {
+    "mobileMoneyPayIn": {
+      "attemptReference": "ref-02ec23bc404c4fa1842b01509be7a08f",
+      "status": "successful",
+      "message": "Payment completed successfully."
+    }
+  },
+  "ttl": 3593
+}
+```
+
+<Warning>
+Watch **`metadata.mobileMoneyPayIn.status`**, not the top-level `status`. The
+payment reads `successful` while the quote is still `AWAITING_PAYMENT` — that
+is correct, not a stuck trade. The top-level status only changes when you
+complete.
+</Warning>
+
+<Note>
+In test mode this settled within about four seconds. Poll every few seconds
+rather than in a tight loop, and give up against `ttl` rather than a fixed
+number of tries.
+</Note>
+
+---
+
+## Step 5: Complete the trade
+
+```bash
+curl -X PUT https://api.hyperrails.io/exchange/api/v1/partners/marketplace/quote/QUOTE_ID/complete \
+  -H "Authorization: Bearer YOUR_SECRET_KEY"
+```
+
+```json
+{
+  "quoteId": "806dc37d-7880-4c8a-b871-c81e48a47438",
+  "status": "SUCCESSFUL",
+  "source": "GHS",
+  "destination": "NGN",
+  "amount": 5.17301038,
+  "totalSourceAmount": 5.17301038,
+  "fee": 0.17301038,
+  "totalDestinationAmount": 578.0,
+  "mode": "test",
+  "allocationResult": {
+    "allocations": [
+      {
+        "allocatedAmount": 578.00000208,
+        "rate": 115.6,
+        "reference": "HPR-ALO-1bbe8b80e32e42578b6aeb14f9276ada",
+        "sourceAmount": 5.0
+      }
+    ],
+    "totalDestinationAmount": 578.0,
+    "weightedAverageRate": 115.6
+  },
+  "metadata": {
+    "mobileMoneyPayIn": {
+      "status": "successful",
+      "message": "Payment completed successfully."
+    },
+    "transactionFee": {
+      "feeType": "flat",
+      "currency": "NGN",
+      "flatFee": 20.0,
+      "calculatedFee": 20.0
+    }
+  },
+  "ttl": 0
+}
+```
+
+`status` is `SUCCESSFUL` and `ttl` is 0. Done.
+
+### Confirming the money moved
+
+Reading the NGN balance before and after:
+
+```
+NGN 5000126654.75  ->  5000127232.75   +578.00
+```
+
+Exactly `totalDestinationAmount`.
+
+<Warning>
+**The source balance does not move.** GHS was unchanged across the trade. The
+buyer paid by mobile money, so the source side never touches your GHS
+balance — only the destination is credited. Do not reconcile by expecting a
+matching debit.
+</Warning>
+
+<Note>
+**Completing twice is safe.** Calling `complete` a second time returned `200`
+with `SUCCESSFUL` again and the balance stayed at `5000127232.75` — no double
+credit. A retry after a network timeout is a safe no-op.
+</Note>
+
+The provider's liquidity drops by what you took. The `NGN/GHS` listing went
+from `768.27` to `190.27` — the 578.00 this trade consumed. That is the
+clearest independent confirmation the trade really settled.
+
+---
+
+## When things go wrong
+
+| What you see | What it means | What to do |
+|---|---|---|
+| **403** `requires [SECRET_KEY]` | You used a dashboard token | Use your secret key |
+| **400** `Unable to fulfill requested volume` | Bigger than the provider holds | Check listings; trade smaller |
+| **400** `No providers available` | Nobody trades that pair | Pick a listed pair |
+| Quote is `PENDING`, no `mobileMoneyPayIn` | You passed `payment` to the express call | Call accept — express does not charge |
+| **401** with an empty body on accept | `express` left in the path | Accept is on `/quote/{id}/accept`, without `express` |
+| **400** on authorize | Wrong or expired OTP | Have the buyer request a new code |
+| `payIn` stuck on `inProgress` | Buyer has not approved on their phone | Wait, watching `ttl` |
+| **400** on complete | Payment has not settled | Poll until `mobileMoneyPayIn.status` is `successful` |
+| Duplicate quotes after a retry | `externalReference` is not idempotent | Track `quoteId`; cancel abandoned quotes |
+| Source balance unchanged | Expected — mobile money pay-in | Reconcile the destination only |
+
+## What to do next
+
+- [Let a Buyer Pay for a Trade](/documentation/guides/buyer-pays-for-a-trade) — the intent flow, with a `ttl` to show a customer
+- [Find a Liquidity Provider](/documentation/guides/find-a-liquidity-provider) — size a trade before you quote
+- [Read Your Balances](/documentation/guides/read-your-balances) — confirm the trade landed
