@@ -4,7 +4,8 @@
     "title": "HyperRail",
     "description": "HyperRail documentation",
     "license": {
-      "name": "MIT"
+      "name": "MIT",
+      "identifier": "MIT"
     },
     "version": "1.0.0"
   },
@@ -2257,7 +2258,8 @@
           }
         }
       }
-    },
+    }
+  },
   "components": {
     "schemas": {
       "StablecoinBalanceResponse": {
@@ -3527,6 +3529,43 @@
           "status"
         ]
       },
+      "Error400": {
+        "type": "object",
+        "description": "Bad request error",
+        "properties": {
+          "code": { "type": "string", "example": "BAD_REQUEST" },
+          "message": { "type": "string", "example": "Invalid request parameters" },
+          "details": { "type": "object", "additionalProperties": true }
+        }
+      },
+      "Error401": {
+        "type": "object",
+        "description": "Authentication error",
+        "properties": {
+          "code": { "type": "string", "example": "UNAUTHORIZED" },
+          "message": { "type": "string", "example": "Invalid or missing API key" }
+        }
+      },
+      "QuoteDestination": {
+        "type": "object",
+        "description": "Settlement destination for the trade. Provide `bank` for fiat settlement or `blockChain` for crypto settlement.",
+        "properties": {
+          "bank": {
+            "type": "object",
+            "properties": {
+              "accountName": { "type": "string", "example": "John Doe" },
+              "accountNumber": { "type": "string", "example": "8037592839" },
+              "bankCode": { "type": "string", "example": "058" }
+            }
+          },
+          "blockChain": {
+            "type": "object",
+            "properties": {
+              "address": { "type": "string", "example": "0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5" }
+            }
+          }
+        }
+      },
       "Error": {
         "required": ["code", "message"],
         "type": "object",
@@ -3558,5 +3597,4 @@
       }
     }
   }
-}
 }
