@@ -3087,7 +3087,7 @@
       },
       "ExpressQuoteRequest": {
         "type": "object",
-        "required": ["sourceCurrency", "destinationCurrency", "amount"],
+        "required": ["sourceCurrency", "destinationCurrency", "amount", "sourceChain"],
         "properties": {
           "sourceCurrency": {
             "type": "string",
@@ -3104,6 +3104,11 @@
             "description": "Amount to exchange",
             "example": 50000,
             "minimum": 1
+          },
+          "sourceChain": {
+            "type": "string",
+            "description": "Source chain code (base_sepolia, ethereum_sepolia)",
+            "example": "ethereum_sepolia"
           }
         }
       },
