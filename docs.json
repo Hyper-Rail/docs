@@ -186,6 +186,26 @@
           }
 
         ]
+      },
+      {
+        "tab": "Changelog",
+        "icon": "tags",
+        "groups": [
+          {
+            "group": "Changelog",
+            "icon": "list",
+            "pages": [
+              "changelog/introduction"
+            ]
+          },
+          {
+            "group": "Release Notes",
+            "icon": "tag",
+            "pages": [
+              "changelog/launch"
+            ]
+          }
+        ]
       }
     ]
   },

@@ -1,0 +1,66 @@
+---
+title: "Launch Release"
+description: "Liquidity & Trading. Everything that went into launching HyperRails, from liquidity pools and the marketplace to stablecoin wallets, payouts, and the Partner API."
+icon: "rocket"
+---
+
+## Trading & Liquidity
+
+- Liquidity Pools: Exchange Clients can create a pool for any currency pair. Choose a funded pool (money added right away) or an unfunded pool (approved by admin first). You can edit, pause, resume, delete, and top up your pools. A pool can't be deleted while a trade is in progress.
+- Liquidity Marketplace: List your pools and browse other pools by currency pair. Business names stay hidden behind trading aliases.
+- Liquidity Aggregation: Buyers can combine liquidity from several pools in one order, or buy from a single pool.
+- Instant Trade (previously Express Buy): Instant Trade now has its own page. Buy at a listed rate in one flow, entering either the amount you send or the amount you want to receive. The flow is also simpler for sub-merchants.
+- Chat & Quotes: Buyers and sellers can chat inside the platform and send, accept, and decline quotes. A sound plays when a new message arrives.
+- Orders Page: See your ongoing orders, your order history, and the full details of each trade, including whether the pool was funded or unfunded.
+- Order Timer & Time Extension: A countdown timer shows on the payment page of every order type, and pop-ups keep you informed about your order time and any extension.
+- Pool Expiry & Archiving: Set an expiry date on a pool. Expired pools are archived automatically and can still be viewed. Pools with no balance are removed.
+- Chain Selection for Stablecoin Pairs: When creating a pool or viewing listings for a pair that includes a stablecoin, you pick the chain (network).
+- Clear Rate Direction: Rates show in a consistent direction (base and quote) on pools, listings, orders, chat, the dashboard, Instant Trade, and swaps.
+
+## Balances, Wallets & Conversions
+
+- Balances, Virtual Accounts & Stablecoin Wallets: Create fiat and stablecoin balances, create virtual accounts to receive payments, and use stablecoin wallets.
+- Swap Between Balances: Move money from a balance in one currency to a balance in another.
+- Bridge: Convert between a currency and its matching stablecoin (for example, USD to USDT) with a reworked flow and a banner that points you to it.
+- On-ramp & Off-ramp: Turn local currency into stablecoins (on-ramp) and stablecoins back into local currency (off-ramp).
+
+## Payouts
+
+- High-Volume Payouts: Large payouts that exceed a provider's per-transaction limit are split into smaller parts and paid out automatically.
+- Smarter Payout Routing: If a priority provider doesn't have enough funds for a payout, HyperRails moves funds from other providers first, so your payout still goes through.
+- USD Payouts: Send USD payouts using SWIFT/BIC. ACH and Fedwire aren't available yet.
+- Save Beneficiary: Save recipient account details so repeat payouts are faster.
+- Corridor Checker: Check whether a payment route or currency pair is supported before you send.
+- Print Receipts: Print a receipt for any payin or payout.
+- Export: Export your transaction history.
+
+## Fees
+
+- Free Internal Transfers: All internal transfers in NGN, GHS, and USD are free.
+- Fee Breakdowns: See exactly how each fee is made up.
+
+## Onboarding & Account
+
+- Revamped Onboarding & Verification (KYB/KYC): Exchange Clients and sub-merchants go through a new onboarding flow with a checklist of steps and identity checks through Smile ID. If verification fails, there's a clear flow to fix the problem and resubmit. We've also added required and additional document fields.
+- New Dashboard: See your balances, currency pairs, rates, and orders in one place, with quick action buttons that guide new users through their first steps.
+- Test & Live Modes: You get separate test and live accounts, so you can try HyperRails safely before going live.
+- Sub-merchant Management: Invite sub-merchants, see them in a list, view your trade history with each one, and suspend them when needed.
+- Refreshed Navigation & New Logo: We've reworked the side and top menus, and the new HyperRails logo appears across the platform.
+- HyperRails Website & Blog: HyperRails has a public website, with a waitlist page for Exchange Clients, and a blog.
+
+## Security & Compliance
+
+- OTP for Trades Paid from Balance: Trades paid from your balance need a one-time code, which adds a security step before money moves.
+- Recover 2FA: Lost your authenticator device? Use your single-use recovery codes to get back into your account and set up 2FA again on a new device.
+- Transaction Monitoring: Deposits and withdrawals are checked for risk before they go through, and flagged transactions are reviewed by our team.
+
+## Notifications
+
+- Notification Settings: Choose which in-app notifications you receive.
+- Email Notifications: HyperRails sends its own emails, including payin and payout alerts, rate emails, Instant Trade confirmations to buyers, and alerts when a counterparty can't supply enough funds.
+
+## Developers
+
+- Partner API: Connect to HyperRails directly through our API to request quotes, create and complete orders, fetch marketplace listings, get indicative market rates, check balances, and make payouts. Messages also support ISO 20022, the international standard for payment messages.
+- API Documentation: HyperRails has published API documentation, including how to fetch wallet addresses.
+- Webhooks & API Keys: Create webhook API keys and receive webhooks when transactions succeed or fail, when a quote is about to expire, and for rate and liquidity updates.`
