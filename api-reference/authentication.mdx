@@ -28,6 +28,10 @@ and live mode.
 | **Secret Key** | `sk_test_…` / `sk_live_…` | All server-to-server API calls. Grants full account access. **Never expose client-side.** | `Authorization: Bearer sk_live_...` header |
 | **Encryption Key** | `enc_test_…` / `enc_live_…` | Encrypting sensitive fields (e.g. bank account numbers, blockchain destination addresses) before sending them in request bodies that require field-level encryption. See [Field Encryption](/api-reference/field-encryption). | Used locally in your integration to encrypt payload fields — never transmitted as a header. |
 
+<Warning>
+  **Your secret key, public key and encryption key are shown only once.** After you view a key, HyperRails stores it hashed for security, so neither you nor HyperRails can see it again. Copy it straight into a secrets manager or environment variable and keep it safe. If you lose a key, generate a new one. The old key stops working immediately.
+</Warning>
+
 ## Required Headers
 
 Every request must include:

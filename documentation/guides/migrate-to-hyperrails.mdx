@@ -1,0 +1,83 @@
+---
+title: "Migrate to HyperRails"
+description: "Move your exchange, collection and payout flows from another payment partner to HyperRails, step by step."
+icon: "right-left"
+---
+
+This guide is for teams already moving money with another provider who want to move some or all of that volume to HyperRails without disrupting customers.
+
+## Migration overview
+
+<Steps>
+  <Step title="Get access">
+    Onboard and complete KYB, then ask for API access.
+  </Step>
+  <Step title="Map your flows">
+    Match each thing you do today to its HyperRails equivalent.
+  </Step>
+  <Step title="Build in test mode">
+    Rebuild each flow against the test environment.
+  </Step>
+  <Step title="Run in parallel">
+    Send a slice of live volume to HyperRails and compare.
+  </Step>
+  <Step title="Cut over">
+    Move traffic corridor by corridor, then retire the old integration.
+  </Step>
+</Steps>
+
+## Step 1: Get access
+
+1. [Onboard with us](/documentation/onboarding) and complete [KYB](/documentation/kyb-reference). Verification typically takes 1–3 business days.
+2. API access is granted per partner during onboarding. Contact [support@hyperrails.io](mailto:support@hyperrails.io) to enable it.
+3. Generate test keys from **Dashboard → Credentials → API Keys**. Each key is shown only once, then stored hashed, so save it straight away.
+
+## Step 2: Map your flows
+
+| What you do today | HyperRails equivalent |
+|---|---|
+| Get an indicative FX rate | [Get Rate](/api-reference/rate/get-rate), or [Rate Stream](/api-reference/rate/rate-stream) for live updates |
+| Request a firm quote | [Intent](/documentation/guides/request-for-quote), [express quote](/documentation/guides/take-a-quote-in-one-call) or [multi-provider quote](/documentation/guides/request-for-quote) |
+| Execute a conversion | Accept, authorize and complete the quote. See [Transaction lifecycle](/get-started/transaction-lifecycle) |
+| Collect by bank transfer | [Virtual accounts](/documentation/guides/give-a-customer-an-account) |
+| Collect by mobile money | [Accept a quote with a mobile money payment](/documentation/guides/buyer-pays-for-a-trade) |
+| Hold stablecoins | [Stablecoin wallets](/documentation/guides/check-what-a-wallet-holds) |
+| Pay out to a bank | [Fiat payout](/documentation/features/fiat-payout-process) |
+| Send stablecoins | [Wallet payout](/api-reference/payout/wallet-payout) |
+| Check balances | [Read Your Balances](/documentation/guides/read-your-balances) |
+| Receive status updates | [Webhooks](/documentation/webhooks/overview) |
+
+Things that commonly differ between providers, and how HyperRails handles them:
+
+| Topic | On HyperRails |
+|---|---|
+| Credentials | One secret key works for every endpoint. See [Environments and credentials](/get-started/concepts/environments) |
+| Duplicate protection | Your unique `reference` on payouts. Quote creation and virtual account creation aren't idempotent. See [Idempotency](/api-reference/idempotency) |
+| Rates | The published rate is a reference. You trade at the quote's `weightedAverageRate`. See [Quotes](/get-started/concepts/quotes) |
+| Liquidity | Trades are filled from marketplace pools. Check depth before quoting. See [Liquidity](/get-started/concepts/liquidity) |
+| Webhook signatures | HMAC-SHA512, following the Standard Webhooks specification |
+| Pagination | `page` and `size`, starting at page `0`. See [Pagination](/api-reference/pagination) |
+
+## Step 3: Build in test mode
+
+- Fund test balances and virtual accounts with the [Funding Simulator](/documentation/testing/funding-in-test-mode).
+- Point a test webhook URL at your staging environment and check signatures with the [Webhook validator](/documentation/webhooks/validator).
+- Rebuild your reconciliation around HyperRails references: your `reference` on payouts, `quoteId` on trades, and `x-hyperrails-webhook-id` on events.
+- Work through the error cases on [Error codes](/api-reference/error-codes).
+
+## Step 4: Run in parallel
+
+- Generate live keys (shown only once, so store them in your secrets manager straight away) and configure your live webhook URL and secret. Live and test are configured separately.
+- Route a small share of one corridor to HyperRails while your existing provider handles the rest.
+- Compare rates, settlement times and success rates, and reconcile both sides daily.
+- Check coverage for your account first. Live mode supports fewer currencies than test mode. See [Coverage](/documentation/coverage).
+
+## Step 5: Cut over
+
+- Increase HyperRails' share corridor by corridor once results match.
+- Move any balances you hold with your old provider using your normal payout process with them.
+- Keep your old integration available until in-flight transactions on it have settled, then retire it.
+
+## Need help?
+
+Contact [support@hyperrails.io](mailto:support@hyperrails.io) to plan your migration.

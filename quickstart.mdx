@@ -1,80 +1,214 @@
 ---
 title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+description: "Authenticate, make your first API call, and price your first trade in test mode, in about ten minutes."
+icon: "rocket"
 ---
 
-## Get started in three steps
+This quickstart takes you from a new test key to a priced quote, without moving real money. Every call runs in **test mode**.
 
-Get your documentation site running locally and make your first customization.
+<RequestExample>
 
-### Step 1: Set up your local environment
+```bash cURL
+curl "https://api.hyperrails.io/api/v1/partners/rates?base=GHS&quote=NGN" \
+  -H "Authorization: Bearer $HYPERRAILS_SECRET_KEY"
+```
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+```javascript Node.js
+const res = await fetch(
+  "https://api.hyperrails.io/api/v1/partners/rates?base=GHS&quote=NGN",
+  { headers: { Authorization: `Bearer ${process.env.HYPERRAILS_SECRET_KEY}` } }
+);
+console.log(await res.json());
+```
 
-### Step 2: Deploy your changes
+```python Python
+import os, requests
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+res = requests.get(
+    "https://api.hyperrails.io/api/v1/partners/rates",
+    params={"base": "GHS", "quote": "NGN"},
+    headers={"Authorization": f"Bearer {os.environ['HYPERRAILS_SECRET_KEY']}"},
+)
+print(res.json())
+```
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+</RequestExample>
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+<ResponseExample>
 
-### Step 3: Go live
+```json 200
+{
+  "base": "GHS",
+  "inverseRate": 0.0077657840,
+  "quote": "NGN",
+  "rate": 128.7700,
+  "timestamp": "2026-04-30T17:13:13.892233Z",
+  "weight": "QUOTE"
+}
+```
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+</ResponseExample>
+
+## Before you start
+
+- A HyperRails account. See [Onboard with us](/documentation/onboarding).
+- API access enabled on your account. Contact [support@hyperrails.io](mailto:support@hyperrails.io) if it isn't.
+
+<Steps>
+  <Step title="Get your test secret key">
+    In the [dashboard](https://app.hyperrails.io), switch to **test mode**, then go to **Credentials → API Keys** and copy your secret key. It starts with `sk_test_`.
+
+    <Warning>
+      Your key is shown **only once**. After that it's stored hashed and can't be viewed again, so save it now. If you lose it, generate a new one.
+    </Warning>
+
+    Store it as an environment variable, never in code:
+
+    ```bash
+    export HYPERRAILS_SECRET_KEY="sk_test_..."
+    ```
+
+    <Warning>
+      Your secret key grants full account access. Keep it on your server. See [Integration security](/documentation/guides/integration-security).
+    </Warning>
+  </Step>
+
+  <Step title="Make your first call">
+    Read a reference rate. The request and response are shown alongside this page, in cURL, Node.js and Python.
+
+    Every request authenticates the same way: `Authorization: Bearer <secret key>`. The `sk_test_` prefix is what makes this a test-mode call. See [Authentication](/api-reference/authentication).
+  </Step>
+
+  <Step title="Check there's liquidity">
+    A rate doesn't mean anyone is offering to trade. List the liquidity marketplace to see who is, and how much they can fill:
+
+    <CodeGroup>
+
+    ```bash cURL
+    curl https://api.hyperrails.io/exchange/api/v1/partners/marketplace/listings \
+      -H "Authorization: Bearer $HYPERRAILS_SECRET_KEY"
+    ```
+
+    ```javascript Node.js
+    const res = await fetch(
+      "https://api.hyperrails.io/exchange/api/v1/partners/marketplace/listings",
+      { headers: { Authorization: `Bearer ${process.env.HYPERRAILS_SECRET_KEY}` } }
+    );
+    const { content } = await res.json();
+    console.log(content.map((l) => [l.pair, l.rate, l.availableBalance]));
+    ```
+
+    ```python Python
+    res = requests.get(
+        "https://api.hyperrails.io/exchange/api/v1/partners/marketplace/listings",
+        headers={"Authorization": f"Bearer {os.environ['HYPERRAILS_SECRET_KEY']}"},
+    )
+    for l in res.json()["content"]:
+        print(l["pair"], l["rate"], l["availableBalance"])
+    ```
+
+    </CodeGroup>
+
+    Note the base URL: listings live on `/exchange/api/v1`. Pick a pair whose `availableBalance` covers the amount you'll quote.
+  </Step>
+
+  <Step title="Find the account to settle into">
+    A quote needs the `accountId` of the balance that receives the money:
+
+    ```bash
+    curl https://api.hyperrails.io/api/v1/balances/currency/NGN \
+      -H "Authorization: Bearer $HYPERRAILS_SECRET_KEY"
+    ```
+
+    Need test funds? Use the [Funding Simulator](/documentation/testing/funding-in-test-mode).
+  </Step>
+
+  <Step title="Price your first quote">
+    Create an express quote for 5 GHS into NGN:
+
+    <CodeGroup>
+
+    ```bash cURL
+    curl -X POST https://api.hyperrails.io/exchange/api/v1/partners/marketplace/express/quote \
+      -H "Authorization: Bearer $HYPERRAILS_SECRET_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "sourceCurrency": "GHS",
+        "destinationCurrency": "NGN",
+        "amount": 5,
+        "amountDirection": "source",
+        "accountId": "YOUR_NGN_ACCOUNT_ID"
+      }'
+    ```
+
+    ```javascript Node.js
+    const res = await fetch(
+      "https://api.hyperrails.io/exchange/api/v1/partners/marketplace/express/quote",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.HYPERRAILS_SECRET_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sourceCurrency: "GHS",
+          destinationCurrency: "NGN",
+          amount: 5,
+          amountDirection: "source",
+          accountId: "YOUR_NGN_ACCOUNT_ID",
+        }),
+      }
+    );
+    const quote = await res.json();
+    console.log(quote.quoteId, quote.allocationResult.weightedAverageRate);
+    ```
+
+    ```python Python
+    res = requests.post(
+        "https://api.hyperrails.io/exchange/api/v1/partners/marketplace/express/quote",
+        headers={"Authorization": f"Bearer {os.environ['HYPERRAILS_SECRET_KEY']}"},
+        json={
+            "sourceCurrency": "GHS",
+            "destinationCurrency": "NGN",
+            "amount": 5,
+            "amountDirection": "source",
+            "accountId": "YOUR_NGN_ACCOUNT_ID",
+        },
+    )
+    quote = res.json()
+    print(quote["quoteId"], quote["allocationResult"]["weightedAverageRate"])
+    ```
+
+    </CodeGroup>
+
+    You get back a quote in `PENDING`, with a `quoteId`, the `allocationResult` showing who fills it, and the totals. Quotes are valid for 30 minutes.
+  </Step>
+</Steps>
+
+## Troubleshooting
+
+| What you see | What it means | What to do |
+|---|---|---|
+| **401** | Missing or invalid secret key | Check the `Authorization: Bearer sk_test_...` header |
+| **404** with an empty body on the rate call | No rate exists for that pair | Try another pair. Check the status code before parsing the body |
+| **400** `missing_parameter` | `base` or `quote` missing | Rates use `base` and `quote`, not `source` and `destination` |
+| **400** `No providers available` | Nobody offers the pair | Pick a pair from the listings in step 3 |
+| **400** `Unable to fulfill requested volume` | Bigger than the provider holds | Quote a smaller amount |
+| **401** with an empty body on accept | `express` left in the accept path | Accept is `/partners/marketplace/quote/{id}/accept` |
 
 ## Next steps
 
-Now that you have your docs running, explore these key features:
-
 <CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
+  <Card title="Complete the trade" icon="circle-check" href="/documentation/guides/take-a-quote-in-one-call">
+    Accept, authorize, and complete the quote you just priced.
+  </Card>
+  <Card title="Set up webhooks" icon="bell" href="/documentation/webhooks/overview">
+    Get notified when trades and payouts settle.
+  </Card>
+  <Card title="Try the API in your browser" icon="terminal" href="/api-reference/rate/get-rate">
+    Every endpoint page has an interactive playground. Send real test requests and inspect the response.
+  </Card>
+  <Card title="Go live" icon="rocket" href="/documentation/guides/migrate-to-hyperrails">
+    Switch to live keys and roll out safely.
+  </Card>
 </CardGroup>
-
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>

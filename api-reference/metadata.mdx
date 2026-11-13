@@ -1,0 +1,78 @@
+---
+title: "Metadata"
+description: "The metadata HyperRails returns on a quote, and the fields you can use to attach your own references."
+icon: "tags"
+---
+
+On HyperRails, `metadata` is an object **HyperRails returns** on a quote. It tells you how the payer should pay and what fees apply. It isn't a free-form field you can write to.
+
+To tie HyperRails objects to your own records, use the reference fields in [Your own references](#your-own-references).
+
+## Quote metadata
+
+Which keys appear depends on how the quote is paid.
+
+| Key | When it appears | What it contains |
+|---|---|---|
+| `bankPayIn` | Paid by bank transfer | `accountName`, `accountNumber`, `bankName` and the payment `reference` to show the payer |
+| `cryptoPayIn` | Paid by stablecoin deposit | `addressId`, `address`, `chain`, `token`, `addressType`, `expectedAmount`, `externalReference`, `status` (`active`, `pending` or `expired`), `createdAt`, `expiresAt`, `virtualAccountId`, `derivationIndex` and an optional `warningMessage` |
+| `mobileMoneyPayIn` | Paid by mobile money, after accept | `provider`, `providerName`, `phoneNumber`, `attemptReference`, `authorizationMode` (for example `otp`), `status`, `message` and `expiresAt` |
+| `transactionFee` | When a transaction fee applies | `feeType`, `currency`, `flatFee`, `percentageRate`, `appliedAmount` and `calculatedFee` |
+
+```json Example: a quote awaiting a mobile money payment
+{
+  "quoteId": "806dc37d-7880-4c8a-b871-c81e48a47438",
+  "status": "AWAITING_PAYMENT",
+  "metadata": {
+    "mobileMoneyPayIn": {
+      "provider": "mtn",
+      "authorizationMode": "otp",
+      "status": "inProgress",
+      "message": "Please enter the one time password sent to your phone."
+    },
+    "transactionFee": {
+      "feeType": "flat",
+      "currency": "NGN",
+      "flatFee": 20.0,
+      "calculatedFee": 20.0
+    }
+  }
+}
+```
+
+<Tip>
+  While a quote is `AWAITING_PAYMENT`, watch the pay-in's own `status` inside `metadata`, not the top-level quote status. See [Transaction lifecycle](/get-started/transaction-lifecycle).
+</Tip>
+
+Each allocation in `allocationResult.allocations` can also carry its own `metadata` object with extra details about that allocation.
+
+## Chat metadata
+
+Quotes agreed through chat on the dashboard carry a separate top-level `chatMetadata` object, alongside `metadata`:
+
+| Field | What it is |
+|---|---|
+| `conversationId` | The chat conversation |
+| `chatQuoteId` | The quote's ID within the chat |
+| `listingId` | The marketplace listing the negotiation started from |
+| `initialListingRate` | The listing's rate when the negotiation started |
+| `negotiationStartedAt` | When the negotiation started |
+| `quoteSentAt` | When the quote was sent |
+| `acceptedAt` | When the quote was accepted |
+
+## In webhooks
+
+Webhook payloads use snake_case and carry pay-in instructions as `payment_instruction` (with `type`, `account_name`, `account_number`, `bank_name` and `reference`) rather than `metadata`. See [Webhook payloads](/documentation/webhooks/payloads).
+
+## Your own references
+
+| Field | Where | Use it for |
+|---|---|---|
+| `reference` | [Fiat](/api-reference/payout/withdrawal) and [wallet](/api-reference/payout/wallet-payout) payouts | Your unique ID for the payout. It's also the [idempotency](/api-reference/idempotency) key |
+| `narration` | Fiat payouts | A description that travels with the bank transfer |
+| `memo` | Wallet payouts | An optional note on the withdrawal |
+| `externalReference` | Express quotes | Your own tracking reference. It isn't an idempotency key |
+| `accountTag` | Virtual accounts | Your own label. Defaults to `sub-account`, and you can filter by it |
+| `accountName` | Virtual accounts | The name your customer sees |
+
+Store the HyperRails IDs you get back (`quoteId`, the account `id`, the payout `reference`) against your own records, and use them to reconcile webhooks.

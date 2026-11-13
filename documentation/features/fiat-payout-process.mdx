@@ -16,13 +16,13 @@ Before submitting a payout request, your backend must follow this sequential pro
 
 <Steps>
   <Step title="Retrieve the Bank Code">
-    Different regions and financial systems use different clearing identifiers. Before executing a transfer, fetch the bank code for the target currency using the [Get All Banks API](/api-reference/banks/get-all).
+    Different regions and financial systems use different clearing identifiers. Before executing a transfer, fetch the bank code for the target currency using the [Get All Banks API](/api-reference/payout/list-banks).
 
     This is currently supported for **NGN** and **GHS**.
   </Step>
 
   <Step title="Verify the Recipient's Account Name">
-    To confirm funds are going to the right person, pass the account number and the `bankCode` from Step 1 to the [Resolve Bank Account API](/api-reference/banks/resolve). This returns the verified account name on record.
+    To confirm funds are going to the right person, pass the account number and the `bankCode` from Step 1 to the [Resolve Bank Account API](/api-reference/payout/resolve-account). This returns the verified account name on record.
   </Step>
 
   <Step title="Initiate the Fiat Payout">

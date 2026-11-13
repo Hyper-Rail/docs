@@ -5,29 +5,90 @@ icon: code
 description: HyperRails APIs allow approved partners to programmatically access on-ramp, off-ramp, and fiat currency exchange functionality through secure, RESTful endpoints.
 ---
 
-The **HyperRails API** enables partners to integrate digital asset infrastructure directly into their applications, including fiat on-ramp, off-ramp, and currency exchange operations.
+The **HyperRails API** lets partners build HyperRails into their own products: request rates and quotes, execute trades, read balances, create virtual accounts, and send payouts.
 
-The API with Base URL, https://api.hyperrails.io/api/v1, is designed using **RESTful principles**, providing predictable endpoints, standard HTTP methods, and structured responses to ensure a smooth developer experience. 
+API access is granted per partner during onboarding. Contact [support@hyperrails.io](mailto:support@hyperrails.io) to enable it on your account.
 
-### API Design Principles
+## API conventions
 
-You can expect the following when working with the HyperRails API:
+### Base URLs
 
-- **Resource-Oriented Endpoints**
-Clear and intuitive URLs representing core resources.
+| Base URL | Serves |
+|---|---|
+| `https://api.hyperrails.io/api/v1` | Most endpoints: rates, intents, quotes, balances, accounts, wallets and payouts |
+| `https://api.hyperrails.io/exchange/api/v1` | Marketplace listings and express quotes |
 
-- **Standard HTTP Methods & Status Codes**
-Uses `GET`, `POST`, `PUT`, and `DELETE` with conventional response codes.
-
-- **JSON Request & Response Format**
-All responses are returned in JSON for easy parsing and integration.
-
-- **Consistent Content-Type Handling**  
-All requests should include the header `Content-Type: application/json`.
+There's one base URL for test and live. Your credential decides which environment a request runs in.
 
 ### Authentication
 
-All API requests require authentication using your **API keys**.
-These keys identify your application and determine whether requests are processed in test or live mode.
+Every endpoint authenticates with your secret key:
 
-You can find and manage your API keys from the **API Keys & Webhooks** section of your HyperRails dashboard.
+```bash
+Authorization: Bearer sk_test_...
+```
+
+Use `sk_test_` keys in test mode and `sk_live_` keys in live mode. See [Authentication](/api-reference/authentication).
+
+### Requests and responses
+
+- **HTTPS only.** Plain HTTP requests are rejected.
+- **JSON.** Send `Content-Type: application/json`, except for file uploads. Responses are JSON unless you [request ISO 20022 XML](/api-reference/iso20022/content-negotiation).
+- **RESTful.** Resource-oriented URLs, standard HTTP methods (`GET`, `POST`, `PUT`, `DELETE`) and standard status codes.
+- **Currency codes** are ISO 4217 codes such as `NGN`, `GHS` and `USD`. Stablecoins are `USDT` and `USDC`.
+- **Rates use `base` and `quote`.** Quotes and intents use `sourceCurrency` and `destinationCurrency`.
+- **Timestamps** are ISO 8601 in UTC, for example `2026-09-22T08:10:15.731553Z`.
+- **Unknown query parameters are ignored**, not rejected. Check that a filter actually narrowed your results.
+
+### Errors
+
+Always check the HTTP status code first. Some errors return an empty body: for example, a pair with no rate returns `404` with nothing in it.
+
+Most error bodies look like this:
+
+```json
+{
+  "errorCategory": "REQUEST_ERROR",
+  "errorCode": "validation_error",
+  "errorMessage": "Validation failed for one or more fields",
+  "additionalDetails": { "accountName": "Account Name is required" },
+  "traceId": "0d3bc736578e4a1087fc54129a8f5266"
+}
+```
+
+- Branch on `errorCode`, not on `errorMessage`.
+- `additionalDetails` names the field or parameter that's wrong.
+- Keep the `traceId` when you contact support.
+
+See [Error codes](/api-reference/error-codes) for the full list.
+
+### Versioning
+
+The current API version is **v1**, and it's part of every path (`/api/v1`). See the [Changelog](/changelog/introduction) for what has changed.
+
+### Every endpoint page
+
+Each endpoint in this reference lists its authentication, path and query parameters, request body, and every documented status code with an example response. Use the **Try it** playground on any endpoint page to send a request with your **test** secret key and inspect the live response in your browser. Code samples switch between cURL, JavaScript, Python, Go, PHP and Java.
+
+### More conventions
+
+<CardGroup cols={3}>
+  <Card title="Idempotency" icon="repeat" href="/api-reference/idempotency">
+    Retry safely without moving money twice.
+  </Card>
+  <Card title="Pagination" icon="list-ol" href="/api-reference/pagination">
+    Walk through long lists with `page` and `size`.
+  </Card>
+  <Card title="Metadata" icon="tags" href="/api-reference/metadata">
+    Pay-in instructions and fees on a quote, and your own references.
+  </Card>
+  <Card title="Rate limits" icon="gauge-high" href="/documentation/rate-limits">
+    100 requests per minute per secret key.
+  </Card>
+  <Card title="Webhooks" icon="bell" href="/documentation/webhooks/overview">
+    Signed, real-time notifications.
+  </Card>
+  <Card title="Glossary" icon="book" href="/api-reference/glossary">
+    Every HyperRails term in one place.
+  </Card>
+</CardGroup>

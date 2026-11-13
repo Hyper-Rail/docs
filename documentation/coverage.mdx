@@ -1,0 +1,48 @@
+---
+title: "Coverage"
+description: "The markets and currencies HyperRails covers, and the payment methods available in each."
+icon: "earth-africa"
+---
+
+HyperRails covers currencies across Africa and major global currencies, with USDT and USDC as the settlement layer.
+
+<CardGroup cols={3}>
+  <Card title="West Africa" icon="earth-africa">
+    🇳🇬 **NGN**: Nigerian Naira<br/>
+    🇬🇭 **GHS**: Ghanaian Cedi<br/>
+    **XOF**: West African CFA Franc
+  </Card>
+  <Card title="East and Southern Africa" icon="earth-africa">
+    🇰🇪 **KES**: Kenyan Shilling<br/>
+    🇿🇦 **ZAR**: South African Rand
+  </Card>
+  <Card title="Global" icon="earth-americas">
+    🇺🇸 **USD**: US Dollar<br/>
+    🇬🇧 **GBP**: British Pound<br/>
+    🇪🇺 **EUR**: Euro
+  </Card>
+</CardGroup>
+
+<Card title="Stablecoins" icon="coins" horizontal>
+  **USDT** and **USDC** on Base, Ethereum, Polygon and Stellar, held in one **multi-chain wallet with gasless transactions**. See [Stablecoin wallets](/documentation/guides/stablecoin-wallets) and [Supported currencies and networks](/documentation/supported-currencies).
+</Card>
+
+## Payment methods
+
+| Method | Coverage | Learn more |
+|---|---|---|
+| Bank payouts with bank lookup and account name resolution | NGN, GHS | [Fiat payout process](/documentation/features/fiat-payout-process) |
+| USD bank payouts | SWIFT/BIC. ACH and Fedwire aren't available yet | [Supported currencies](/documentation/supported-currencies) |
+| Mobile money pay-in | Query live coverage with [List Mobile Money Currencies](/api-reference/hyperrail-quote/get-mmo-currencies). Providers in Ghana include MTN, Airtel and Telecel | [Let a Buyer Pay for a Trade](/documentation/guides/buyer-pays-for-a-trade) |
+| Virtual accounts | By currency balance | [Give a Customer an Account](/documentation/guides/give-a-customer-an-account) |
+| Stablecoin deposits and payouts | USDT and USDC on supported chains, from one multi-chain wallet. Payouts are gasless | [Stablecoin payments](/use-cases/stablecoin-payments) |
+
+## Check coverage for your account
+
+Coverage depends on the mode and on what's provisioned for your account. **Live mode supports fewer currencies than test mode.** Check before you build:
+
+- `GET /balances/currency-list?mode=live`: the currencies your account can hold. See [Read Your Balances](/documentation/guides/read-your-balances).
+- The **corridor checker** on the dashboard: whether a payment route or currency pair is supported.
+- [Supported trade pairs](/api-reference/trade-pair/get-supported-trade-currency): the pairs available to trade.
+
+Additional corridors and currencies are in controlled rollout. Contact [support@hyperrails.io](mailto:support@hyperrails.io) if you need one that isn't listed.

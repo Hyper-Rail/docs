@@ -1,54 +1,90 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Hyperrails - Documentation",
-  "appearance": {"default": "dark", "strict": true},
+  "name": "HyperRails Docs",
+  "appearance": {
+    "default": "system",
+    "strict": false
+  },
   "colors": {
     "primary": "#000000",
     "light": "#B5FD85",
     "dark": "#B5FD85"
   },
   "fonts": {
-  "family": "IBM Plex Sans"
-},
-"styling": {"codeblocks": "dark"},
+    "family": "IBM Plex Sans"
+  },
+  "styling": {
+    "codeblocks": "dark"
+  },
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
       {
-        "tab": "Documentation",
-        "icon": "scroll",
+        "tab": "Home",
+        "icon": "house",
+        "pages": [
+          "index"
+        ]
+      },
+      {
+        "tab": "Get Started",
+        "icon": "play",
         "groups": [
           {
-            "group": "Core Concepts",
-            "icon": "building",
+            "group": "Welcome",
+            "icon": "hand-wave",
             "pages": [
-              {
-                "group": "Getting Started",
-                "icon": "rocket",
-                "pages": [
-                 "documentation/onboarding"
-                ]
-              },
-               {
-                "group": "KYB Verification",
-                "icon": "id-card",
-                "pages": [
-                 "documentation/kyb-verification"
-                ]
-              }
+              "introduction",
+              "get-started/how-it-works",
+              "quickstart",
+              "get-started/transaction-lifecycle",
+              "get-started/platform-overview"
             ]
           },
           {
-            "group": "Supported Currencies",
-            "icon": "money-bill",
+            "group": "Onboard with us",
+            "icon": "user-plus",
             "pages": [
-              "documentation/supported-currencies"
+              "documentation/onboarding",
+              "documentation/kyb-verification",
+              "documentation/kyb-reference"
             ]
           },
           {
-            "group": "Testing",
-            "icon": "vial",
+            "group": "Find your use case",
+            "icon": "compass",
+            "pages": [
+              "use-cases/overview",
+              "use-cases/stablecoin-payments",
+              "use-cases/on-off-ramp",
+              "use-cases/cross-border-fx",
+              "use-cases/collections-and-payouts",
+              "use-cases/liquidity-providers"
+            ]
+          },
+          {
+            "group": "Concepts",
+            "icon": "lightbulb",
+            "pages": [
+              "get-started/concepts/accounts-and-balances",
+              "get-started/concepts/liquidity",
+              "get-started/concepts/quotes",
+              "get-started/concepts/environments"
+            ]
+          },
+          {
+            "group": "What we support",
+            "icon": "globe",
+            "pages": [
+              "documentation/supported-currencies",
+              "documentation/coverage",
+              "documentation/limits"
+            ]
+          },
+          {
+            "group": "Test Mode",
+            "icon": "flask",
             "pages": [
               "documentation/testing/test-mode-overview",
               "documentation/testing/funding-in-test-mode"
@@ -67,21 +103,48 @@
             ]
           },
           {
-            "group": "Features",
-            "icon": "star",
+            "group": "Quotes and settlement",
+            "icon": "arrows-rotate",
             "pages": [
-              "documentation/features/offramp-transaction",
-              "documentation/features/onramp-transaction",
-              "documentation/features/currency-exchange-fiat",
-              "documentation/features/team-members",
-              "documentation/features/account-management",
-              "documentation/features/profile-settings",
-              "documentation/features/merchant-settings",
-              "documentation/features/notifications",
+              "documentation/guides/find-a-liquidity-provider",
+              "documentation/guides/request-for-quote",
+              "documentation/guides/buyer-pays-for-a-trade",
+              "documentation/guides/take-a-quote-in-one-call"
+            ]
+          },
+          {
+            "group": "Accounts and wallets",
+            "icon": "wallet",
+            "pages": [
+              "documentation/guides/read-your-balances",
+              "documentation/guides/give-a-customer-an-account",
+              "documentation/guides/check-what-a-wallet-holds"
+            ]
+          },
+          {
+            "group": "Stablecoins",
+            "icon": "coins",
+            "pages": [
+              "documentation/guides/stablecoin-wallets",
+              "documentation/guides/receive-stablecoins",
+              "documentation/guides/send-stablecoins"
+            ]
+          },
+          {
+            "group": "Payouts",
+            "icon": "money-bill-transfer",
+            "pages": [
               "documentation/features/fiat-payout-process",
-              "documentation/features/payout-structure",
-              "documentation/features/rate-limits",
-              "documentation/features/audit-logs"
+              "documentation/features/payout-structure"
+            ]
+          },
+          {
+            "group": "Build and go live",
+            "icon": "rocket",
+            "pages": [
+              "documentation/guides/recipes",
+              "documentation/guides/integration-security",
+              "documentation/guides/migrate-to-hyperrails"
             ]
           },
           {
@@ -89,36 +152,66 @@
             "icon": "bell",
             "pages": [
               "documentation/webhooks/overview",
-              "documentation/webhooks/payloads"
+              "documentation/webhooks/payloads",
+              "documentation/webhooks/validator"
             ]
           },
           {
-            "group": "Expert Desk",
-            "icon": "user-tie",
+            "group": "Using the dashboard",
+            "icon": "browser",
             "pages": [
+              "documentation/features/onramp-transaction",
+              "documentation/features/offramp-transaction",
+              "documentation/features/currency-exchange-fiat",
+              "documentation/features/account-management",
+              "documentation/features/profile-settings",
+              "documentation/features/merchant-settings",
+              "documentation/features/team-members",
+              "documentation/features/notifications",
+              "documentation/features/audit-logs"
+            ]
+          },
+          {
+            "group": "Help and support",
+            "icon": "life-ring",
+            "pages": [
+              "documentation/support-channel/help-support",
               "documentation/support-channel/faq"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "API Reference",
         "groups": [
           {
-            "group": "API Reference",
-            "icon": "history",
+            "group": "Get Started",
+            "icon": "code",
             "pages": [
               "api-reference/introduction",
               "api-reference/authentication",
-              "api-reference/error-codes"
-
+              "api-reference/error-codes",
+              "documentation/rate-limits",
+              "api-reference/idempotency",
+              "api-reference/pagination",
+              "api-reference/metadata",
+              "api-reference/glossary"
             ]
           },
           {
-            "group": " ISO20022 Compliance",
+            "group": "Build with AI",
+            "icon": "robot",
+            "pages": [
+              "api-reference/ai/llms"
+            ]
+          },
+          {
+            "group": "ISO 20022 Compliance",
             "icon": "wallet",
             "pages": [
-              "api-reference/iso20022/endpoint-mapping"
+              "api-reference/iso20022/content-negotiation",
+              "api-reference/iso20022/endpoint-mapping",
+              "api-reference/iso20022/testing"
             ]
           },
           {
@@ -130,7 +223,6 @@
               "api-reference/hyperrail-wallet/get-balance-currency",
               "api-reference/hyperrail-wallet/get-stablecoin-balance"
             ]
-
           },
           {
             "group": "Rates",
@@ -144,6 +236,7 @@
             "group": "Exchange",
             "icon": "money-bill",
             "pages": [
+              "api-reference/hyperrail-quote/create-quote",
               "api-reference/hyperrail-quote/create-express-quote",
               "api-reference/hyperrail-quote/create-payment-intent",
               "api-reference/hyperrail-quote/accept-quote",
@@ -165,8 +258,8 @@
               "api-reference/payout/withdrawal",
               "api-reference/payout/wallet-payout",
               "api-reference/payout/payout-status",
-               "api-reference/payout/list-banks",
-               "api-reference/payout/resolve-account"
+              "api-reference/payout/list-banks",
+              "api-reference/payout/resolve-account"
             ]
           },
           {
@@ -182,10 +275,25 @@
             "group": "Marketplace",
             "pages": [
               "api-reference/listings/liquidity-providers"
+            ],
+            "icon": "store"
+          },
+          {
+            "group": "Trade Pairs",
+            "icon": "arrow-right-arrow-left",
+            "pages": [
+              "api-reference/trade-pair/get-trade",
+              "api-reference/trade-pair/get-trade-id",
+              "api-reference/trade-pair/get-trade-currency",
+              "api-reference/trade-pair/get-supported-trade-currency",
+              "api-reference/trade-pair/get-supported-fiat-currency",
+              "api-reference/trade-pair/get-supported-stable-currency",
+              "api-reference/trade-pair/get-supported-chain",
+              "api-reference/trade-pair/create-trade"
             ]
           }
-
-        ]
+        ],
+        "icon": "code"
       },
       {
         "tab": "Changelog",
@@ -210,44 +318,83 @@
     ]
   },
   "logo": {
-    "light": "/logo/hyperrail-logo.svg",
+    "light": "/logo/hyperrail-logo-light.svg",
     "dark": "/logo/hyperrail-logo.svg"
   },
   "navbar": {
     "links": [
       {
-        "label": "Get Started",
-       "href": "https://app.hyperrails.io/"
+        "label": "Support",
+        "href": "mailto:support@hyperrails.io"
+      },
+      {
+        "label": "Website",
+        "href": "https://hyperrails.io"
       }
-    ]
+    ],
+    "primary": {
+      "type": "button",
+      "label": "HyperRails Dashboard",
+      "href": "https://app.hyperrails.io/"
+    }
   },
-   "background": {
+  "background": {
     "decoration": "grid",
     "color": {
       "light": "#ffffff",
-       "dark": "#000"
+      "dark": "#000"
     }
   },
-
   "redirects": [
     {
       "source": "/guides/login",
-      "destination": "documentation/introduction"
+      "destination": "/introduction"
+    },
+    {
+      "source": "/get-started/guides/instant-trade",
+      "destination": "/documentation/guides/take-a-quote-in-one-call"
+    },
+    {
+      "source": "/get-started/concepts/rates-and-fees",
+      "destination": "/get-started/concepts/quotes"
+    },
+    {
+      "source": "/api-reference/ai/mcp",
+      "destination": "/api-reference/ai/llms"
     }
-  
   ],
   "contextual": {
     "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "cursor",
+      "vscode"
+    ]
+  },
+  "api": {
+    "playground": {
+      "display": "interactive"
+    },
+    "examples": {
+      "languages": [
+        "curl",
+        "javascript",
+        "python",
+        "go",
+        "php",
+        "java"
+      ],
+      "defaults": "all"
+    },
+    "mdx": {
+      "auth": {
+        "method": "bearer"
+      },
+      "server": "https://api.hyperrails.io/api/v1"
+    },
+    "openapi": "api-reference/openapi.json"
   }
-    
-
 }

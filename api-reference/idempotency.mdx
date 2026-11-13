@@ -1,0 +1,75 @@
+---
+title: "Idempotency"
+description: "Which HyperRails operations are safe to retry, and how to avoid moving money twice."
+icon: "repeat"
+---
+
+Networks fail. When a request times out, you don't know whether it reached HyperRails, so you need to retry without creating a second payout or trade.
+
+HyperRails doesn't use an `Idempotency-Key` header. Instead, idempotency depends on the operation:
+
+| Operation | Safe to retry? | How |
+|---|---|---|
+| [Fiat payout](/api-reference/payout/withdrawal) | **Yes** | Send the same `reference`. A duplicate returns `DUPLICATE_REFERENCE` instead of paying twice |
+| [Wallet payout](/api-reference/payout/wallet-payout) | **Yes** | Send the same `reference` |
+| [Complete quote](/api-reference/hyperrail-quote/get-complete-quote-id) | **Yes** | Completing twice returns `SUCCESSFUL` again with no double credit |
+| [Create intent](/api-reference/hyperrail-quote/create-payment-intent) | No | Each call creates a new quote |
+| [Create express quote](/api-reference/hyperrail-quote/create-express-quote) | No | `externalReference` isn't an idempotency key. Each call creates a new quote |
+| [Create virtual account](/documentation/guides/give-a-customer-an-account) | No | Each call creates a new account number, even with identical input |
+
+## Payouts: use your `reference`
+
+The `reference` on a payout is your idempotency key. It must be unique per payout.
+
+```bash Idempotent payout request
+curl -X POST https://api.hyperrails.io/api/v1/partners/payouts \
+  -H "Authorization: Bearer sk_test_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "reference": "payout-001",
+    "amount": 10000,
+    "currency": "NGN",
+    "destination": {
+      "accountNumber": "0123456789",
+      "accountName": "Jane Doe",
+      "bankCode": "058"
+    },
+    "narration": "Vendor payout April"
+  }'
+```
+
+Sending the same `reference` again returns:
+
+```json
+{
+  "code": "DUPLICATE_REFERENCE",
+  "message": "Payout with reference 'payout-001' already exists"
+}
+```
+
+<Steps>
+  <Step title="Generate the reference once">
+    Create it from your own record, for example your internal payout ID, and save it **before** you call the API.
+  </Step>
+  <Step title="Retry with the same reference">
+    On a timeout or `5xx`, send the exact same request again.
+  </Step>
+  <Step title="Treat a duplicate as success">
+    `DUPLICATE_REFERENCE` means the first request was received. Fetch the result with [Get Payout Status](/api-reference/payout/payout-status) instead of retrying with a new reference.
+  </Step>
+</Steps>
+
+<Warning>
+  Never generate a new `reference` to retry a payout whose outcome you don't know. That's how money gets sent twice.
+</Warning>
+
+## Quotes and accounts: track what you create
+
+Because creating a quote or a virtual account isn't idempotent:
+
+- Store the `quoteId` from every quote you create, and [cancel](/api-reference/hyperrail-quote/cancel-quote) any you abandon.
+- Store the `id` of every virtual account, and look a customer up with [List Dynamic Accounts](/api-reference/dynamic-accounts/list-dynamic-account) before creating another.
+
+## Webhooks
+
+The same event can be delivered more than once. Each delivery has a unique `x-hyperrails-webhook-id` header. Store it and ignore IDs you've already processed. See [Webhooks overview](/documentation/webhooks/overview).

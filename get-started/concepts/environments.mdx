@@ -1,0 +1,44 @@
+---
+title: "Environments and Credentials"
+description: "Test and live mode, and the keys you use to call the HyperRails API."
+icon: "key"
+---
+
+## Test and live
+
+You get separate test and live accounts, so you can build safely before going live. Test and live data never mix.
+
+| | Test mode | Live mode |
+|---|---|---|
+| Secret key | `sk_test_…` | `sk_live_…` |
+| Money | Simulated. Fund with the [Funding Simulator](/documentation/testing/funding-in-test-mode) | Real |
+| Banks | Mock provider (Jollof Bank) | Real banks |
+| Currencies | More currencies are available | Fewer. Check `GET /balances/currency-list?mode=live` |
+| Webhook URL and secret | Configured separately | Configured separately |
+
+There is one base URL for both modes. The key you use decides which environment a request runs in. See [Test Mode Overview](/documentation/testing/test-mode-overview).
+
+## Credentials
+
+Every HyperRails endpoint authenticates with your **secret key**, sent as `Authorization: Bearer sk_test_…` or `sk_live_…`. Generate it from **Dashboard → Credentials → API Keys**.
+
+| Credential | What it is | Used for |
+|---|---|---|
+| **Secret key** (`sk_…`) | Your API key. Server-side only | Every API endpoint: rates, listings, quotes, balances, virtual accounts, wallets and payouts |
+| **Public key** (`pk_…`) | Safe for client-side use where documented | Client-side contexts only |
+| **Encryption key** (`enc_…`) | Used locally to encrypt sensitive fields | Field-level encryption where an endpoint requires it |
+
+<Warning>
+  **Your secret key, public key and encryption key are shown only once.** After you view a key, HyperRails stores it hashed for security, so neither you nor HyperRails can see it again. Copy it straight into a secrets manager or environment variable and keep it safe. If you lose a key, generate a new one. The old key stops working immediately.
+</Warning>
+
+See [Authentication](/api-reference/authentication).
+
+## Base URLs
+
+| Base URL | Serves |
+|---|---|
+| `https://api.hyperrails.io/api/v1` | Most endpoints, including rates, intents, quotes, balances, accounts, wallets and payouts |
+| `https://api.hyperrails.io/exchange/api/v1` | Marketplace listings and express quotes |
+
+Each guide shows the full URL on every call.

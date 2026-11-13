@@ -1,144 +1,310 @@
 ---
-title: FAQs
-description: Answers to common questions about HyperRails, including on-ramp, off-ramp, fiat exchange, liquidity, wallets, team management, and security.
-icon: lightbulb
+title: "FAQs"
+description: "Answers to common questions about HyperRails: accounts, exchange, liquidity, stablecoins, payouts, fees, webhooks, testing, security and the API."
+icon: "circle-question"
 ---
 
-## Getting Started & Account Access
+## Getting started
 
-<Accordion title="Q1: What is HyperRails used for?">
-A: HyperRails enables businesses to convert between fiat currencies and stablecoins, perform fiat-to-fiat exchange, and manage liquidity using stablecoins as the settlement rail.
-</Accordion>
+<AccordionGroup>
+  <Accordion title="What is HyperRails used for?">
+    HyperRails lets financial institutions and fintechs convert between fiat currencies and stablecoins, exchange one fiat currency for another, hold multi-currency and stablecoin balances, pay in and pay out, and supply liquidity, with stablecoins as the settlement layer.
+  </Accordion>
+  <Accordion title="Who can use HyperRails?">
+    Financial institutions and fintechs that need on-ramp, off-ramp, FX, payouts or cross-border treasury, and liquidity providers that supply fiat or stablecoin liquidity. See [Find your use case](/use-cases/overview).
+  </Accordion>
+  <Accordion title="Is HyperRails a dashboard or an API?">
+    Both. You can do everything from the [dashboard](https://app.hyperrails.io), or integrate with the [HyperRails API](/api-reference/introduction) once API access is enabled for your account. Most businesses start on the dashboard and move to the API as their volume grows.
+  </Accordion>
+  <Accordion title="How do I create an account?">
+    Sign up on the HyperRails dashboard, choose how you'll use HyperRails, and complete verification. See [Onboard with us](/documentation/onboarding).
+  </Accordion>
+  <Accordion title="How long does verification take?">
+    Typically 1–3 business days, excluding weekends and public holidays. See [KYB reference](/documentation/kyb-reference).
+  </Accordion>
+  <Accordion title="What documents do I need for verification?">
+    Your company registration number with a supporting document such as a Certificate of Incorporation, a valid tax ID with a supporting document, and details of all directors and owners. The onboarding checklist shows any additional documents your business needs. See [KYB reference](/documentation/kyb-reference).
+  </Accordion>
+  <Accordion title="What happens if my verification fails?">
+    The onboarding flow shows what needs fixing so you can correct it and resubmit, and we'll email you too. Common reasons are missing details, documents that don't match what you entered, and unreadable or expired documents.
+  </Accordion>
+  <Accordion title="Where should I start?">
+    Read [How HyperRails works](/get-started/how-it-works), then follow the [Quickstart](/quickstart) to make your first API call and price a quote in test mode.
+  </Accordion>
+</AccordionGroup>
 
-<Accordion title="Q2: Is HyperRails an API or a dashboard application?">
-A: HyperRails is both. You can perform on-ramp, off-ramp, FX, payout, and
-  liquidity operations directly from the dashboard, **or** integrate
-  programmatically using the [HyperRails API](/api-reference/introduction)
-  once your account is approved for API access. Most merchants start on the
-  dashboard and move to the API as their transaction volume grows.
-</Accordion>
+## Exchange and liquidity
 
-<Accordion title="Q3: Who can use HyperRails?">
-A: HyperRails is built for:
-- Merchants performing on-ramp, off-ramp, and FX transactions  
-- Exchange Clients supplying stablecoin or fiat liquidity  
-- Enterprises managing cross-border treasury operations
-</Accordion>
+<AccordionGroup>
+  <Accordion title="What are on-ramp and off-ramp?">
+    An on-ramp converts fiat currency into stablecoins. An off-ramp converts stablecoins into fiat currency, which you can then pay out to a bank account. See [On-ramp and off-ramp](/use-cases/on-off-ramp).
+  </Accordion>
+  <Accordion title="How does fiat-to-fiat exchange work?">
+    It's executed through stablecoins: fiat A → stablecoin → fiat B. You see one quote and one rate. See [Cross-border FX](/use-cases/cross-border-fx).
+  </Accordion>
+  <Accordion title="Why does HyperRails use stablecoins for FX?">
+    Stablecoins enable faster settlement, lower costs and better transparency than traditional correspondent banking.
+  </Accordion>
+  <Accordion title="What is Instant Trade?">
+    Instant Trade (previously Express Buy) lets you buy at a listed rate in one flow, entering either the amount you send or the amount you want to receive. On the dashboard, on-ramp, off-ramp and fiat exchange are all accessed from the **Instant Trade** tab. Through the API, it's the express quote. See [Take a Quote in One Call](/documentation/guides/take-a-quote-in-one-call).
+  </Accordion>
+  <Accordion title="Where does the liquidity come from?">
+    From liquidity providers on the Liquidity Marketplace. A trade can be filled by one provider or combined across several. See [Liquidity](/get-started/concepts/liquidity).
+  </Accordion>
+  <Accordion title="Who can become a liquidity provider?">
+    Approved institutions with fiat or stablecoin liquidity. See [Supply liquidity](/use-cases/liquidity-providers).
+  </Accordion>
+  <Accordion title="Can I negotiate a rate?">
+    Yes. On the dashboard, buyers and sellers can chat and send, accept or decline quotes. Through the API, you can propose your own rate with an intent. A listing's `negotiationLimit` of `0` means the provider's rate is take-it-or-leave-it. See [Request for quote](/documentation/guides/request-for-quote).
+  </Accordion>
+  <Accordion title="Is liquidity credit available?">
+    Liquidity credit is coming soon.
+  </Accordion>
+</AccordionGroup>
 
-<Accordion title="Q4: How do I create a HyperRails account?">
-A: Sign up directly on the HyperRails application and complete onboarding based on your role (Merchant or Exchange Client).
-</Accordion>
+## Quotes and settlement
 
----
+<AccordionGroup>
+  <Accordion title="How long is a quote valid?">
+    30 minutes. A quote's `ttl` shows the seconds it has left, starting at 1800. When it reaches 0, the quote expires and you receive a `quote.expired` webhook. See [Transaction lifecycle](/get-started/transaction-lifecycle).
+  </Accordion>
+  <Accordion title="Why is the rate on my quote different from the published rate?">
+    The published rate is a reference. Your quote is priced from the liquidity that actually fills it, shown as `weightedAverageRate`. Always price your customers from the quote. See [Quotes](/get-started/concepts/quotes).
+  </Accordion>
+  <Accordion title="What's the difference between an intent and an express quote?">
+    An intent lets you propose the rate you want and review the quote before committing, which suits a person deciding. An express quote prices the trade at the best available rate in one call, which suits pricing and committing in one motion. After pricing, both are accepted, paid and completed the same way.
+  </Accordion>
+  <Accordion title="What does amountDirection mean?">
+    It says whether `amount` counts the `source` side (what's paid) or the `destination` side (what's received). On express quotes it defaults to `source`. Set it explicitly and check `totalSourceAmount` before you accept.
+  </Accordion>
+  <Accordion title="Why does my quote say 'No providers available'?">
+    Nobody is offering that currency pair right now, even if a rate exists for it. Check the [marketplace listings](/documentation/guides/find-a-liquidity-provider) and pick a pair with a provider.
+  </Accordion>
+  <Accordion title="Why does my quote say 'Unable to fulfill requested volume'?">
+    Someone offers the pair, but not at the size you asked for. Check the listing's `availableBalance` and quote a smaller amount.
+  </Accordion>
+  <Accordion title="The payment succeeded but my quote still says AWAITING_PAYMENT. Is it stuck?">
+    No. The pay-in has its own status inside `metadata` (for mobile money, `metadata.mobileMoneyPayIn.status`). Once that reads `successful`, call complete to move the quote to `SUCCESSFUL`.
+  </Accordion>
+  <Accordion title="Is it safe to call complete more than once?">
+    Yes. Completing a quote twice returns `SUCCESSFUL` again and doesn't credit you twice, so a retry after a timeout is safe.
+  </Accordion>
+  <Accordion title="Can I cancel a quote?">
+    Yes, before it settles, with [Cancel Quote](/api-reference/hyperrail-quote/cancel-quote). Cancel any quotes you abandon, because creating quotes isn't idempotent.
+  </Accordion>
+  <Accordion title="How long does a transaction take?">
+    Settlement time depends on the corridor and payment method. Most on-ramps complete within minutes to a few business hours.
+  </Accordion>
+</AccordionGroup>
 
-## On-Ramp Transactions
+## Accounts and virtual accounts
 
-<Accordion title="Q5: What is an on-ramp transaction?">
-A: An on-ramp converts **fiat currency into stablecoins**, crediting the stablecoins to your HyperRails wallet.
-</Accordion>
+<AccordionGroup>
+  <Accordion title="Can I hold both fiat and stablecoins?">
+    Yes. You can open accounts across multiple currencies and hold USDT and USDC in a multi-chain wallet, all managed from one dashboard. See [Accounts and balances](/get-started/concepts/accounts-and-balances).
+  </Accordion>
+  <Accordion title="What's the difference between balance and availableBalance?">
+    `balance` is everything in the account. `availableBalance` is what you can spend right now. The difference is held against pending activity, so always spend against `availableBalance`.
+  </Accordion>
+  <Accordion title="Can I give my customers their own account numbers?">
+    Yes, with virtual accounts. Each one is a real, payable account number that settles into one of your currency balances. You can create them across a number of currencies. See [Give a Customer an Account](/documentation/guides/give-a-customer-an-account).
+  </Accordion>
+  <Accordion title="Why did one customer end up with several virtual accounts?">
+    Creating a virtual account isn't idempotent: every call creates a new account number, even with identical details. Store the account `id` you get back, and list existing accounts before creating a new one.
+  </Accordion>
+  <Accordion title="Why does creating a virtual account return 404?">
+    Usually because `parentAccountId` is missing. Send the `accountId` of the currency balance the virtual account should settle into.
+  </Accordion>
+  <Accordion title="Which currencies can my account hold?">
+    It depends on your account and mode. Live mode supports fewer currencies than test mode. Check `GET /balances/currency-list?mode=live`, and see [Coverage](/documentation/coverage).
+  </Accordion>
+</AccordionGroup>
 
-<Accordion title="Q6: What fiat currencies and stablecoins are supported?">
-A: HyperRails currently supports NGN, GHS, KES, ZAR, XOF, USD, GBP, and EUR for fiat currencies, major stablecoins like USDT and USDC with networks such as BASE, ETHEREUM, POLYGON and STELLAR.
-</Accordion>
+## Stablecoins and wallets
 
-<Accordion title="Q7: How long does an on-ramp transaction take?">
-A: Settlement times depend on the fiat corridor, but most on-ramps complete within minutes to a few business hours.
-</Accordion>
+<AccordionGroup>
+  <Accordion title="Does HyperRails provide stablecoin wallets?">
+    Yes. Every account comes with a multi-asset, multi-chain wallet that supports gasless transactions. Your main wallet is created with your account, and sub-wallets keep their own balances. See [Stablecoin wallets](/documentation/guides/stablecoin-wallets).
+  </Accordion>
+  <Accordion title="What does gasless mean?">
+    On most blockchains, sending a token also costs a network fee paid in the chain's native token, such as ETH on Ethereum. HyperRails wallets support gasless transactions, so you can send USDT and USDC without holding a separate native-token balance.
+  </Accordion>
+  <Accordion title="Which stablecoins and networks are supported?">
+    USDT and USDC. See [Supported currencies and networks](/documentation/supported-currencies) for the networks, and your wallet's deposit addresses for the chains available to you.
+  </Accordion>
+  <Accordion title="How do I receive stablecoins?">
+    Share the deposit address for the chain the sender is using. Only share addresses with `status: "active"`. See [Receive stablecoins](/documentation/guides/receive-stablecoins).
+  </Accordion>
+  <Accordion title="Why wasn't my Stellar deposit credited?">
+    Stellar deposits need the memo. Several wallets can share one Stellar address, so a deposit sent without `memoValue` can't be matched to your wallet. Always share the memo with the address.
+  </Accordion>
+  <Accordion title="What's the minimum stablecoin payout?">
+    10 token units, for example 10 USDC. See [Send stablecoins](/documentation/guides/send-stablecoins).
+  </Accordion>
+  <Accordion title="What happens if I send stablecoins on the wrong network?">
+    Stablecoins sent on an unsupported network, to an inactive address, or to an incorrect address may be lost permanently. Always confirm the chain and address before sending.
+  </Accordion>
+</AccordionGroup>
 
----
+## Payouts
 
-## Off-Ramp Transactions
+<AccordionGroup>
+  <Accordion title="Where can I send payouts?">
+    To bank accounts in supported currencies, and stablecoins to wallet addresses. See [Collections and payouts](/use-cases/collections-and-payouts).
+  </Accordion>
+  <Accordion title="How do USD payouts work?">
+    USD payouts are sent over SWIFT/BIC. ACH and Fedwire aren't available yet.
+  </Accordion>
+  <Accordion title="How do I make sure a bank payout reaches the right person?">
+    Look up the bank code with [Get All Banks](/api-reference/payout/list-banks), resolve the account name with [Resolve Bank Account](/api-reference/payout/resolve-account), then send the payout using the returned name. See [Fiat payout process](/documentation/features/fiat-payout-process).
+  </Accordion>
+  <Accordion title="Can I send a payout larger than a provider's limit?">
+    Yes. Payouts over a provider's per-transaction limit are split into smaller parts and paid out automatically.
+  </Accordion>
+  <Accordion title="What if a payout provider runs low on funds?">
+    If the priority provider doesn't have enough funds, HyperRails moves funds from other providers first, so your payout still goes through.
+  </Accordion>
+  <Accordion title="Can I save recipients for repeat payouts?">
+    Yes. Save beneficiary account details on the dashboard so repeat payouts are faster.
+  </Accordion>
+  <Accordion title="Can I get a weekly payout cycle?">
+    Businesses with higher transaction volume can request a weekly payout cycle by emailing [support@hyperrails.io](mailto:support@hyperrails.io). See [Payout structure](/documentation/features/payout-structure).
+  </Accordion>
+  <Accordion title="Can I get a receipt or export my transactions?">
+    Yes. You can print receipts for payins and payouts, and export your transaction history from the dashboard.
+  </Accordion>
+</AccordionGroup>
 
-<Accordion title="Q8: What is an off-ramp transaction?">
-A: An off-ramp converts **stablecoins into fiat currency**, which is then paid out to a local bank account.
-</Accordion>
+## Fees and limits
 
-<Accordion title="Q9: Where can off-ramp funds be sent?">
-A: Funds can be sent to supported local bank accounts linked to your HyperRails account.
-</Accordion>
+<AccordionGroup>
+  <Accordion title="What fees apply to a trade?">
+    A trade can carry two fees. A source-side `fee` is added to what the payer pays (`totalSourceAmount` = `amount` + `fee`), and a `transactionFee` in the quote's `metadata` applies on the destination side. See [Metadata](/api-reference/metadata).
+  </Accordion>
+  <Accordion title="Are internal transfers free?">
+    Yes. Internal transfers in NGN, GHS and USD are free.
+  </Accordion>
+  <Accordion title="Can I see how a fee is calculated?">
+    Yes. Fee breakdowns show how each fee is made up. For a detailed fee schedule, contact [support@hyperrails.io](mailto:support@hyperrails.io).
+  </Accordion>
+  <Accordion title="What are the transaction limits?">
+    Trades are limited by the liquidity available, quotes are valid for 30 minutes, and payout minimums vary by endpoint and currency. Per-currency limits depend on your account. See [Transaction limits](/documentation/limits).
+  </Accordion>
+  <Accordion title="What are the API rate limits?">
+    100 requests per minute per secret key on standard endpoints, and up to 5 concurrent rate-stream connections. If you're rate-limited, wait for the number of seconds in the `Retry-After` header. See [Rate limits](/documentation/rate-limits).
+  </Accordion>
+</AccordionGroup>
 
-<Accordion title="Q10: Are off-ramp rates fixed?">
-A: Rates are executable at the time of transaction and reflect current liquidity and market conditions.
-</Accordion>
+## Webhooks
 
----
+<AccordionGroup>
+  <Accordion title="How do I know when a transaction completes?">
+    Use [webhooks](/documentation/webhooks/overview). They're the source of truth for transaction outcomes, so don't rely only on the response to your last API call.
+  </Accordion>
+  <Accordion title="Which webhook events are there?">
+    Order events (`order.awaiting_payment`, `order.successful`, `order.failed`, `order.cancelled`), `quote.expired`, `account.credit_successful`, `wallet.credit_successful` and `wallet.debit_successful`. See [Webhook payloads](/documentation/webhooks/payloads).
+  </Accordion>
+  <Accordion title="How do I verify a webhook really came from HyperRails?">
+    Check the timestamp is within 5 minutes, then recompute the HMAC-SHA512 signature of `{webhook_id}.{timestamp}.{raw_body}` with your webhook secret and compare it in constant time. Debug your code with the [Webhook validator](/documentation/webhooks/validator).
+  </Accordion>
+  <Accordion title="Why am I receiving the same webhook twice?">
+    Deliveries can repeat. Store each `x-hyperrails-webhook-id` and ignore IDs you've already processed.
+  </Accordion>
+  <Accordion title="Why did webhooks arrive out of order?">
+    Network retries can reorder deliveries. Read the state from each payload rather than assuming a sequence.
+  </Accordion>
+  <Accordion title="Do test and live mode use the same webhook settings?">
+    No. Test and live mode each have their own webhook URL and secret, so configure both.
+  </Accordion>
+</AccordionGroup>
 
-## Fiat Currency Exchange
+## Test mode
 
-<Accordion title="Q11: How does fiat-to-fiat exchange work on HyperRails?">
-A: Fiat-to-fiat exchange is executed via stablecoins:  
-Fiat A → Stablecoin → Fiat B.
-</Accordion>
+<AccordionGroup>
+  <Accordion title="Can I test before going live?">
+    Yes. You get separate test and live accounts, and no real money moves in test mode. See [Test mode overview](/documentation/testing/test-mode-overview).
+  </Accordion>
+  <Accordion title="How do I add funds in test mode?">
+    Use the [Funding Simulator](/documentation/testing/funding-in-test-mode). Enter the account number to fund, which can be your balance or a virtual account, plus the currency and amount.
+  </Accordion>
+  <Accordion title="Why do my virtual accounts show Jollof Bank?">
+    In test mode, virtual accounts come from a mock provider called Jollof Bank. Live mode returns real banks.
+  </Accordion>
+  <Accordion title="Do test bank details need to be real?">
+    No. In test mode, any value works for bank codes and account numbers, and accounts resolve automatically.
+  </Accordion>
+  <Accordion title="Why are my wallet chains called base_sepolia or tron_nile?">
+    Test mode uses blockchain testnets, such as `base_sepolia`, `ethereum_sepolia`, `polygon_amoy`, `stellar_testnet` and `tron_nile`. Live mode uses mainnets. Never reuse a test address in production.
+  </Accordion>
+  <Accordion title="Do test balances last forever?">
+    No. Test balances may be cleared between testing sessions.
+  </Accordion>
+</AccordionGroup>
 
-<Accordion title="Q12: Why does HyperRails use stablecoins for FX?">
-A: Stablecoins enable faster settlement, lower costs, and better transparency compared to traditional correspondent banking.
-</Accordion>
+## Security and compliance
 
----
+<AccordionGroup>
+  <Accordion title="Is HyperRails secure?">
+    HyperRails is built with enterprise-grade security, including wallet safeguards, role-based access, two-factor authentication, OTP confirmation for trades paid from balance, and transaction monitoring. See [Integration security](/documentation/guides/integration-security).
+  </Accordion>
+  <Accordion title="Does HyperRails require KYB?">
+    Yes. Every business completes verification before transacting, and AML checks are carried out on everyone. See [KYB reference](/documentation/kyb-reference).
+  </Accordion>
+  <Accordion title="Are transactions monitored?">
+    Yes. Deposits and withdrawals are risk-checked before they go through, and flagged transactions are reviewed by our team.
+  </Accordion>
+  <Accordion title="Why am I asked for a one-time code when I trade?">
+    Trades paid from your balance are confirmed with a one-time code, which adds a security step before money moves.
+  </Accordion>
+  <Accordion title="I lost my authenticator device. How do I get back in?">
+    Use one of your single-use recovery codes to sign in, then set up 2FA again on your new device.
+  </Accordion>
+  <Accordion title="Can I give teammates different levels of access?">
+    Yes. Invite team members and assign roles that control who can view balances, start transactions or change settings. See [Team members](/documentation/features/team-members).
+  </Accordion>
+  <Accordion title="Can I see who did what on my account?">
+    Yes. [Audit logs](/documentation/features/audit-logs) record activity on your account.
+  </Accordion>
+  <Accordion title="Can I manage businesses I work with on HyperRails?">
+    Yes. You can invite sub-merchants, see them in a list, view your trade history with each one, and suspend them if needed.
+  </Accordion>
+</AccordionGroup>
 
-## Liquidity & Pricing
+## API and integration
 
-<Accordion title="Q13: Where does HyperRails’s liquidity come from?">
-A: Liquidity is aggregated from multiple exchange clients across fiat corridors and stablecoin markets.
-</Accordion>
+<AccordionGroup>
+  <Accordion title="How do I get API access?">
+    API access is enabled per business during onboarding. Contact [support@hyperrails.io](mailto:support@hyperrails.io) to turn it on, then generate keys from **Dashboard → Credentials → API Keys**.
+  </Accordion>
+  <Accordion title="Can I view my API keys again later?">
+    No. Secret, public and encryption keys are shown only once, then stored hashed for security, so neither you nor HyperRails can see them again. Save each key as soon as you generate it. If you lose one, generate a new key and update your integrations. The old key stops working immediately.
+  </Accordion>
+  <Accordion title="How do I authenticate?">
+    Send your secret key as `Authorization: Bearer sk_test_…` or `sk_live_…`. The key decides whether the request runs in test or live mode. See [Authentication](/api-reference/authentication).
+  </Accordion>
+  <Accordion title="Why are there two base URLs?">
+    Most endpoints are on `https://api.hyperrails.io/api/v1`. Marketplace listings and express quotes are on `https://api.hyperrails.io/exchange/api/v1`. Every guide shows the full URL for each call. See [API conventions](/api-reference/introduction).
+  </Accordion>
+  <Accordion title="How do I avoid sending a payout twice?">
+    Use a unique `reference` on every payout and reuse it on retries. A duplicate returns `DUPLICATE_REFERENCE` instead of paying twice. See [Idempotency](/api-reference/idempotency).
+  </Accordion>
+  <Accordion title="How do I page through long lists?">
+    Pass `page` (starting at 0) and `size`. Responses include `totalPages` and `totalElements`. See [Pagination](/api-reference/pagination).
+  </Accordion>
+  <Accordion title="Can I try the API without writing code?">
+    Yes. Every endpoint in the [API reference](/api-reference/introduction) has a playground where you can send a request with your test key and see the live response.
+  </Accordion>
+  <Accordion title="What should I do when I get an error?">
+    Check the HTTP status first, since some errors have an empty body. Then branch on `errorCode`, read `additionalDetails` for the field that's wrong, and keep the `traceId` if you contact support. See [Error codes](/api-reference/error-codes).
+  </Accordion>
+  <Accordion title="Does HyperRails support ISO 20022?">
+    Yes. You can send and receive ISO 20022 XML by setting both `Accept` and `Content-Type` to `application/xml`. See [Content negotiation](/api-reference/iso20022/content-negotiation).
+  </Accordion>
+  <Accordion title="Can AI tools read the HyperRails docs?">
+    Yes. The docs are available as [llms.txt](https://docs.hyperrails.io/llms.txt), and every page has a Markdown version. See [Docs for LLMs](/api-reference/ai/llms).
+  </Accordion>
+</AccordionGroup>
 
-<Accordion title="Q14: Who can become a exchange client on HyperRails?">
-A: Approved institutions and entities with fiat or stablecoin liquidity can onboard as Exchange Clients.
-</Accordion>
+## Still need help?
 
-<Accordion title="Q15: How are exchange rates determined?">
-A: Rates are calculated using aggregated liquidity and market pricing, with spreads dynamically adjusted based on transaction volume and liquidity depth.
-</Accordion>
-
----
-
-## Wallets & Treasury
-
-<Accordion title="Q16: Does HyperRails provide stablecoin wallets?">
-A: Yes. HyperRails provides merchant-owned stablecoin wallets with simplified key management.
-</Accordion>
-
-<Accordion title="Q17: Can I hold both fiat and stablecoins on HyperRails?">
-A: Yes. You can view and manage fiat balances, stablecoin balances, and in-flight transactions from a unified dashboard.
-</Accordion>
-
----
-
-## Security & Compliance
-
-<Accordion title="Q18: Is HyperRails secure?">
-A: HyperRails is built with enterprise-grade security, including wallet safeguards, role-based access, and transaction monitoring.
-</Accordion>
-
-<Accordion title="Q19: Does HyperRails require KYC/KYB?">
-A: Yes. Merchants and exchange clients must complete onboarding and verification before transacting.
-</Accordion>
-
----
-
-## Team & Access Control
-
-<Accordion title="Q20: Can I add team members to my HyperRails account?">
-A: Yes. You can invite team members and assign roles with specific permissions.
-</Accordion>
-
-<Accordion title="Q21: Can different team members have different access levels?">
-A: Yes. Roles allow you to control who can view balances, initiate transactions, or manage settings.
-</Accordion>
-
----
-
-## Support & Roadmap
-
-<Accordion title="Q22: How do I get support if I encounter an issue?">
-A: Support is available through the HyperRails dashboard and official support channels provided during onboarding.
-</Accordion>
-
-<Accordion title="Q23: Will HyperRails support APIs in the future?">
-A: Yes. The HyperRails API is live at `https://api.hyperrails.io/api/v1`
-  and covers balances, rates, quotes, payouts, and dynamic (virtual)
-  accounts. See the [API Reference](/api-reference/introduction) to get
-  started. API access is granted per-partner during onboarding — contact
-  [support@hyperrails.io](mailto:support@hyperrails.io) to enable it on your
-  account.
-</Accordion>
+See [Contact support](/documentation/support-channel/help-support).

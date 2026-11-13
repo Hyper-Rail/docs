@@ -1,5 +1,49 @@
 ---
-title: Help and Support
-description: We understand that even the most seamless platforms require a lifeline now and then. At Spotflow, we keep our support channels tight and highly technical, ensuring you get the right expert, fast.
+title: "Contact support"
+description: "How to reach the HyperRails team, and what to include so we can help you fast."
 icon: "life-ring"
 ---
+
+Our support team is technical, so you'll be talking to someone who knows the API and the platform.
+
+<CardGroup cols={2}>
+  <Card title="Email support" icon="envelope" href="mailto:support@hyperrails.io">
+    **support@hyperrails.io**. For integration questions, account issues and transaction investigations.
+  </Card>
+  <Card title="From the dashboard" icon="browser" href="https://app.hyperrails.io">
+    Reach support from your HyperRails dashboard, or through the channels shared with you during onboarding.
+  </Card>
+</CardGroup>
+
+## Before you contact us
+
+Many questions are answered in the docs:
+
+| If you're dealing with… | Check |
+|---|---|
+| A specific error | [Error codes](/api-reference/error-codes) |
+| A quote that expired or won't complete | [Transaction lifecycle](/get-started/transaction-lifecycle) |
+| "No providers available" or "Unable to fulfill requested volume" | [Find a Liquidity Provider](/documentation/guides/find-a-liquidity-provider) |
+| A webhook that fails verification | [Webhook validator](/documentation/webhooks/validator) |
+| A missing stablecoin deposit | [Receive stablecoins](/documentation/guides/receive-stablecoins) |
+| Verification or documents | [KYB reference](/documentation/kyb-reference) |
+| General questions | [FAQs](/documentation/support-channel/faq) |
+
+## What to include
+
+The more of these you include, the faster we can investigate:
+
+- **Mode:** test or live
+- **IDs:** the `quoteId`, payout `reference`, virtual account `id` or `walletId`
+- **Trace ID:** the `traceId` from the error response
+- **Webhook ID:** `x-hyperrails-webhook-id`, if it's about a webhook
+- **The request and response,** with your secret key removed
+- **When it happened,** with the timezone
+
+<Warning>
+  Never send your secret key, webhook secret or 2FA recovery codes to anyone, including HyperRails support. If you think a key has been exposed, regenerate it from **Dashboard → Credentials → API Keys** straight away.
+</Warning>
+
+## Higher payout frequency or limits
+
+To request a weekly payout cycle, or to ask about limits on your account, email [support@hyperrails.io](mailto:support@hyperrails.io). See [Payout structure](/documentation/features/payout-structure) and [Transaction limits](/documentation/limits).

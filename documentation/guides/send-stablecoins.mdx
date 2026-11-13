@@ -1,0 +1,61 @@
+---
+title: "Send Stablecoins"
+description: "Withdraw USDT or USDC from your HyperRails wallet to any external wallet address, without paying gas yourself."
+icon: "paper-plane"
+---
+
+A wallet payout sends stablecoins from your HyperRails wallet to an external address. HyperRails wallets are gasless, so you don't need a native-token balance to cover network fees.
+
+## What you'll need
+
+- Your **secret key**.
+- Enough `availableBalance` in the asset you're sending. See [Stablecoin wallets](/documentation/guides/stablecoin-wallets).
+- The recipient's address, and the chain they want to receive on.
+
+<Steps>
+  <Step title="Create the payout">
+    ```bash
+    curl -X POST https://api.hyperrails.io/api/v1/partners/wallets/payouts \
+      -H "Authorization: Bearer YOUR_SECRET_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "reference": "wallet-payout-001",
+        "chain": "base",
+        "asset": "usdc",
+        "amount": 100,
+        "toAddress": "0x742d35Cc6634C0532925a3b844Bc9e7595f0be",
+        "memo": "Payment to supplier"
+      }'
+    ```
+
+    | Field | Required | What it is |
+    |---|---|---|
+    | `reference` | yes | Your unique ID for this payout. Reusing it is blocked, so a retry can't pay twice |
+    | `chain` | yes | The network to send on. See [Create Wallet Payout](/api-reference/payout/wallet-payout) for accepted values |
+    | `asset` | yes | `usdc` or `usdt` |
+    | `amount` | yes | In token units, not subunits. Minimum: 10 |
+    | `toAddress` | yes | The recipient's address on that chain |
+    | `memo` | no | A note for your records |
+  </Step>
+
+  <Step title="Track it">
+    Listen for the `wallet.debit_successful` [webhook](/documentation/webhooks/payloads), or read the wallet's activity with `GET /wallets/WALLET_ID/activities`. An outgoing payout appears with `type: "SEND"`.
+  </Step>
+</Steps>
+
+<Warning>
+  Double-check the address and chain before you send. Stablecoins sent to the wrong address or on the wrong network may be lost permanently.
+</Warning>
+
+## Retrying safely
+
+If a request times out, retry with the **same** `reference`. A duplicate is rejected instead of sending twice. See [Idempotency](/api-reference/idempotency).
+
+## When things go wrong
+
+| What you see | What it means | What to do |
+|---|---|---|
+| `INVALID_ADDRESS` | The address is malformed for the chain | Validate it before sending |
+| `AMOUNT_TOO_LOW` | Below the 10-token minimum | Send at least 10 |
+| `INSUFFICIENT_BALANCE` | Not enough available in that asset | Check `availableBalance` |
+| `DUPLICATE_REFERENCE` | That reference was already used | Look up the original payout instead of retrying with a new reference |

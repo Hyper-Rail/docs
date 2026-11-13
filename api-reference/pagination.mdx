@@ -1,0 +1,55 @@
+---
+title: "Pagination"
+description: "How to page through lists such as marketplace listings, virtual accounts and wallets."
+icon: "list-ol"
+---
+
+List endpoints return results one page at a time. You choose the page and its size with query parameters, and the response tells you how many pages there are.
+
+```bash Paginated request
+curl "https://api.hyperrails.io/exchange/api/v1/partners/marketplace/listings?page=0&size=10" \
+  -H "Authorization: Bearer sk_test_..."
+```
+
+```json Paginated response
+{
+  "content": [
+    { "id": "12798236-1916-40c5-acc2-843adb43cdd3", "pair": "NGN/GHS", "rate": 115.6, "availableBalance": 3080.27 }
+  ],
+  "pageNumber": 0,
+  "pageSize": 10,
+  "totalElements": 2,
+  "totalPages": 1
+}
+```
+
+## Query parameters
+
+| Parameter | Description |
+|---|---|
+| `page` | The page to return. Pages start at **0** |
+| `size` | How many items per page |
+
+## Response attributes
+
+| Attribute | Description |
+|---|---|
+| `content` | The items on this page |
+| `pageNumber` | The page you're on, starting at 0 |
+| `pageSize` | The number of items per page |
+| `totalElements` | The number of items across all pages |
+| `totalPages` | The number of pages |
+
+You've reached the last page when `pageNumber + 1` equals `totalPages`.
+
+## Paginated endpoints
+
+- [Marketplace listings](/api-reference/listings/liquidity-providers)
+- [Virtual accounts](/api-reference/dynamic-accounts/list-dynamic-account): newest first
+- Wallets. See [Check What a Wallet Holds](/documentation/guides/check-what-a-wallet-holds)
+
+<Tip>
+  Some list endpoints also take filters. For example, virtual accounts accept `currency` and `accountTag`. Unknown parameters are ignored rather than rejected, so check that a filter actually narrowed your results.
+</Tip>
+
+For a loop that fetches every page, see [Recipes](/documentation/guides/recipes#page-through-marketplace-listings).

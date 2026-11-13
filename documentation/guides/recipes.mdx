@@ -1,0 +1,152 @@
+---
+title: "Recipes"
+description: "Short, copy-paste code for the tasks you'll do most often with the HyperRails API."
+icon: "book-open"
+---
+
+Each recipe is a small, self-contained snippet for Node.js 18 or later, which has `fetch` built in. Set `HYPERRAILS_SECRET_KEY` in your environment, and use a test key (`sk_test_…`) while you try them.
+
+## Verify a webhook
+
+Check the timestamp and signature before you trust an event. Use the **raw** request body: re-serialised JSON won't match the signature.
+
+```javascript verify-webhook.js
+const crypto = require("crypto");
+const express = require("express");
+
+const app = express();
+const WEBHOOK_SECRET = process.env.HYPERRAILS_WEBHOOK_SECRET;
+
+app.post("/webhooks/hyperrails", express.raw({ type: "application/json" }), (req, res) => {
+  const id = req.header("x-hyperrails-webhook-id");
+  const timestamp = req.header("x-hyperrails-webhook-timestamp");
+  const signature = req.header("x-hyperrails-signature") || "";
+
+  // 1. Reject anything older than 5 minutes
+  if (Math.abs(Date.now() / 1000 - Number(timestamp)) > 300) return res.sendStatus(400);
+
+  // 2. Recompute the HMAC-SHA512 signature
+  const expected = crypto
+    .createHmac("sha512", WEBHOOK_SECRET)
+    .update(`${id}.${timestamp}.${req.body.toString("utf8")}`)
+    .digest("hex");
+
+  // 3. Compare in constant time
+  const valid =
+    expected.length === signature.length &&
+    crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature));
+  if (!valid) return res.sendStatus(401);
+
+  const event = JSON.parse(req.body.toString("utf8"));
+  // 4. Deduplicate on `id` before acting, then handle event.event, e.g. "order.successful"
+  res.sendStatus(200);
+});
+
+app.listen(3000);
+```
+
+Test your setup with the [Webhook validator](/documentation/webhooks/validator).
+
+## Page through marketplace listings
+
+Pages start at `0`. Stop when you reach `totalPages`.
+
+```javascript list-all-listings.js
+const BASE = "https://api.hyperrails.io/exchange/api/v1";
+const headers = { Authorization: `Bearer ${process.env.HYPERRAILS_SECRET_KEY}` };
+
+async function listAllListings(size = 50) {
+  const all = [];
+  for (let page = 0; ; page++) {
+    const res = await fetch(`${BASE}/partners/marketplace/listings?page=${page}&size=${size}`, { headers });
+    if (!res.ok) throw new Error(`Listings failed: ${res.status}`);
+    const body = await res.json();
+    all.push(...body.content);
+    if (page + 1 >= body.totalPages) return all;
+  }
+}
+```
+
+## Check liquidity before you quote
+
+Find a listing for your pair that can fill your amount. `availableBalance` is in the first currency of `pair`.
+
+```javascript find-pool.js
+async function findPool(pair, amount) {
+  const listings = await listAllListings(); // from the recipe above
+  return listings
+    .filter((l) => l.pair === pair && l.availableBalance >= amount)
+    .sort((a, b) => b.availableBalance - a.availableBalance)[0];
+}
+
+// const pool = await findPool("NGN/GHS", 1000);
+// if (!pool) -> no provider can fill this size right now
+```
+
+Listings change as trades settle, so call this right before you quote. See [Find a Liquidity Provider](/documentation/guides/find-a-liquidity-provider).
+
+## Wait for a mobile money payment, then complete
+
+Poll every few seconds, give up when the quote's `ttl` runs out (quotes are valid for 30 minutes), and watch the pay-in status rather than the quote status.
+
+```javascript settle-quote.js
+const API = "https://api.hyperrails.io/api/v1/partners/marketplace/quote";
+const headers = { Authorization: `Bearer ${process.env.HYPERRAILS_SECRET_KEY}` };
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+async function waitAndComplete(quoteId, ttlSeconds) {
+  const deadline = Date.now() + ttlSeconds * 1000;
+  while (Date.now() < deadline) {
+    const res = await fetch(`${API}/${quoteId}/payment/status`, { headers });
+    const quote = await res.json();
+    const payIn = quote.metadata?.mobileMoneyPayIn?.status;
+    if (payIn === "successful") {
+      // Completing twice is safe: a retry won't credit twice
+      const done = await fetch(`${API}/${quoteId}/complete`, { method: "PUT", headers });
+      return done.json(); // status: "SUCCESSFUL"
+    }
+    await sleep(4000);
+  }
+  throw new Error("Quote ran out of time before the payment settled");
+}
+```
+
+See [Let a Buyer Pay for a Trade](/documentation/guides/buyer-pays-for-a-trade) for the calls that come before this.
+
+## Retry a payout safely
+
+Create the `reference` once, store it, and reuse it on every retry. If the first attempt actually went through, the retry returns `DUPLICATE_REFERENCE` instead of paying twice, and you look the payout up by its reference.
+
+```javascript safe-payout.js
+const API = "https://api.hyperrails.io/api/v1/partners/payouts";
+const headers = {
+  Authorization: `Bearer ${process.env.HYPERRAILS_SECRET_KEY}`,
+  "Content-Type": "application/json",
+};
+
+async function sendPayout(payout) {
+  // payout.reference must be stored in your database before this call
+  const res = await fetch(API, { method: "POST", headers, body: JSON.stringify(payout) });
+  const body = await res.json();
+  const code = body.code ?? body.errorCode;
+
+  if (res.ok) return body;
+  if (code === "DUPLICATE_REFERENCE") {
+    const existing = await fetch(`${API}/${encodeURIComponent(payout.reference)}`, { headers });
+    return existing.json();
+  }
+  throw Object.assign(new Error(body.message ?? body.errorMessage), { code, status: res.status });
+}
+```
+
+## Stream live rates
+
+The rate stream sends server-sent events: `rate_update`, `heartbeat`, `error` and `connection_closed`. You can hold up to 5 connections at once.
+
+```bash
+curl -N "https://api.hyperrails.io/api/v1/partners/marketplace/rates/stream?base=NGN&quote=USDT" \
+  -H "Authorization: Bearer $HYPERRAILS_SECRET_KEY" \
+  -H "Accept: text/event-stream"
+```
+
+See [Rate Stream](/api-reference/rate/rate-stream).
