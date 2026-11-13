@@ -634,6 +634,12 @@
       }
     },
     "/partners/marketplace/express/quote": {
+      "servers": [
+        {
+          "url": "https://api.hyperrails.io/exchange/api/v1",
+          "description": "Exchange service (marketplace listings and express quotes)"
+        }
+      ],
       "post": {
         "summary": "Create Express Quote",
         "description": "Create an express quote with automatic best-rate provider selection and immediate execution.",
@@ -2121,6 +2127,12 @@
       }
     },
     "/partners/marketplace/listings": {
+      "servers": [
+        {
+          "url": "https://api.hyperrails.io/exchange/api/v1",
+          "description": "Exchange service (marketplace listings and express quotes)"
+        }
+      ],
       "get": {
         "description": "Get marketplace listings for the authenticated client",
         "parameters": [
