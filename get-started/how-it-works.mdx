@@ -24,7 +24,7 @@ HyperRails is a marketplace for currency exchange built for **financial institut
 
 ```mermaid
 flowchart TB
-  EC["Liquidity provider<br/>supplies liquidity, sets a rate"] --> MKT["Liquidity Marketplace"]
+  EC["Liquidity provider<br/>supplies liquidity, sets a rate"] --> MKT["Liquidity Listings"]
   M["Financial institution or fintech<br/>requests a quote and pays in"] --> HR{{"HyperRails<br/>prices, allocates, collects, settles"}}
   MKT --> HR
   HR --> BAL["Your balance"]
@@ -34,7 +34,7 @@ flowchart TB
 
 <Steps>
   <Step title="Liquidity is supplied">
-    A liquidity provider creates a trade request for a currency pair, either **funded** (money added right away) or **unfunded** (approved by an admin first), and sets the rate they will trade at. Each one appears on the liquidity marketplace under a trading alias, so business names stay hidden.
+    A liquidity provider creates a trade request for a currency pair, either **funded** (money added right away) or **unfunded** (approved by an admin first), and sets the rate they will trade at. Each one appears on liquidity listings under a trading alias, so business names stay hidden.
   </Step>
   <Step title="A quote is priced">
     You ask to trade a pair. HyperRails allocates the trade across one or more liquidity providers and returns a quote showing who is filling it and at what `weightedAverageRate`. See [Quotes](/get-started/concepts/quotes).

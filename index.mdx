@@ -56,7 +56,7 @@ export const TRY_ITEMS = [
     method: "POST",
     path: "/accounts",
     href: "/api-reference/dynamic-accounts/create-dynamic-account",
-    code: 'curl -X POST https://api.hyperrails.io/api/v1/accounts \\\n  -H "Authorization: Bearer sk_test_..." \\\n  -H "Content-Type: application/json" \\\n  -d \'{\n    "accountName": "Edem Anagbah",\n    "currency": "GHS",\n    "parentAccountId": "YOUR_GHS_ACCOUNT_ID"\n  }\'',
+    code: 'curl -X POST https://api.hyperrails.io/api/v1/accounts \\\n  -H "Authorization: Bearer sk_test_..." \\\n  -H "Content-Type: application/json" \\\n  -d \'{\n    "accountName": "Eden Ali",\n    "currency": "GHS",\n    "parentAccountId": "YOUR_GHS_ACCOUNT_ID"\n  }\'',
   },
   {
     label: "Pay out to a bank",
@@ -239,8 +239,8 @@ export const Row = ({ href, title, meta }) => (
         <Product icon="bolt" title="Instant Trade" links={[["Take a quote in one call", "/documentation/guides/take-a-quote-in-one-call"], ["On-ramp and off-ramp", "/use-cases/on-off-ramp"]]}>
           On-ramp, off-ramp and fiat exchange in one flow, at a listed rate.
         </Product>
-        <Product icon="droplet" title="Liquidity" links={[["Liquidity marketplace", "/documentation/guides/find-a-liquidity-provider"], ["Request for quote", "/documentation/guides/request-for-quote"]]}>
-          Trade requests, the liquidity marketplace, aggregation and dynamic quotes.
+        <Product icon="droplet" title="Liquidity" links={[["Liquidity Listings", "/documentation/guides/find-a-liquidity-provider"], ["Request for quote", "/documentation/guides/request-for-quote"]]}>
+          Trade requests, liquidity listings, aggregation and dynamic quotes.
         </Product>
         <Product icon="money-bill-transfer" title="Pay-in and payout" links={[["Bank payouts", "/documentation/features/fiat-payout-process"], ["Mobile money pay-in", "/documentation/guides/buyer-pays-for-a-trade"]]}>
           Pay in and pay out across multiple currencies, by bank, mobile money or stablecoin.
