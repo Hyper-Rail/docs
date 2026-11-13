@@ -89,19 +89,13 @@
               "documentation/testing/test-mode-overview",
               "documentation/testing/funding-in-test-mode"
             ]
-          },
-          {
-            "group": "Guides",
-            "icon": "map",
-            "pages": [
-              "documentation/guides/find-a-liquidity-provider",
-              "documentation/guides/take-a-quote-in-one-call",
-              "documentation/guides/buyer-pays-for-a-trade",
-              "documentation/guides/check-what-a-wallet-holds",
-              "documentation/guides/read-your-balances",
-              "documentation/guides/give-a-customer-an-account"
-            ]
-          },
+          }
+        ]
+      },
+      {
+        "tab": "Guides",
+        "icon": "book-open",
+        "groups": [
           {
             "group": "Quotes and settlement",
             "icon": "arrows-rotate",

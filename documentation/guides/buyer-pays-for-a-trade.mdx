@@ -24,12 +24,6 @@ Use test mode while you follow this guide. No real money moves and no real phone
 charged.
 </Info>
 
-<Warning>
-These endpoints take a **secret key**, not a dashboard token. A JWT returns
-`403 Forbidden` with the message
-`This endpoint requires one of the following authentication types: [SECRET_KEY]`.
-</Warning>
-
 ## The shape of the flow
 
 <Steps>
@@ -382,7 +376,6 @@ Reference: [Get Complete Quote](/api-reference/hyperrail-quote/get-complete-quot
 
 | What you see | What it means | What to do |
 |---|---|---|
-| **403** `requires [SECRET_KEY]` | You used a dashboard token | Use your secret key |
 | **400** `No providers available` | No liquidity for that pair | Try another pair, or check the marketplace listings |
 | **400** `unsupported_currency` | Mobile money does not cover that currency | Check Step 2's currency list |
 | **400** on accept | The quote expired | Create a new intent |
