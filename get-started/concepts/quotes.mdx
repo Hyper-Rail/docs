@@ -1,0 +1,58 @@
+---
+title: "Quotes"
+description: "Intents, express quotes and multi-provider quotes: the three ways to price a trade on HyperRails."
+icon: "file-invoice-dollar"
+---
+
+A **quote** is a priced, allocated trade. Every trade on HyperRails, whether it starts on the dashboard or the API, is a quote that moves through the [transaction lifecycle](/get-started/transaction-lifecycle).
+
+## Three ways to get a quote
+
+| | Intent | Express quote | Multi-provider quote |
+|---|---|---|---|
+| Endpoint | `POST /partners/marketplace/intent` | `POST /partners/marketplace/express/quote` | `POST /partners/marketplace/quote` |
+| You provide | Pair, amount, direction and the **rate** you want | Pair, amount, direction | Pair, amount and the **pools** to use |
+| Who picks the pools | HyperRails | HyperRails, at the best available rate | You |
+| Quote validity (`ttl`) | 30 minutes | 30 minutes | 30 minutes |
+| Best for | A person deciding, with a countdown on screen | Pricing and committing in one motion | Choosing specific liquidity providers |
+| Guide | [Let a Buyer Pay for a Trade](/documentation/guides/buyer-pays-for-a-trade) | [Take a Quote in One Call](/documentation/guides/take-a-quote-in-one-call) | [Request for quote](/documentation/guides/request-for-quote) |
+
+On the dashboard, **Instant Trade** (previously Express Buy) uses the express flow, and **chat and quotes** let buyers and sellers send, accept and decline quotes inside the platform.
+
+## After pricing, every quote is the same
+
+<Steps>
+  <Step title="Accept">
+    `PUT /partners/marketplace/quote/{id}/accept` with the `accountId` to settle into and the payment details. The quote moves to `AWAITING_PAYMENT`.
+  </Step>
+  <Step title="Authorize, if needed">
+    `PUT /partners/marketplace/quote/{id}/payment/authorize`, for example to pass a mobile money OTP.
+  </Step>
+  <Step title="Watch the payment">
+    `GET /partners/marketplace/quote/{id}/payment/status` until the pay-in succeeds, or wait for the webhook.
+  </Step>
+  <Step title="Complete">
+    `PUT /partners/marketplace/quote/{id}/complete`. The quote moves to `SUCCESSFUL`. Calling complete twice is safe and doesn't credit twice.
+  </Step>
+</Steps>
+
+<Warning>
+  The accept, authorize, status and complete paths have no `express` segment, even for an express quote.
+</Warning>
+
+## Reading a quote
+
+| Field | What it is |
+|---|---|
+| `quoteId` | Keep it. Every later call needs it |
+| `status` | Where the quote is in the [lifecycle](/get-started/transaction-lifecycle) |
+| `totalSourceAmount` | What the payer pays, including the source-side `fee` |
+| `totalDestinationAmount` | What gets credited |
+| `allocationResult` | Which pools fill the trade, and the `weightedAverageRate` |
+| `ttl` | Seconds left before the quote expires. Quotes are valid for 30 minutes |
+| `metadata` | Pay-in instructions and fee details. See [Metadata](/api-reference/metadata) |
+| `mode` | `test` or `live` |
+
+## Amount direction
+
+`amountDirection` says whether `amount` counts the **source** or the **destination** side. On the express quote it defaults to `source`. Set it explicitly and check `totalSourceAmount` before you accept.

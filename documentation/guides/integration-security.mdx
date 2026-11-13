@@ -1,0 +1,57 @@
+---
+title: "Integration Security"
+description: "How to protect your keys, verify webhooks, and move money safely with HyperRails."
+icon: "shield-halved"
+---
+
+Use this checklist before you go live.
+
+## Protect your credentials
+
+- **Keep your secret key on your server.** It grants full account access. Never put it in a browser, a mobile app or a public repository. Only the public key (`pk_…`) is safe client-side, and only where documented.
+- **Save each key the moment you see it.** Secret, public and encryption keys are shown only once, then stored hashed. Nobody, including HyperRails, can show them to you again. If one is lost, generate a new one.
+- **Keep test and live keys apart.** Use `sk_test_` keys everywhere except production, and store live keys in a secrets manager rather than in code or config files.
+- **Rotate keys when people or systems change.** Regenerate keys from **Dashboard → Credentials → API Keys**. The old key stops working immediately, so update every integration first.
+- **Use HTTPS only.** Plain HTTP requests are rejected.
+- **Encrypt sensitive fields** such as bank account numbers and blockchain addresses with your encryption key (`enc_…`) where an endpoint requires field-level encryption. See [Authentication](/api-reference/authentication).
+
+## Verify every webhook
+
+Webhooks tell you money moved, so an attacker who can fake one can trick your system. For every request:
+
+<Steps>
+  <Step title="Check the timestamp">
+    Reject requests where `x-hyperrails-webhook-timestamp` is more than 5 minutes from now.
+  </Step>
+  <Step title="Check the signature">
+    Recompute the HMAC-SHA512 of `{webhook_id}.{timestamp}.{raw_body}` with your webhook secret, and compare it with `x-hyperrails-signature` using a constant-time comparison.
+  </Step>
+  <Step title="Deduplicate">
+    Store `x-hyperrails-webhook-id` and ignore events you've already processed.
+  </Step>
+  <Step title="Don't rely on order">
+    Events may arrive out of order. Read the state from the payload rather than assuming a sequence.
+  </Step>
+</Steps>
+
+Test and live mode each have their own webhook secret. See [Webhooks overview](/documentation/webhooks/overview), and check your setup with the [Webhook validator](/documentation/webhooks/validator).
+
+## Move money safely
+
+- **Use a unique `reference` on every payout** and store it before you send the request. If a request times out, retry with the same reference: a duplicate returns `DUPLICATE_REFERENCE` instead of paying twice. See [Idempotency](/api-reference/idempotency).
+- **Resolve the account name before a bank payout.** Use [Resolve Bank Account](/api-reference/payout/resolve-account) and send the returned name.
+- **Validate stablecoin addresses and chains.** Funds sent on an unsupported network, or to an incorrect address, may be lost permanently.
+- **Treat webhooks as the source of truth.** A timeout or `5xx` leaves the outcome unknown. Don't assume a payment failed, and don't retry blindly with a new reference.
+- **Check `availableBalance`, not `balance`,** before you spend.
+
+## Secure your dashboard
+
+- **Turn on two-factor authentication** and keep your recovery codes somewhere safe. If you lose your authenticator device, use a recovery code to set up 2FA on a new device.
+- **Trades paid from your balance** are confirmed with a one-time code.
+- **Give teammates only the access they need.** Assign roles with [Team members](/documentation/features/team-members).
+- **Review activity** in [Audit logs](/documentation/features/audit-logs).
+- **Suspend sub-merchants** you no longer work with.
+
+## Report a problem
+
+If you think a key has been exposed, regenerate it straight away, then contact [support@hyperrails.io](mailto:support@hyperrails.io).

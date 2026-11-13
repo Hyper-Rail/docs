@@ -1,0 +1,52 @@
+---
+title: "Liquidity"
+description: "Liquidity pools, Liquidity Listings, and how a trade is filled."
+icon: "droplet"
+---
+
+Every trade on HyperRails is filled from **liquidity pools** that liquidity providers fund. If nobody is offering a pair, or the offers are too small, the trade can't be filled, no matter what the published rate says.
+
+## Liquidity Pools
+
+A liquidity provider creates a pool for one currency pair and sets the rate they'll trade at.
+
+| Pool Type | How it works |
+|---|---|
+| **Funded** | Money is added to the pool right away. |
+| **Unfunded** | The pool is approved by an admin first. |
+
+Liquidity Providers can edit, pause, resume, top up and delete their pools. A pool can't be deleted while a trade is in progress. Pools can also be given an expiry date. Expired pools are archived automatically and stay viewable, and pools with no balance are removed.
+
+When a pair includes a stablecoin, the liquidity provider also picks the chain (network) for the pool.
+
+## Liquidity Listings
+
+Pools are listed on the marketplace by currency pair. Each listing shows the provider's trading alias, never their business name.
+
+| Listing field | What it tells you |
+|---|---|
+| `pair` | The currencies, as `A/B` |
+| `rate` | The rate **this provider** offers. This is what a trade against the pool fills at |
+| `availableBalance` | How much the pool can actually fill, in the first currency of the pair |
+| `negotiationLimit` | `0` means the rate is take-it-or-leave-it |
+
+Read listings with [Get Marketplace Listings](/api-reference/listings/liquidity-providers).
+
+<Warning>
+  `availableBalance` is the real constraint, and it's consumed as trades settle. Re-read listings right before you quote, and don't cache them. Asking for more than a pool holds fails with `Unable to fulfill requested volume at the moment.`
+</Warning>
+
+## How a trade is filled
+
+When you request a quote, HyperRails **allocates** it across pools. The quote's `allocationResult` shows each allocation (pool, amount, rate) and the `weightedAverageRate` you get overall. `fullAllocation: true` means the whole amount was matched.
+
+You can let HyperRails pick the pools, combine several pools in one order (liquidity aggregation), or name the pools yourself with a [multi-provider quote](/documentation/guides/request-for-quote).
+
+## Errors that mean "no liquidity"
+
+| Message | Meaning |
+|---|---|
+| `No providers available for the given intent configuration` | Nobody trades this pair at all |
+| `Unable to fulfill requested volume at the moment.` | Someone trades it, but not at this size |
+
+Guide: [Find a Liquidity Provider](/documentation/guides/find-a-liquidity-provider)

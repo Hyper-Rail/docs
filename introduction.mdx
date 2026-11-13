@@ -1,75 +1,64 @@
 ---
-title: Introduction
-description: HyperRails is an application for exchanging fiat and stablecoins using aggregated liquidity.
-icon: 'scroll'
+title: "Welcome to HyperRails"
+description: "HyperRails is exchange and liquidity infrastructure for moving value between fiat currencies and stablecoins."
+icon: "circle-info"
+sidebarTitle: "Welcome"
 ---
 
-## Overview
+Welcome to **HyperRails**, the platform for exchanging fiat and stablecoins using aggregated liquidity. HyperRails lets businesses on-ramp, off-ramp and exchange currencies across global payment corridors, with stablecoins as the settlement layer. Pricing, liquidity sourcing and settlement are handled for you, so you don't need to manage banks, blockchains or counterparties directly.
 
-<Badge text="Payments Application" />
-<Badge text="Fiat & Stablecoins" />
-<Badge text="Liquidity Marketplace" />
+Our documentation is designed to help you understand our products, avoid common integration pitfalls, and get to market faster.
 
-HyperRails is an **exchange and liquidity orchestration application** that allows businesses to move value between **fiat currencies and stablecoins** across global payment corridors.
+## What you can do with HyperRails
 
-It enables **on-ramping, off-ramping, and fiat-to-fiat exchange** using stablecoins as the settlement layer—while handling pricing, liquidity sourcing, and settlement internally.
+- **Convert fiat to stablecoins and back.** On-ramp local currency into USDT or USDC, and off-ramp stablecoins into local currency.
+- **Exchange between fiat currencies.** Move between currencies like NGN, GHS, KES and USD, bridged through stablecoins.
+- **Trade against aggregated liquidity.** Buy from a single pool or combine liquidity from several pools in one order.
+- **Supply liquidity and earn.** As a liquidity provider, fund currency pairs, set your rates, and earn on executed trades.
+- **Pay out globally.** Send fiat to bank accounts or stablecoins to wallet addresses.
 
-HyperRails is built for businesses that need **fast, reliable, and transparent currency exchange**, without managing banks, blockchains, or exchange clients directly.
+## Who HyperRails is for
 
----
-
-## Who Uses HyperRails
-  <Card title="Merchants">
-    Businesses that convert currencies, on-ramp or off-ramp funds, and execute trades using available liquidity.
+<CardGroup cols={2}>
+  <Card title="Financial Institutions" icon="building-columns">
+    Banks, payment companies and other licensed institutions moving money across currencies and borders.
   </Card>
-
-  <Card title= "Exchange Client">
-    Institutions or partners that supply liquidity to currency pairs and earn margins on executed trades.
+  <Card title="Fintechs" icon="mobile-screen">
+    Fintechs building payments, FX and stablecoin products on HyperRails. Both can trade, pay in and out, and supply liquidity.
   </Card>
+</CardGroup>
 
----
-
-## What You Can Do
-
-- Convert fiat to stablecoins and back
-- Exchange between fiat currencies via stablecoins
-- View real-time exchange rates before trading
-- Manage balances and transaction history
-- Access liquidity from multiple providers through one interface
-
----
-
-## How HyperRails Works (Quick View)
+## How HyperRails works
 
 <Steps>
-  <Step title="Liquidity Is Supplied">
-    Exchange Clients fund currency pairs and set exchange pricing.
+  <Step title="Liquidity is supplied">
+    Liquidity providers fund currency pairs and set exchange pricing.
   </Step>
-
-  <Step title="Rates Are Generated">
+  <Step title="Rates are generated">
     HyperRails aggregates liquidity and displays the best available rates.
   </Step>
-
-  <Step title="Trades Are Executed">
-    Merchants initiate exchanges and settle instantly using available liquidity.
+  <Step title="Trades are executed">
+    Financial institutions and fintechs initiate exchanges and settle using available liquidity.
   </Step>
 </Steps>
 
----
+## Get Started
 
-## Getting Started
-### For Merchants
-1. Create a HyperRails account at [https://app.hyperrails.io](https://app.hyperrails.io/signup) 
-2. Select merchant as service type
-3. Complete business verification  
-4. Fund your account 
-5. Start exchanging currencies  
+<CardGroup cols={2}>
+  <Card title="Platform Overview" icon="layer-group" href="/get-started/platform-overview">
+    See every HyperRails product and when to use it.
+  </Card>
+  <Card title="Create your account" icon="user-plus" href="/documentation/onboarding">
+    Sign up as a financial institution or fintech and get verified.
+  </Card>
+  <Card title="Set up test mode" icon="flask" href="/documentation/testing/test-mode-overview">
+    Build and test your integration without real money.
+  </Card>
+  <Card title="Make your first trade" icon="bolt" href="/documentation/guides/take-a-quote-in-one-call">
+    Run an Instant Trade end to end with the Partner API.
+  </Card>
+</CardGroup>
 
-### For Exchange Clients
-1. Create a HyperRails account at [https://app.hyperrails.io](https://app.hyperrails.io/signup) 
-2. Select exchange client as service type
-2. Complete onboarding and approval  
-3. Fund supported currency pairs  
-4. Set rates and monitor performance  
+## Getting Help
 
-Learn more about creating a <Link href="documentation/onboarding">merchant</Link> or  <Link href="documentation/onboarding">exchange client</Link>  account
+We're excited to have you build with us. If you have questions or run into issues, contact us at [support@hyperrails.io](mailto:support@hyperrails.io).

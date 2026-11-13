@@ -1,0 +1,83 @@
+---
+title: "Platform Overview"
+description: "The building blocks of HyperRails, what each one does, and when to use it."
+icon: "layer-group"
+---
+
+HyperRails gives financial institutions and fintechs modular building blocks for holding, exchanging and moving money across fiat and stablecoin rails. This page outlines the core products, what each does, and when you should use them.
+
+## 🏦 Fiat Accounts: Hold local and global currencies
+
+Open fiat accounts in the currencies your business works in, from local African currencies to major global ones.
+
+| Product | Description | Use when you need to… |
+|---|---|---|
+| Local Accounts | Accounts in local currencies: **NGN**, **GHS**, **KES**, **ZAR** and **XOF**. | Collect, hold and pay out in the markets you operate in. |
+| Global Accounts | Accounts in global currencies: **USD**, **GBP** and **EUR**. | Hold and move money in major currencies alongside your local balances. |
+
+See [Coverage](/documentation/coverage) for what's available on your account.
+
+## 🪙 Stablecoins: Wallets, deposits and withdrawals
+
+<Check>
+  HyperRails wallets are **multi-chain** and support **gasless transactions**, so you can move stablecoins without holding a separate native token to pay network fees.
+</Check>
+
+| Product | Description | Use when you need to… |
+|---|---|---|
+| [Wallet Creation](/documentation/guides/stablecoin-wallets) | **Multi-asset, multi-chain** wallets that hold USDT and USDC across supported networks. | Hold stablecoins for your business, or separate funds with sub-wallets. |
+| [Deposit](/documentation/guides/receive-stablecoins) | Receive stablecoins at your wallet's deposit addresses on supported chains. | Accept stablecoin payments or fund your wallet. |
+| [Withdrawal](/documentation/guides/send-stablecoins) | Send stablecoins from your wallet to an external wallet address. | Pay suppliers or partners, or move funds out. |
+
+## 🔁 Exchange: Convert between fiat and stablecoins
+
+Every exchange product runs on **Instant Trade**: buy at a listed rate in one flow, entering either the amount you send or the amount you want to receive. On the dashboard, all of the products below are accessed from the **Instant Trade** tab.
+
+| Product | Description | Use when you need to… |
+|---|---|---|
+| [On-ramp](/documentation/features/onramp-transaction) | Convert local fiat currency into stablecoins with Instant Trade. | Fund stablecoin balances or convert local collections into stablecoins. |
+| [Off-ramp](/documentation/features/offramp-transaction) | Convert stablecoins back into local fiat currency with Instant Trade. | Settle stablecoin balances into local bank accounts. |
+| [Fiat Exchange](/documentation/features/currency-exchange-fiat) | Exchange one fiat currency for another with Instant Trade, bridged through stablecoins. | Rebalance multi-currency treasury or prepare funds for local payouts. |
+| Bridge | Convert between a currency and its matching stablecoin, for example USD to USDT. | Move between a fiat balance and its dollar-pegged stablecoin. |
+| Swap | Move money from a balance in one currency to a balance in another. | Convert between your own HyperRails balances. |
+
+Integrating by API? See [Take a Quote in One Call](/documentation/guides/take-a-quote-in-one-call).
+
+## 💧 Liquidity: Source and supply liquidity
+
+| Product | Description | Use when you need to… |
+|---|---|---|
+| Trade Request | Funded (money added right away) or unfunded liquidity for a currency pair, which can be paused, resumed, topped up and set to expire. | Supply liquidity to a pair and earn on executed trades. |
+| [Liquidity Listings](/documentation/guides/find-a-liquidity-provider) | Browse available liquidity by currency pair. Business names stay hidden behind trading aliases. | Find the best available liquidity for a pair. |
+| Liquidity Aggregation | Combine liquidity from several providers in one order, or buy from a single provider. | Fill orders larger than any single provider can. |
+| [Dynamic Quotes & Chat](/documentation/guides/request-for-quote) | Send, accept and decline quotes, and chat with your counterparty inside the platform. | Agree a rate for a specific trade. |
+
+## 👛 Balances: Accounts across multiple currencies
+
+Create accounts across **multiple currencies** and hold fiat and stablecoin balances side by side.
+
+| Product | Description | Use when you need to… |
+|---|---|---|
+| [Multi-currency Balances](/documentation/guides/read-your-balances) | One account per currency, each with its own balance, all managed from one place. | Hold funds in several currencies, ready to trade or pay out. |
+| [Stablecoin Balances](/api-reference/hyperrail-wallet/get-stablecoin-balance) | USDT and USDC balances in your wallets. | Hold dollar-pegged value alongside your fiat accounts. |
+
+## 💸 Pay-in and Payout: Move money in and out
+
+Pay in and pay out **across multiple currencies**, by bank, mobile money or stablecoin.
+
+| Product | Description | Use when you need to… |
+|---|---|---|
+| Pay-in | Fund trades and balances from your balance, by bank transfer, by mobile money or by stablecoin deposit. | Collect money from customers or fund your account. |
+| [Fiat Payouts](/documentation/features/fiat-payout-process) | Pay out to bank accounts in supported currencies, including USD over SWIFT/BIC. | Settle to your own or a recipient's bank account. |
+| [Stablecoin Payouts](/documentation/guides/send-stablecoins) | Send stablecoins to a wallet address. | Pay a recipient in stablecoins. |
+| High-volume Payouts | Payouts above a provider's per-transaction limit are split and paid out automatically. | Send large payouts without manual splitting. |
+| Saved Beneficiaries | Save recipient account details for repeat payouts. | Pay the same recipients regularly. |
+
+## 🏧 Virtual Accounts: Collect with dedicated account numbers
+
+Create **virtual (dynamic) accounts across a number of currencies**. Each one is a real, payable account number that settles into your balance.
+
+| Product | Description | Use when you need to… |
+|---|---|---|
+| [Virtual Accounts](/documentation/guides/give-a-customer-an-account) | Dedicated account numbers you can give to each customer. | Collect bank transfers and know exactly who paid. |
+| [Dynamic Accounts API](/api-reference/dynamic-accounts/create-dynamic-account) | Create, read and list virtual accounts programmatically. | Issue accounts from your own product. |

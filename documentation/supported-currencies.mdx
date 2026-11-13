@@ -1,28 +1,55 @@
 ---
-title: Supported Currencies & Networks
-description: The list of what HyperRails supports.
-icon: money-bills
+title: "Supported Currencies and Networks"
+sidebarTitle: "Currencies and Networks"
+description: "The fiat currencies, stablecoins and blockchain networks supported on HyperRails."
+icon: "money-bills"
 ---
 
-# Supported Currencies & Networks
+This is the authoritative list of what HyperRails supports. If this page and any other page disagree, this page is correct. Currency-pair tickers on the dashboard may include preview or coming-soon pairs.
 
-> The authoritative, always-current list of what HyperRails supports. If
-> this page and any other page disagree, this page is correct — dashboard
-> currency-pair tickers may include preview/coming-soon pairs.
+<Warning>
+  Stablecoins sent on an unsupported network, or to an incorrect address, may be irretrievable and permanently lost. Always confirm the network (chain) before sending.
+</Warning>
 
-## Fiat
-Wallet funding and payouts: **NGN**, **GHS**, **KES**, **ZAR**, **XOF**, **USD**, **GBP** and **EUR**.
-Fiat-to-fiat exchange (via stablecoin bridging): **NGN**, **GHS**, **KES**, **ZAR**, **XOF**, **USD**, **GBP** and **EUR**.
-Additional corridors and currencies are in controlled rollout — reach out to our support team for any requests.
+## Fiat Currencies
 
-## Stablecoins & Crypto
-**USDT**, **USDC**.
+| Currency | Code | Wallet funding | Payouts | Fiat-to-fiat exchange |
+|---|---|:---:|:---:|:---:|
+| Nigerian Naira | `NGN` | ✓ | ✓ | ✓ |
+| Ghanaian Cedi | `GHS` | ✓ | ✓ | ✓ |
+| Kenyan Shilling | `KES` | ✓ | ✓ | ✓ |
+| South African Rand | `ZAR` | ✓ | ✓ | ✓ |
+| West African CFA Franc | `XOF` | ✓ | ✓ | ✓ |
+| US Dollar | `USD` | ✓ | ✓ | ✓ |
+| British Pound | `GBP` | ✓ | ✓ | ✓ |
+| Euro | `EUR` | ✓ | ✓ | ✓ |
+
+Fiat-to-fiat exchange is bridged through stablecoins. Additional corridors and currencies are in controlled rollout, so contact [support@hyperrails.io](mailto:support@hyperrails.io) if you need one that isn't listed.
+
+### USD Payouts
+
+USD Payouts are sent over **SWIFT/BIC**. ACH and Fedwire are not available yet.
+
+## Stablecoins
+
+| Stablecoin | Code |
+|---|---|
+| Tether | `USDT` |
+| USD Coin | `USDC` |
 
 ## Networks
-**Base**, **Ethereum**, **Polygon**, **Stellar**.
 
-## Check support programmatically
-Don't hardcode this list in production integrations — query it instead:
+When you create a pool or view listings for a pair that includes a stablecoin, you pick the network (chain) to use.
+
+- Base
+- Ethereum
+- Polygon
+- Stellar
+- Tron
+
+## Check Support Programmatically
+
+Don't hardcode these lists in production integrations. Query them instead:
 
 ```bash
 curl https://api.hyperrails.io/api/v1/trade-pairs/supported/currencies/fiat \

@@ -1,0 +1,47 @@
+---
+title: "Collections and Payouts"
+description: "Collect money with virtual accounts and mobile money, and pay out to bank accounts and stablecoin wallets."
+icon: "money-bill-transfer"
+---
+
+## Collect
+
+<CardGroup cols={2}>
+  <Card title="Virtual Accounts" icon="building-columns" href="/documentation/guides/give-a-customer-an-account">
+    Give each customer a real, payable bank account number. Their transfers land in your balance for that currency.
+  </Card>
+  <Card title="Mobile Money" icon="mobile-screen" href="/documentation/guides/buyer-pays-for-a-trade">
+    Charge a buyer's mobile money wallet when they accept a quote. The buyer approves the charge on their phone, for example with an OTP.
+  </Card>
+  <Card title="Stablecoin Deposits" icon="coins" href="/documentation/guides/check-what-a-wallet-holds">
+    Receive USDT or USDC at your wallet's deposit addresses.
+  </Card>
+  <Card title="Your Balance" icon="scale-balanced" href="/documentation/guides/read-your-balances">
+    Pay for a trade from your HyperRails balance. Trades paid from balance are confirmed with a one-time code from your authenticator app.
+  </Card>
+</CardGroup>
+
+Check which currencies support mobile money, and which providers, with [List Mobile Money Currencies](/api-reference/hyperrail-quote/get-mmo-currencies) and [List Mobile Money Providers](/api-reference/hyperrail-quote/get-mmo-providers).
+
+## Pay out
+
+<CardGroup cols={2}>
+  <Card title="Bank Payouts" icon="money-check-dollar" href="/documentation/features/fiat-payout-process">
+    Look up the bank code, resolve the account name, then pay out. USD payouts use SWIFT/BIC.
+  </Card>
+  <Card title="Wallet Payouts" icon="paper-plane" href="/api-reference/payout/wallet-payout">
+    Send USDT or USDC to a wallet address.
+  </Card>
+</CardGroup>
+
+HyperRails also helps payouts go through:
+
+- **High-volume Payouts.** Payouts over a provider's per-transaction limit are split into smaller parts and paid out automatically.
+- **Smarter Routing.** If the priority provider doesn't have enough funds, HyperRails moves funds from other providers first.
+- **Saved Beneficiaries.** Save recipient account details on the dashboard for faster repeat payouts.
+- **Corridor Checker.** Check whether a payment route or currency pair is supported before you send.
+
+## Reconcile
+
+- Every payout takes your own unique `reference`. Reusing one returns `DUPLICATE_REFERENCE`, so a retry can never pay twice. See [Idempotency](/api-reference/idempotency).
+- Print receipts for payins and payouts, and export your transaction history from the dashboard.

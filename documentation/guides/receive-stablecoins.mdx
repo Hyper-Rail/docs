@@ -1,0 +1,72 @@
+---
+title: "Receive Stablecoins"
+description: "Get a deposit address for the right chain, share it safely, and confirm when funds arrive."
+icon: "arrow-down"
+---
+
+To receive USDT or USDC, give the sender your wallet's deposit address for the chain they're sending on. When the deposit lands, your wallet balance goes up and you receive a webhook.
+
+## What you'll need
+
+- Your **secret key**.
+- Your `walletId`, or use `main`. See [Stablecoin wallets](/documentation/guides/stablecoin-wallets).
+
+<Steps>
+  <Step title="Get your deposit addresses">
+    ```bash
+    curl https://api.hyperrails.io/api/v1/wallets/WALLET_ID/deposit-addresses \
+      -H "Authorization: Bearer YOUR_SECRET_KEY"
+    ```
+
+    ```json
+    {
+      "walletId": "ac07cc78-7209-49ab-b3bd-28fa4b403c17",
+      "addresses": [
+        {
+          "id": "227c4474-0e06-4862-906b-d9476c7dbe65",
+          "chain": "base_sepolia",
+          "address": "0xe5599e5092cbd398fd50b4a8f8ddba4909617b82",
+          "explorerUrl": "https://sepolia.basescan.org/address/0xe5599e5092cbd398fd50b4a8f8ddba4909617b82",
+          "status": "active",
+          "createdAt": "2026-08-14T17:59:22.194204Z"
+        }
+      ]
+    }
+    ```
+  </Step>
+
+  <Step title="Pick the right address">
+    Choose the address where `chain` matches the sender's network **and** `status` is `active`. The list can include inactive addresses, so never just take the first one.
+
+    For Stellar, also share `memoType` and `memoValue`. Several wallets can share one Stellar address, and a deposit without the memo can't be credited to you.
+  </Step>
+
+  <Step title="Share it with the sender">
+    Tell the sender the exact chain, the address, and the memo if there is one.
+  </Step>
+
+  <Step title="Confirm the deposit">
+    Listen for the `wallet.credit_successful` [webhook](/documentation/webhooks/payloads). You can also read the wallet's activity:
+
+    ```bash
+    curl https://api.hyperrails.io/api/v1/wallets/WALLET_ID/activities \
+      -H "Authorization: Bearer YOUR_SECRET_KEY"
+    ```
+  </Step>
+</Steps>
+
+<Warning>
+  Stablecoins sent on an unsupported network, to an inactive address, or to Stellar without the memo may be lost permanently.
+</Warning>
+
+<Note>
+  In test mode, chain names are testnets, for example `base_sepolia`, `ethereum_sepolia`, `polygon_amoy`, `stellar_testnet` and `tron_nile`. Live mode returns mainnet names. Never reuse a test address in production.
+</Note>
+
+## When things go wrong
+
+| What you see | What it means | What to do |
+|---|---|---|
+| Deposit never credited | Sent to an inactive address, or to Stellar without the memo | Only share `active` addresses; always include the Stellar memo |
+| An address entry has no `address` field | The address is still being provisioned | Check the field exists before sharing it |
+| **404** `wallet_not_found` | Wrong wallet ID, or a wallet from the other mode | List wallets with `GET /wallets` and check your key's mode |

@@ -67,7 +67,7 @@ Response Body:
     <TtlSttlmAmt>20000.00</TtlSttlmAmt>
     <WtdAvrgRate>1580.50</WtdAvrgRate>
   </AllcnDtls>
-  <TTL>300</TTL>
+  <TTL>1800</TTL>
 </fxtr:FXTradInstrRspn>
 
 ```
@@ -82,7 +82,7 @@ Response Body:
 - **`XchgRate`** = Exchange rate
 - **`TxId`** = Transaction ID
 - **`Sts`** = Status (NEWT = New Trade)
-- **`TTL`** = Time to live (seconds)
+- **`TTL`** = Time to live (seconds). Quotes are valid for 30 minutes (1800 seconds)
 
 
 ## 2. Get FX Trade Status
@@ -112,7 +112,7 @@ Response Body:
     <TradgCcyAmt>31610000.00</TradgCcyAmt>
     <CntrValCcyAmt>20000.00</CntrValCcyAmt>
   </TradAmts>
-  <TTL>300</TTL>
+  <TTL>1800</TTL>
 </fxtr:FXTradStsAndDtlsNtfctn>
 
 ```
@@ -423,7 +423,7 @@ Response Body:
 - **`TradSts/Sts`** = Trade status code
 - **`XchgRate`** = Exchange rate
 - **`CcyPair`** = Currency pair (BaseCcy/QtdCcy)
-- **`TTL`** = Time to live (seconds)
+- **`TTL`** = Time to live (seconds). Quotes are valid for 30 minutes (1800 seconds)
 - **`OprgMd`** = Operating mode (live/sandbox)
 
 ---

@@ -1,0 +1,99 @@
+---
+title: "Webhook Validator"
+description: "Check a HyperRails webhook signature in your browser, to debug your verification code."
+icon: "badge-check"
+---
+
+export const WebhookValidator = () => {
+  const [secret, setSecret] = useState("");
+  const [webhookId, setWebhookId] = useState("");
+  const [timestamp, setTimestamp] = useState("");
+  const [signature, setSignature] = useState("");
+  const [body, setBody] = useState("");
+  const [result, setResult] = useState(null);
+
+  const toHex = (buf) => Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+
+  const validate = async () => {
+    try {
+      if (!window.crypto || !window.crypto.subtle) {
+        setResult({ error: "Your browser doesn't support the Web Crypto API." });
+        return;
+      }
+      const signedContent = `${webhookId.trim()}.${timestamp.trim()}.${body}`;
+      const enc = new TextEncoder();
+      const key = await window.crypto.subtle.importKey("raw", enc.encode(secret), { name: "HMAC", hash: "SHA-512" }, false, ["sign"]);
+      const expected = toHex(await window.crypto.subtle.sign("HMAC", key, enc.encode(signedContent)));
+      const ts = Number(timestamp.trim());
+      const ageSeconds = Number.isFinite(ts) ? Math.round(Math.abs(Date.now() / 1000 - ts)) : null;
+      setResult({ expected, match: expected === signature.trim().toLowerCase(), ageSeconds, signedContentLength: signedContent.length });
+    } catch (e) {
+      setResult({ error: String(e && e.message ? e.message : e) });
+    }
+  };
+
+  const field = "hr-v-field";
+  const label = "hr-v-label";
+
+  return (
+    <div className="not-prose hr-v">
+      <label className={label}>Webhook secret</label>
+      <input className={field} type="password" autoComplete="off" value={secret} onChange={(e) => setSecret(e.target.value)} placeholder="Your test webhook secret" />
+      <label className={label}>x-hyperrails-webhook-id</label>
+      <input className={field} value={webhookId} onChange={(e) => setWebhookId(e.target.value)} />
+      <label className={label}>x-hyperrails-webhook-timestamp</label>
+      <input className={field} value={timestamp} onChange={(e) => setTimestamp(e.target.value)} placeholder="Unix seconds" />
+      <label className={label}>x-hyperrails-signature</label>
+      <input className={field} value={signature} onChange={(e) => setSignature(e.target.value)} placeholder="Hex-encoded signature" />
+      <label className={label}>Raw request body</label>
+      <textarea className={field} rows={8} value={body} onChange={(e) => setBody(e.target.value)} placeholder="Paste the body exactly as received, byte for byte" />
+      <button onClick={validate} className="hr-v-btn">
+        Validate signature
+      </button>
+      {result && result.error && <p className="mt-4 text-sm text-red-500">{result.error}</p>}
+      {result && !result.error && (
+        <div className="mt-4 text-sm space-y-2">
+          <p className={result.match ? "text-green-600 dark:text-green-400 font-semibold" : "text-red-500 font-semibold"}>
+            {result.match ? "✓ Signature is valid" : "✗ Signature does not match"}
+          </p>
+          <p>Expected signature: <code className="break-all">{result.expected}</code></p>
+          {result.ageSeconds !== null && (
+            <p>Timestamp age: {result.ageSeconds} seconds {result.ageSeconds > 300 ? "(older than 5 minutes: your server should reject this)" : "(within 5 minutes)"}</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+<Warning>
+  Everything runs in your browser and nothing is sent anywhere. Even so, use your **test-mode** webhook secret here, never your live one.
+</Warning>
+
+## Gather what you need
+
+| Input | Where to find it |
+|---|---|
+| Webhook secret | **Dashboard → Credentials → API Keys → Webhooks**. Test and live have separate secrets |
+| `x-hyperrails-webhook-id` | Request header on the webhook |
+| `x-hyperrails-webhook-timestamp` | Request header, in Unix seconds |
+| `x-hyperrails-signature` | Request header, hex-encoded HMAC-SHA512 |
+| Raw request body | Log it on your server **before** parsing it as JSON |
+
+## Validate
+
+<WebhookValidator />
+
+## What it checks
+
+The validator computes the HMAC-SHA512 of `{webhook_id}.{timestamp}.{raw_body}` with your secret, exactly as described in the [Webhooks overview](/documentation/webhooks/overview), and compares it with the signature you pasted. It also tells you whether the timestamp is within the 5-minute window your server should enforce.
+
+## If the signature doesn't match
+
+- **The body changed.** Parsing and re-serialising JSON changes whitespace and key order. Sign and verify the raw bytes you received.
+- **Wrong secret.** Test and live mode have different webhook secrets.
+- **Extra whitespace.** Copy header values exactly, with no trailing spaces or line breaks.
+- **Wrong separator.** The three parts are joined with a single `.` and nothing else.
+- **Wrong encoding.** The signature is lowercase hex, not base64.
+
+For a ready-made verification handler, see [Recipes](/documentation/guides/recipes#verify-a-webhook).

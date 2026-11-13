@@ -1,0 +1,36 @@
+---
+title: "Docs for LLMs"
+description: "Give AI assistants and coding tools accurate, up-to-date HyperRails documentation."
+icon: "robot"
+---
+
+The HyperRails docs are available in formats built for large language models, so your AI tools can answer questions and write integration code from the real documentation instead of guessing.
+
+## llms.txt
+
+| File | What it contains | Use it when |
+|---|---|---|
+| [`/llms.txt`](https://docs.hyperrails.io/llms.txt) | An index of every page, with a one-line description and a link | Your tool can fetch pages on demand |
+| [`/llms-full.txt`](https://docs.hyperrails.io/llms-full.txt) | The full text of the documentation in one file | You want to paste or attach everything at once |
+
+Both follow the [llms.txt](https://llmstxt.org) convention and update automatically when the docs change.
+
+## Markdown for any page
+
+Add `.md` to the end of any page URL to get it as Markdown. For example:
+
+```
+https://docs.hyperrails.io/documentation/guides/find-a-liquidity-provider.md
+```
+
+## From any page
+
+Use the menu next to **Copy page** at the top of every page to:
+
+- Copy the page as Markdown
+- View it as Markdown
+- Open it in ChatGPT, Claude or Perplexity
+
+<Tip>
+  When you ask an AI tool to write integration code, tell it which base URL each endpoint lives on and to authenticate with your secret key. See [Environments and credentials](/get-started/concepts/environments).
+</Tip>

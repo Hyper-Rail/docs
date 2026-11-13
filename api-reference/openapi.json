@@ -60,8 +60,29 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid secret key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "List Balances"
       }
     },
     "/partners/balances/{accountId}": {
@@ -101,8 +122,29 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid secret key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Get Balance by Account ID"
       }
     },
     "/partners/balances/currency/{currency}": {
@@ -141,8 +183,29 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid secret key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Get Balance by Currency"
       }
     },
     "/wallets/main/balances": {
@@ -184,24 +247,46 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid secret key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Get Main Wallet Balances"
       }
     },
-
-"/partners/payouts": {
-  "post": {
-    "summary": "Initiate Bank Withdrawal",
-    "description": "Processes a withdrawal request from a specified account to a destination bank account.",
-    "tags": ["Withdrawals"],
-    "requestBody": {
-      "required": true,
-      "content": {
-        "application/json": {
-          "schema": {
-            "$ref": "#/components/schemas/WithdrawalRequest"
-          },
-          "examples": {
+    "/partners/payouts": {
+      "post": {
+        "summary": "Initiate Bank Withdrawal",
+        "description": "Processes a withdrawal request from a specified account to a destination bank account.",
+        "tags": [
+          "Withdrawals"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WithdrawalRequest"
+              },
+              "examples": {
                 "ngnPayout": {
                   "summary": "Nigerian Naira payout",
                   "value": {
@@ -233,18 +318,18 @@
                   }
                 }
               }
-        }
-      }
-    },
-    "responses": {
-      "200": {
-        "description": "Withdrawal initiated successfully",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/WithdrawalResponse"
-            },
-            "example": {
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Withdrawal initiated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WithdrawalResponse"
+                },
+                "example": {
                   "reference": "payout-001",
                   "hyperrailReference": "HPR-TRSF-3a1b2c3d4e5f",
                   "amount": 10000,
@@ -262,17 +347,17 @@
                   "createdAt": "2026-04-24T10:30:00Z",
                   "estimatedCompletionAt": "2026-04-24T10:35:00Z"
                 }
-          }
-        }
-      },
-      "400": {
-        "description": "Bad request - Invalid withdrawal details",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            },
-            "examples": {
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid withdrawal details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
                   "insufficientBalance": {
                     "summary": "Insufficient balance",
                     "value": {
@@ -309,11 +394,10 @@
                     }
                   }
                 }
-
-          }
-        }
-      },
-      "401": {
+              }
+            }
+          },
+          "401": {
             "description": "Unauthorized - Invalid or missing authentication token",
             "content": {
               "application/json": {
@@ -337,6 +421,16 @@
               }
             }
           },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "503": {
             "description": "Service unavailable - Bank service temporarily unavailable",
             "content": {
@@ -345,133 +439,146 @@
                   "$ref": "#/components/schemas/Error"
                 },
                 "example": {
-                  "code": "SERVICE_UNAVAILABLE"                }
-              }
-            }
-          }
-    }
-  }
-},
-
-"/partners/payouts/{reference}":{
-"get": {
-    "summary": "Get Payout Status",
-    "description": "Retrieves the status and details of a payout using the reference provided when it was created.",
-    "tags": ["Withdrawals"],
-    "parameters": [
-      {
-        "name": "reference",
-        "in": "path",
-        "required": true,
-        "description": "The unique reference assigned to the payout when it was created.",
-        "schema": {
-          "type": "string"
-        },
-        "example": "ref-lowamount"
-      }
-    ],
-    "responses": {
-      "200": {
-        "description": "Payout details retrieved successfully",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/WithdrawalResponse"
-            },
-            "examples": {
-              "failedPayout": {
-                "summary": "Failed payout",
-                "value": {
-                  "reference": "ref-lowamount",
-                  "hyperrailReference": "HPR-TRSF-dde75c6f4f3f4fd79e8fd734942ebe99",
-                  "amount": 0.88,
-                  "fee": 0.0000,
-                  "currency": "GHS",
-                  "destination": {
-                    "accountNumber": "7030012128907",
-                    "accountName": "Jane Doe",
-                    "bankCode": "SPB-45633",
-                    "bankName": "Stanbic Bank"
-                  },
-                  "narration": "Transfer",
-                  "status": "failed"
-                }
-              },
-              "processingPayout": {
-                "summary": "Processing payout",
-                "value": {
-                  "reference": "payout-001",
-                  "hyperrailReference": "HPR-TRSF-3a1b2c3d4e5f",
-                  "amount": 10000,
-                  "fee": 50,
-                  "currency": "NGN",
-                  "destination": {
-                    "accountNumber": "0123456789",
-                    "accountName": "Jane Doe",
-                    "bankCode": "058",
-                    "branchCode": "001",
-                    "bankName": "GTBank"
-                  },
-                  "narration": "Vendor payout April",
-                  "status": "processing"
-                }
-              },
-              "successfulPayout": {
-                "summary": "Successful payout",
-                "value": {
-                  "reference": "payout-002",
-                  "hyperrailReference": "HPR-TRSF-9f8e7d6c5b4a",
-                  "amount": 50000,
-                  "fee": 250,
-                  "currency": "GHS",
-                  "destination": {
-                    "accountNumber": "098765",
-                    "accountName": "John Smith",
-                    "bankCode": "030100",
-                    "branchCode": "001",
-                    "bankName": "Ecobank"
-                  },
-                  "narration": "Salary payment",
-                  "status": "successful"
+                  "code": "SERVICE_UNAVAILABLE"
                 }
               }
             }
           }
         }
-      },
-      "401": {
-        "description": "Unauthorized - Invalid or missing authentication token",
-        "content": {
-          "application/json": {
+      }
+    },
+    "/partners/payouts/{reference}": {
+      "get": {
+        "summary": "Get Payout Status",
+        "description": "Retrieves the status and details of a payout using the reference provided when it was created.",
+        "tags": [
+          "Withdrawals"
+        ],
+        "parameters": [
+          {
+            "name": "reference",
+            "in": "path",
+            "required": true,
+            "description": "The unique reference assigned to the payout when it was created.",
             "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "404": {
-        "description": "Not found - No payout exists with the given reference",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
+              "type": "string"
             },
-            "example": {
-              "code": "PAYOUT_NOT_FOUND",
-              "message": "No payout found with reference 'ref-lowamount'"
+            "example": "ref-lowamount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payout details retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WithdrawalResponse"
+                },
+                "examples": {
+                  "failedPayout": {
+                    "summary": "Failed payout",
+                    "value": {
+                      "reference": "ref-lowamount",
+                      "hyperrailReference": "HPR-TRSF-dde75c6f4f3f4fd79e8fd734942ebe99",
+                      "amount": 0.88,
+                      "fee": 0.0,
+                      "currency": "GHS",
+                      "destination": {
+                        "accountNumber": "7030012128907",
+                        "accountName": "Jane Doe",
+                        "bankCode": "SPB-45633",
+                        "bankName": "Stanbic Bank"
+                      },
+                      "narration": "Transfer",
+                      "status": "failed"
+                    }
+                  },
+                  "processingPayout": {
+                    "summary": "Processing payout",
+                    "value": {
+                      "reference": "payout-001",
+                      "hyperrailReference": "HPR-TRSF-3a1b2c3d4e5f",
+                      "amount": 10000,
+                      "fee": 50,
+                      "currency": "NGN",
+                      "destination": {
+                        "accountNumber": "0123456789",
+                        "accountName": "Jane Doe",
+                        "bankCode": "058",
+                        "branchCode": "001",
+                        "bankName": "GTBank"
+                      },
+                      "narration": "Vendor payout April",
+                      "status": "processing"
+                    }
+                  },
+                  "successfulPayout": {
+                    "summary": "Successful payout",
+                    "value": {
+                      "reference": "payout-002",
+                      "hyperrailReference": "HPR-TRSF-9f8e7d6c5b4a",
+                      "amount": 50000,
+                      "fee": 250,
+                      "currency": "GHS",
+                      "destination": {
+                        "accountNumber": "098765",
+                        "accountName": "John Smith",
+                        "bankCode": "030100",
+                        "branchCode": "001",
+                        "bankName": "Ecobank"
+                      },
+                      "narration": "Salary payment",
+                      "status": "successful"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found - No payout exists with the given reference",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "code": "PAYOUT_NOT_FOUND",
+                  "message": "No payout found with reference 'ref-lowamount'"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
             }
           }
         }
       }
-    }
-  }
-},
-
+    },
     "/partners/marketplace/quote": {
       "post": {
         "summary": "Create Multi-Provider Quote",
         "description": "Create a quote with multiple provider allocation support.",
-        "tags": ["Quotes"],
+        "tags": [
+          "Quotes"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -512,16 +619,33 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
     },
-
-     "/partners/marketplace/express/quote": {
+    "/partners/marketplace/express/quote": {
+      "servers": [
+        {
+          "url": "https://api.hyperrails.io/exchange/api/v1",
+          "description": "Exchange service (marketplace listings and express quotes)"
+        }
+      ],
       "post": {
         "summary": "Create Express Quote",
         "description": "Create an express quote with automatic best-rate provider selection and immediate execution.",
-        "tags": ["Quotes"],
+        "tags": [
+          "Quotes"
+        ],
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -565,84 +689,123 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-
-    "/partners/marketplace/intent": {
-  "post": {
-    "summary": "Create Marketplace Intent",
-    "description": "Initiates a quote request for a currency exchange, specifying the amount and direction (source or destination).",
-    "requestBody": {
-      "required": true,
-      "content": {
-        "application/json": {
-          "schema": {
-            "type": "object",
-            "required": ["sourceCurrency", "destinationCurrency", "amount", "amountDirection", "rate"],
-            "properties": {
-              "sourceCurrency": {
-                "type": "string",
-                "example": "NGN",
-                "description": "The ISO currency code you are sending."
-              },
-              "destinationCurrency": {
-                "type": "string",
-                "example": "USDT",
-                "description": "The currency or token you wish to receive."
-              },
-              "amount": {
-                "type": "number",
-                "example": 20000,
-                "description": "The quantity to be exchanged."
-              },
-              "rate": {
-                "type": "number",
-                "example": 20000,
-                "description": "The proposed exchange rate."
-              },
-              "amountDirection": {
-                "type": "string",
-                "enum": ["source", "destination"],
-                "example": "destination",
-                "description": "Indicates if the 'amount' field refers to the source or destination currency."
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
         }
       }
     },
-    "responses": {
-      "200": {
-        "description": "Quote created successfully",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/QuoteResponse"
+    "/partners/marketplace/intent": {
+      "post": {
+        "summary": "Create Marketplace Intent",
+        "description": "Initiates a quote request for a currency exchange, specifying the amount and direction (source or destination).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "sourceCurrency",
+                  "destinationCurrency",
+                  "amount",
+                  "amountDirection",
+                  "rate"
+                ],
+                "properties": {
+                  "sourceCurrency": {
+                    "type": "string",
+                    "example": "NGN",
+                    "description": "The ISO currency code you are sending."
+                  },
+                  "destinationCurrency": {
+                    "type": "string",
+                    "example": "USDT",
+                    "description": "The currency or token you wish to receive."
+                  },
+                  "amount": {
+                    "type": "number",
+                    "example": 20000,
+                    "description": "The quantity to be exchanged."
+                  },
+                  "rate": {
+                    "type": "number",
+                    "example": 20000,
+                    "description": "The proposed exchange rate."
+                  },
+                  "amountDirection": {
+                    "type": "string",
+                    "enum": [
+                      "source",
+                      "destination"
+                    ],
+                    "example": "destination",
+                    "description": "Indicates if the 'amount' field refers to the source or destination currency."
+                  }
+                }
+              }
             }
           }
-        }
-      },
-      "400": {
-        "description": "Validation Error",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
+        },
+        "responses": {
+          "200": {
+            "description": "Quote created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid secret key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
             }
           }
         }
       }
-    }
-  }
-},
-
-"/partners/wallets/payouts": {
-  "post": {
+    },
+    "/partners/wallets/payouts": {
+      "post": {
         "summary": "Initiate Wallet Withdrawal",
         "description": "Processes a withdrawal request from a partner wallet to an on-chain blockchain address. Supports USDC, USDT withdrawals on Ethereum, Polygon, and Base networks.",
-        "tags": ["Withdrawals"],
+        "tags": [
+          "Withdrawals"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -768,433 +931,216 @@
                 }
               }
             }
-          }
-        }
-}
-},
-"/transfers/banks/{currency}": {
-  "get": {
-    "tags": ["Transfers"],
-    "summary": "List Supported Banks",
-    "description": "Retrieves a list of supported banks and their corresponding bank codes for a specific currency.",
-    "operationId": "getTransferBanks",
-    "parameters": [
-      {
-        "name": "currency",
-        "in": "path",
-        "required": true,
-        "description": "The currency for which you want to retrieve the bank list.",
-        "schema": {
-          "type": "string",
-          "enum": ["NGN", "GHS"],
-          "example": "NGN"
-        }
-      },
-      {
-        "name": "x-service-source",
-        "in": "header",
-        "required": true,
-        "description": "Identifies the calling service.",
-        "schema": {
-          "type": "string",
-          "default": "HyperRails",
-          "example": "HyperRails"
-        }
-      }
-    ],
-    "responses": {
-      "200": {
-        "description": "A JSON array of bank objects.",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/Bank"
-              }
-            }
-          }
-        }
-      },
-      "400": {
-        "description": "Bad Request - Invalid currency or missing headers",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "401": {
-        "description": "Unauthorized - Invalid API credentials",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      }
-    }
-  }
-},
-"/partners/marketplace/mobile-money/currencies": {
-  "get": {
-    "summary": "List Mobile Money Currencies",
-    "description": "Returns the currencies supported for mobile money payments, along with the countries each currency is available in.",
-    "tags": ["Marketplace"],
-    "responses": {
-      "200": {
-        "description": "Currencies retrieved successfully",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "currency": {
-                    "type": "string",
-                    "description": "ISO currency code.",
-                    "example": "XOF"
-                  },
-                  "countryCodes": {
-                    "type": "array",
-                    "items": { "type": "string" },
-                    "description": "ISO country codes where this currency is supported for mobile money.",
-                    "example": ["CI", "SN"]
-                  }
-                }
-              }
-            },
-            "example": [
-              { "currency": "XOF", "countryCodes": ["CI", "SN"] },
-              { "currency": "GHS", "countryCodes": ["GH"] }
-            ]
-          }
-        }
-      },
-      "401": {
-        "description": "Unauthorized - Invalid or missing authentication token",
-        "content": {
-          "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" }
-          }
-        }
-      }
-    }
-  }
-},
-"/partners/marketplace/mobile-money/providers": {
-  "get": {
-    "summary": "List Mobile Money Providers",
-    "description": "Returns the mobile money providers available for a given currency and country.",
-    "tags": ["Marketplace"],
-    "parameters": [
-      {
-        "name": "currency",
-        "in": "query",
-        "required": true,
-        "description": "ISO currency code to filter providers by.",
-        "schema": {
-          "type": "string",
-          "example": "XOF"
-        }
-      },
-      {
-        "name": "countryCode",
-        "in": "query",
-        "required": false,
-        "description": "ISO country code. Required when the given currency is supported in more than one country.",
-        "schema": {
-          "type": "string",
-          "example": "CI"
-        }
-      }
-    ],
-    "responses": {
-      "200": {
-        "description": "Providers retrieved successfully",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "code": {
-                    "type": "string",
-                    "description": "Mobile money provider code.",
-                    "example": "MTN_CI"
-                  },
-                  "name": {
-                    "type": "string",
-                    "description": "Human-readable provider name.",
-                    "example": "MTN Cote d'Ivoire"
-                  }
-                }
-              }
-            },
-            "example": [
-              { "code": "MTN_CI", "name": "MTN Cote d'Ivoire" },
-              { "code": "ORANGE_CI", "name": "Orange Money CI" }
-            ]
-          }
-        }
-      },
-      "400": {
-        "description": "Bad request - countryCode required but missing",
-        "content": {
-          "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" },
-            "example": {
-              "code": "COUNTRY_CODE_REQUIRED",
-              "message": "countryCode is required because 'XOF' is supported in more than one country"
-            }
-          }
-        }
-      },
-      "401": {
-        "description": "Unauthorized - Invalid or missing authentication token",
-        "content": {
-          "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" }
-          }
-        }
-      }
-    }
-  }
-},
-"/partners/marketplace/quote/{id}/payment/status": {
-  "get": {
-    "summary": "Get Quote Payment Status",
-    "description": "Retrieves the current status of a quote, including mobile money payment progress if applicable.",
-    "tags": ["Marketplace"],
-    "parameters": [
-      {
-        "name": "id",
-        "in": "path",
-        "required": true,
-        "description": "The unique quote identifier.",
-        "schema": {
-          "type": "string",
-          "format": "uuid",
-          "example": "9d1c5f6a-4b2e-4d31-9f7a-1c2b3d4e5f60"
-        }
-      }
-    ],
-    "responses": {
-      "200": {
-        "description": "Quote payment status retrieved successfully",
-        "content": {
-          "application/json": {
-            "schema": { "$ref": "#/components/schemas/QuoteResponse" },
-            "example": {
-              "quoteId": "9d1c5f6a-4b2e-4d31-9f7a-1c2b3d4e5f60",
-              "status": "awaiting_payment",
-              "source": "XOF",
-              "destination": "USDT",
-              "amount": "20000",
-              "totalSourceAmount": "12250000",
-              "totalDestinationAmount": "20000",
-              "fee": "1500",
-              "mode": "test",
-              "ttl": 780,
-              "externalReference": "cli_be2828cf-5004-4694-8a79-47538573985b",
-              "metadata": {
-                "mobileMoneyPayIn": {
-                  "provider": "MTN_CI",
-                  "phoneNumber": "2250700000000",
-                  "attemptReference": "mm_5f2a91c4e7b8",
-                  "authorizationMode": "otp",
-                  "status": "SUCCESSFUL",
-                  "message": "Payment received",
-                  "expiresAt": "2026-09-15T12:34:56Z"
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
-          }
-        }
-      },
-      "401": {
-        "description": "Unauthorized - Invalid or missing authentication token",
-        "content": {
-          "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" }
-          }
-        }
-      },
-      "404": {
-        "description": "Not found - No quote exists with the given id",
-        "content": {
-          "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" },
-            "example": {
-              "code": "QUOTE_NOT_FOUND",
-              "message": "No quote found with id '9d1c5f6a-4b2e-4d31-9f7a-1c2b3d4e5f60'"
-            }
-          }
-        }
-      }
-    }
-  }
-},
-"/partners/marketplace/quote/{id}/payment/authorize": {
-  "put": {
-    "summary": "Authorize Quote Payment",
-    "description": "Submits an OTP to authorize an in-progress mobile money payment. Only used for providers that send the payer a code after payment initiation (post-auth). For providers where the payer receives the code before paying, pass the OTP directly in the accept-quote request instead.",
-    "tags": ["Marketplace"],
-    "parameters": [
-      {
-        "name": "id",
-        "in": "path",
-        "required": true,
-        "description": "The unique quote identifier.",
-        "schema": {
-          "type": "string",
-          "format": "uuid",
-          "example": "9d1c5f6a-4b2e-4d31-9f7a-1c2b3d4e5f60"
-        }
-      }
-    ],
-    "requestBody": {
-      "required": true,
-      "content": {
-        "application/json": {
-          "schema": {
-            "type": "object",
-            "properties": {
-              "otp": {
-                "type": "string",
-                "description": "The one-time PIN sent to the payer to authorize the payment.",
-                "example": "123456"
-              }
-            },
-            "required": ["otp"]
           }
         }
       }
     },
-    "responses": {
-      "200": {
-        "description": "Payment authorized and processing",
-        "content": {
-          "application/json": {
-            "schema": { "$ref": "#/components/schemas/QuoteResponse" },
-            "example": {
-              "quoteId": "9d1c5f6a-4b2e-4d31-9f7a-1c2b3d4e5f60",
-              "status": "awaiting_payment",
-              "source": "XOF",
-              "destination": "USDT",
-              "amount": "20000",
-              "totalSourceAmount": "12250000",
-              "totalDestinationAmount": "20000",
-              "fee": "1500",
-              "mode": "test",
-              "ttl": 720,
-              "externalReference": "cli_be2828cf-5004-4694-8a79-47538573985b",
-              "metadata": {
-                "mobileMoneyPayIn": {
-                  "provider": "MTN_CI",
-                  "phoneNumber": "2250700000000",
-                  "attemptReference": "mm_5f2a91c4e7b8",
-                  "authorizationMode": "otp",
-                  "status": "INPROGRESS",
-                  "message": "Payment is being processed",
-                  "expiresAt": "2026-09-15T12:34:56Z"
+    "/transfers/banks/{currency}": {
+      "get": {
+        "tags": [
+          "Transfers"
+        ],
+        "summary": "List Supported Banks",
+        "description": "Retrieves a list of supported banks and their corresponding bank codes for a specific currency.",
+        "operationId": "getTransferBanks",
+        "parameters": [
+          {
+            "name": "currency",
+            "in": "path",
+            "required": true,
+            "description": "The currency for which you want to retrieve the bank list.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "NGN",
+                "GHS"
+              ],
+              "example": "NGN"
+            }
+          },
+          {
+            "name": "x-service-source",
+            "in": "header",
+            "required": true,
+            "description": "Identifies the calling service.",
+            "schema": {
+              "type": "string",
+              "default": "HyperRails",
+              "example": "HyperRails"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON array of bank objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Bank"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid currency or missing headers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid API credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
           }
         }
-      },
-      "400": {
-        "description": "Bad request - Invalid or expired OTP",
-        "content": {
-          "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" },
-            "example": {
-              "code": "INVALID_OTP",
-              "message": "The OTP provided is invalid or has expired"
+      }
+    },
+    "/partners/marketplace/mobile-money/currencies": {
+      "get": {
+        "summary": "List Mobile Money Currencies",
+        "description": "Returns the currencies supported for mobile money payments, along with the countries each currency is available in.",
+        "tags": [
+          "Marketplace"
+        ],
+        "responses": {
+          "200": {
+            "description": "Currencies retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "currency": {
+                        "type": "string",
+                        "description": "ISO currency code.",
+                        "example": "XOF"
+                      },
+                      "countryCodes": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "ISO country codes where this currency is supported for mobile money.",
+                        "example": [
+                          "CI",
+                          "SN"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "example": [
+                  {
+                    "currency": "XOF",
+                    "countryCodes": [
+                      "CI",
+                      "SN"
+                    ]
+                  },
+                  {
+                    "currency": "GHS",
+                    "countryCodes": [
+                      "GH"
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
             }
           }
         }
-      },
-      "401": {
-        "description": "Unauthorized - Invalid or missing authentication token",
-        "content": {
-          "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" }
-          }
-        }
-      },
-      "404": {
-        "description": "Not found - No quote exists with the given id",
-        "content": {
-          "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" }
-          }
-        }
       }
-    }
-  }
-},
-    "/partners/marketplace/quote/{id}/accept": {
-  "put": {
-    "summary": "Accept Marketplace Quote",
-    "description": "Finalize and accept a specific quote by providing the settlement destination details (Bank or Blockchain) and, optionally, a mobile money payment method to fund the trade.",
-    "parameters": [
-      {
-        "name": "id",
-        "in": "path",
-        "required": true,
-        "description": "The unique quote identifier of the order to be accepted.",
-        "schema": {
-          "type": "string",
-          "format": "uuid",
-          "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-        }
-      }
-    ],
-    "requestBody": {
-      "required": true,
-      "content": {
-        "application/json": {
-          "schema": {
-            "type": "object",
-            "properties": {
-              "accountId": {
-                "type": "string",
-                "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                "description": "The unique pool account identifier of the order to be accepted."
-              },
-              "balanceId": {
-                "type": "string",
-                "format": "uuid",
-                "description": "The unique balance identifier to fund or settle the trade against."
-              },
-              "destination": {
-                "type": "object",
-                "description": "Settlement destination details for the trade (Bank or Blockchain). See destination schema for bank/blockchain-specific fields.",
-                "$ref": "#/components/schemas/QuoteDestination"
-              },
-              "payment": {
-                "type": "object",
-                "description": "Funds the trade by mobile money. If omitted, the quote is funded by virtual account (default behavior).",
-                "properties": {
-                  "channel": {
-                    "type": "string",
-                    "enum": ["mobile_money"],
-                    "description": "The payment channel used to fund the trade.",
-                    "example": "mobile_money"
-                  },
-                  "countryCode": {
-                    "type": "string",
-                    "description": "ISO country code for the mobile money payment.",
-                    "example": "CI"
-                  },
-                  "mobileMoney": {
+    },
+    "/partners/marketplace/mobile-money/providers": {
+      "get": {
+        "summary": "List Mobile Money Providers",
+        "description": "Returns the mobile money providers available for a given currency and country.",
+        "tags": [
+          "Marketplace"
+        ],
+        "parameters": [
+          {
+            "name": "currency",
+            "in": "query",
+            "required": true,
+            "description": "ISO currency code to filter providers by.",
+            "schema": {
+              "type": "string",
+              "example": "XOF"
+            }
+          },
+          {
+            "name": "countryCode",
+            "in": "query",
+            "required": false,
+            "description": "ISO country code. Required when the given currency is supported in more than one country.",
+            "schema": {
+              "type": "string",
+              "example": "CI"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Providers retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
                     "type": "object",
                     "properties": {
                       "code": {
@@ -1202,44 +1148,57 @@
                         "description": "Mobile money provider code.",
                         "example": "MTN_CI"
                       },
-                      "phoneNumber": {
+                      "name": {
                         "type": "string",
-                        "description": "Payer's mobile money phone number, including country code.",
-                        "example": "2250700000000"
-                      },
-                      "otp": {
-                        "type": "string",
-                        "nullable": true,
-                        "description": "One-time PIN for providers where the payer receives a code before paying. Only applicable for pre-auth (OTP-first) providers; omit or set null otherwise. For providers that send a code after initiation, use the authorize endpoint instead."
+                        "description": "Human-readable provider name.",
+                        "example": "MTN Cote d'Ivoire"
                       }
-                    },
-                    "required": ["code", "phoneNumber"]
+                    }
                   }
                 },
-                "required": ["channel", "countryCode", "mobileMoney"]
-              }
-            },
-            "required": ["accountId"]
-          },
-          "examples": {
-            "poolAccountOnly": {
-              "summary": "Accept via virtual account (default)",
-              "value": {
-                "accountId": "0f0f2b1c-6d5f-4a4f-8f1e-2f3a4b5c6d7e"
-              }
-            },
-            "mobileMoneyPayment": {
-              "summary": "Accept and fund via mobile money",
-              "value": {
-                "accountId": "0f0f2b1c-6d5f-4a4f-8f1e-2f3a4b5c6d7e",
-                "payment": {
-                  "channel": "mobile_money",
-                  "countryCode": "CI",
-                  "mobileMoney": {
+                "example": [
+                  {
                     "code": "MTN_CI",
-                    "phoneNumber": "2250700000000",
-                    "otp": null
+                    "name": "MTN Cote d'Ivoire"
+                  },
+                  {
+                    "code": "ORANGE_CI",
+                    "name": "Orange Money CI"
                   }
+                ]
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - countryCode required but missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "code": "COUNTRY_CODE_REQUIRED",
+                  "message": "countryCode is required because 'XOF' is supported in more than one country"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -1247,18 +1206,35 @@
         }
       }
     },
-    "responses": {
-      "200": {
-        "description": "Quote accepted successfully",
-        "content": {
-          "application/json": {
+    "/partners/marketplace/quote/{id}/payment/status": {
+      "get": {
+        "summary": "Get Quote Payment Status",
+        "description": "Retrieves the current status of a quote, including mobile money payment progress if applicable.",
+        "tags": [
+          "Marketplace"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The unique quote identifier.",
             "schema": {
-              "$ref": "#/components/schemas/QuoteResponse"
-            },
-            "examples": {
-              "awaitingMobileMoneyPayment": {
-                "summary": "Awaiting mobile money payment (OTP-first provider)",
-                "value": {
+              "type": "string",
+              "format": "uuid",
+              "example": "9d1c5f6a-4b2e-4d31-9f7a-1c2b3d4e5f60"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Quote payment status retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteResponse"
+                },
+                "example": {
                   "quoteId": "9d1c5f6a-4b2e-4d31-9f7a-1c2b3d4e5f60",
                   "status": "awaiting_payment",
                   "source": "XOF",
@@ -1268,7 +1244,119 @@
                   "totalDestinationAmount": "20000",
                   "fee": "1500",
                   "mode": "test",
-                  "ttl": 900,
+                  "ttl": 780,
+                  "externalReference": "cli_be2828cf-5004-4694-8a79-47538573985b",
+                  "metadata": {
+                    "mobileMoneyPayIn": {
+                      "provider": "MTN_CI",
+                      "phoneNumber": "2250700000000",
+                      "attemptReference": "mm_5f2a91c4e7b8",
+                      "authorizationMode": "otp",
+                      "status": "SUCCESSFUL",
+                      "message": "Payment received",
+                      "expiresAt": "2026-09-15T12:34:56Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found - No quote exists with the given id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "code": "QUOTE_NOT_FOUND",
+                  "message": "No quote found with id '9d1c5f6a-4b2e-4d31-9f7a-1c2b3d4e5f60'"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/partners/marketplace/quote/{id}/payment/authorize": {
+      "put": {
+        "summary": "Authorize Quote Payment",
+        "description": "Submits an OTP to authorize an in-progress mobile money payment. Only used for providers that send the payer a code after payment initiation (post-auth). For providers where the payer receives the code before paying, pass the OTP directly in the accept-quote request instead.",
+        "tags": [
+          "Marketplace"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The unique quote identifier.",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "9d1c5f6a-4b2e-4d31-9f7a-1c2b3d4e5f60"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "otp": {
+                    "type": "string",
+                    "description": "The one-time PIN sent to the payer to authorize the payment.",
+                    "example": "123456"
+                  }
+                },
+                "required": [
+                  "otp"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Payment authorized and processing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteResponse"
+                },
+                "example": {
+                  "quoteId": "9d1c5f6a-4b2e-4d31-9f7a-1c2b3d4e5f60",
+                  "status": "awaiting_payment",
+                  "source": "XOF",
+                  "destination": "USDT",
+                  "amount": "20000",
+                  "totalSourceAmount": "12250000",
+                  "totalDestinationAmount": "20000",
+                  "fee": "1500",
+                  "mode": "test",
+                  "ttl": 720,
                   "externalReference": "cli_be2828cf-5004-4694-8a79-47538573985b",
                   "metadata": {
                     "mobileMoneyPayIn": {
@@ -1277,349 +1365,691 @@
                       "attemptReference": "mm_5f2a91c4e7b8",
                       "authorizationMode": "otp",
                       "status": "INPROGRESS",
-                      "message": "Enter the code sent to your phone",
+                      "message": "Payment is being processed",
                       "expiresAt": "2026-09-15T12:34:56Z"
                     }
                   }
                 }
               }
             }
-          }
-        }
-      },
-      "400": {
-        "description": "Invalid request or expired quote",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
+          },
+          "400": {
+            "description": "Bad request - Invalid or expired OTP",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "code": "INVALID_OTP",
+                  "message": "The OTP provided is invalid or has expired"
+                }
+              }
             }
-          }
-        }
-      }
-    }
-  }
-},
-    "/partners/marketplace/quote/{id}": {
-  "get": {
-    "summary": "Retrieve Quote Details",
-    "description": "Returns the full details of a specific marketplace quote, including allocation results, payment metadata (Bank or Crypto), and chat history timestamps.",
-    "parameters": [
-      {
-        "name": "id",
-        "in": "path",
-        "required": true,
-        "description": "The unique identifier (UUID) of the quote.",
-        "schema": {
-          "type": "string",
-          "format": "uuid",
-          "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-        }
-      }
-    ],
-    "responses": {
-      "200": {
-        "description": "Detailed quote information retrieved successfully",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/QuoteResponse"
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing authentication token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
             }
-          }
-        }
-      },
-      "400": {
-        "description": "Invalid ID provided or unexpected error",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
+          },
+          "404": {
+            "description": "Not found - No quote exists with the given id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
             }
-          }
-        }
-      }
-    }
-  }
-},
-
-   "/partners/marketplace/quote/{id}/complete": {
-  "put": {
-    "summary": "Retrieve Completed Quote Details",
-    "description": "Fetches the final status and payment instructions for a completed marketplace quote session.",
-    "parameters": [
-      {
-        "name": "id",
-        "in": "path",
-        "required": true,
-        "description": "The unique identifier (UUID) of the quote.",
-        "schema": {
-          "type": "string",
-          "format": "uuid",
-          "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-        }
-      }
-    ],
-    "responses": {
-      "200": {
-        "description": "Finalized quote details retrieved successfully",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/QuoteResponse"
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
             }
-          }
-        }
-      },
-      "400": {
-        "description": "Bad Request - Invalid ID or session state",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      }
-    }
-  }
-},
-
-    "/partners/marketplace/quote/{id}/add": {
-  "put": {
-    "summary": "Add Pool Allocation to Quote",
-    "description": "Updates an existing quote session by adding or modifying the pool allocation details, including amount and direction.",
-    "parameters": [
-      {
-        "name": "id",
-        "in": "path",
-        "required": true,
-        "description": "The unique identifier (UUID) of the quote session.",
-        "schema": {
-          "type": "string",
-          "format": "uuid",
-          "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-        }
-      }
-    ],
-    "requestBody": {
-      "required": true,
-      "content": {
-        "application/json": {
-          "schema": {
-            "$ref": "#/components/schemas/AddPoolRequest"
           }
         }
       }
     },
-    "responses": {
-      "200": {
-        "description": "Pool allocation added successfully",
-        "content": {
-          "application/json": {
+    "/partners/marketplace/quote/{id}/accept": {
+      "put": {
+        "summary": "Accept Marketplace Quote",
+        "description": "Finalize and accept a specific quote by providing the settlement destination details (Bank or Blockchain) and, optionally, a mobile money payment method to fund the trade.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The unique quote identifier of the order to be accepted.",
             "schema": {
-              "$ref": "#/components/schemas/QuoteResponse"
+              "type": "string",
+              "format": "uuid",
+              "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
             }
           }
-        }
-      },
-      "400": {
-        "description": "Invalid pool details or quote state",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "accountId": {
+                    "type": "string",
+                    "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "description": "The unique pool account identifier of the order to be accepted."
+                  },
+                  "balanceId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "The unique balance identifier to fund or settle the trade against."
+                  },
+                  "destination": {
+                    "type": "object",
+                    "description": "Settlement destination details for the trade (Bank or Blockchain). See destination schema for bank/blockchain-specific fields.",
+                    "$ref": "#/components/schemas/QuoteDestination"
+                  },
+                  "payment": {
+                    "type": "object",
+                    "description": "Funds the trade by mobile money. If omitted, the quote is funded by virtual account (default behavior).",
+                    "properties": {
+                      "channel": {
+                        "type": "string",
+                        "enum": [
+                          "mobile_money"
+                        ],
+                        "description": "The payment channel used to fund the trade.",
+                        "example": "mobile_money"
+                      },
+                      "countryCode": {
+                        "type": "string",
+                        "description": "ISO country code for the mobile money payment.",
+                        "example": "CI"
+                      },
+                      "mobileMoney": {
+                        "type": "object",
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                            "description": "Mobile money provider code.",
+                            "example": "MTN_CI"
+                          },
+                          "phoneNumber": {
+                            "type": "string",
+                            "description": "Payer's mobile money phone number, including country code.",
+                            "example": "2250700000000"
+                          },
+                          "otp": {
+                            "type": "string",
+                            "nullable": true,
+                            "description": "One-time PIN for providers where the payer receives a code before paying. Only applicable for pre-auth (OTP-first) providers; omit or set null otherwise. For providers that send a code after initiation, use the authorize endpoint instead."
+                          }
+                        },
+                        "required": [
+                          "code",
+                          "phoneNumber"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "channel",
+                      "countryCode",
+                      "mobileMoney"
+                    ]
+                  }
+                },
+                "required": [
+                  "accountId"
+                ]
+              },
+              "examples": {
+                "poolAccountOnly": {
+                  "summary": "Accept via virtual account (default)",
+                  "value": {
+                    "accountId": "0f0f2b1c-6d5f-4a4f-8f1e-2f3a4b5c6d7e"
+                  }
+                },
+                "mobileMoneyPayment": {
+                  "summary": "Accept and fund via mobile money",
+                  "value": {
+                    "accountId": "0f0f2b1c-6d5f-4a4f-8f1e-2f3a4b5c6d7e",
+                    "payment": {
+                      "channel": "mobile_money",
+                      "countryCode": "CI",
+                      "mobileMoney": {
+                        "code": "MTN_CI",
+                        "phoneNumber": "2250700000000",
+                        "otp": null
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Quote accepted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteResponse"
+                },
+                "examples": {
+                  "awaitingMobileMoneyPayment": {
+                    "summary": "Awaiting mobile money payment (OTP-first provider)",
+                    "value": {
+                      "quoteId": "9d1c5f6a-4b2e-4d31-9f7a-1c2b3d4e5f60",
+                      "status": "awaiting_payment",
+                      "source": "XOF",
+                      "destination": "USDT",
+                      "amount": "20000",
+                      "totalSourceAmount": "12250000",
+                      "totalDestinationAmount": "20000",
+                      "fee": "1500",
+                      "mode": "test",
+                      "ttl": 900,
+                      "externalReference": "cli_be2828cf-5004-4694-8a79-47538573985b",
+                      "metadata": {
+                        "mobileMoneyPayIn": {
+                          "provider": "MTN_CI",
+                          "phoneNumber": "2250700000000",
+                          "attemptReference": "mm_5f2a91c4e7b8",
+                          "authorizationMode": "otp",
+                          "status": "INPROGRESS",
+                          "message": "Enter the code sent to your phone",
+                          "expiresAt": "2026-09-15T12:34:56Z"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request or expired quote",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid secret key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
             }
           }
         }
       }
-    }
-  }
-},
-
-     "/partners/marketplace/quote/{id}/cancel": {
-  "put": {
-    "summary": "Cancel Quote Session",
-    "description": "Cancels an active or pending quote session. Once cancelled, the quote can no longer be accepted or completed.",
-    "parameters": [
-      {
-        "name": "id",
-        "in": "path",
-        "required": true,
-        "description": "The unique identifier (UUID) of the quote to be cancelled.",
-        "schema": {
-          "type": "string",
-          "format": "uuid",
-          "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-        }
-      }
-    ],
-    "responses": {
-      "200": {
-        "description": "Quote successfully cancelled",
-        "content": {
-          "application/json": {
+    },
+    "/partners/marketplace/quote/{id}": {
+      "get": {
+        "summary": "Retrieve Quote Details",
+        "description": "Returns the full details of a specific marketplace quote, including allocation results, payment metadata (Bank or Crypto), and chat history timestamps.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier (UUID) of the quote.",
             "schema": {
-              "$ref": "#/components/schemas/QuoteResponse"
+              "type": "string",
+              "format": "uuid",
+              "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detailed quote information retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID provided or unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid secret key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
             }
           }
         }
-      },
-      "400": {
-        "description": "Bad Request - Invalid ID or quote cannot be cancelled in its current state",
-        "content": {
-          "application/json": {
+      }
+    },
+    "/partners/marketplace/quote/{id}/complete": {
+      "put": {
+        "summary": "Retrieve Completed Quote Details",
+        "description": "Fetches the final status and payment instructions for a completed marketplace quote session.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier (UUID) of the quote.",
             "schema": {
-              "$ref": "#/components/schemas/Error"
+              "type": "string",
+              "format": "uuid",
+              "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Finalized quote details retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid ID or session state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid secret key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
             }
           }
         }
       }
-    }
-  }
-},
-
+    },
+    "/partners/marketplace/quote/{id}/add": {
+      "put": {
+        "summary": "Add Pool Allocation to Quote",
+        "description": "Updates an existing quote session by adding or modifying the pool allocation details, including amount and direction.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier (UUID) of the quote session.",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddPoolRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pool allocation added successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid pool details or quote state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid secret key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/partners/marketplace/quote/{id}/cancel": {
+      "put": {
+        "summary": "Cancel Quote Session",
+        "description": "Cancels an active or pending quote session. Once cancelled, the quote can no longer be accepted or completed.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier (UUID) of the quote to be cancelled.",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Quote successfully cancelled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid ID or quote cannot be cancelled in its current state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid secret key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/partners/marketplace/quote/{id}/remove/{itemId}": {
-    "put": {
-      "summary": "Remove Item from Quote",
-      "description": "Removes a specific allocation or item from an existing quote session using the quote ID and item ID.",
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "description": "The unique identifier (UUID) of the quote session.",
-          "schema": {
-            "type": "string",
-            "format": "uuid",
-            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      "put": {
+        "summary": "Remove Item from Quote",
+        "description": "Removes a specific allocation or item from an existing quote session using the quote ID and item ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier (UUID) of the quote session.",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            }
+          },
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the item/allocation to remove.",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            }
           }
-        },
-        {
-          "name": "itemId",
-          "in": "path",
-          "required": true,
-          "description": "The unique identifier of the item/allocation to remove.",
-          "schema": {
-            "type": "string",
-            "format": "uuid",
-            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-          }
-        }
-      ],
-      "responses": {
-        "200": {
-          "description": "Item removed successfully, returns updated quote state",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/QuoteResponse"
+        ],
+        "responses": {
+          "200": {
+            "description": "Item removed successfully, returns updated quote state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID or item not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid secret key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
-        },
-        "400": {
-          "description": "Invalid ID or item not found",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Error"
-              }
-            }
-          }
         }
       }
-    }
-  },
-"/partners/rates": {
-  "get": {
-    "summary": "Get Exchange Rate",
-    "description": "Retrieve the current exchange rate between two currencies. Optionally specify a blockchain network.",
-    "parameters": [
-      {
-        "name": "base",
-        "in": "query",
-        "required": true,
-        "description": "The source currency code (e.g., NGN).",
-        "schema": {
-          "type": "string",
-          "example": "NGN"
-        }
-      },
-      {
-        "name": "quote",
-        "in": "query",
-        "required": true,
-        "description": "The target currency code (e.g., GHS).",
-        "schema": {
-          "type": "string",
-          "example": "GHS"
-        }
-      },
-      {
-        "name": "chain",
-        "in": "query",
-        "required": false,
-        "description": "The blockchain network (optional - only for crypto currencies)",
-        "schema": {
-          "type": "string",
-          "example": "ETHEREUM"
-        }
-      }
-    ],
-    "responses": {
-      "200": {
-        "description": "Successfully retrieved the exchange rate",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/GetRateResponse"
-            }
-          }
-        }
-      },
-      "400": {
-        "description": "Missing required parameters or invalid currency/chain",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      }
-    }
-  }
-},
-"/partners/marketplace/rates/stream": {
-  "get": {
-    "summary": "Stream Real-Time Exchange Rates",
-    "description": "Subscribe to real-time exchange rate updates via Server-Sent Events (SSE). The connection remains open and pushes rate updates as they occur.",
-    "tags": ["Rates", "Streaming"],
-    "parameters": [
-      {
-        "name": "base",
-        "in": "query",
-        "required": true,
-        "description": "The source currency code",
+    },
+    "/partners/rates": {
+      "get": {
+        "summary": "Get Exchange Rate",
+        "description": "Retrieve the current exchange rate between two currencies. Optionally specify a blockchain network.",
+        "parameters": [
+          {
+            "name": "base",
+            "in": "query",
+            "required": true,
+            "description": "The source currency code (e.g., NGN).",
             "schema": {
               "type": "string",
               "example": "NGN"
             }
-      },
-      {
-        "name": "quote",
-        "in": "query",
-        "required": true,
-        "description": "The target currency code (e.g., GHS).",
-        "schema": {
-          "type": "string",
-          "example": "GHS"
+          },
+          {
+            "name": "quote",
+            "in": "query",
+            "required": true,
+            "description": "The target currency code (e.g., GHS).",
+            "schema": {
+              "type": "string",
+              "example": "GHS"
+            }
+          },
+          {
+            "name": "chain",
+            "in": "query",
+            "required": false,
+            "description": "The blockchain network (optional - only for crypto currencies)",
+            "schema": {
+              "type": "string",
+              "example": "ETHEREUM"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the exchange rate",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetRateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing required parameters or invalid currency/chain",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid secret key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
         }
       }
-    ],
-    "responses": {
-      "200": {
-        "description": "Successfully established SSE connection. Rate updates will be pushed continuously.",
+    },
+    "/partners/marketplace/rates/stream": {
+      "get": {
+        "summary": "Stream Real-Time Exchange Rates",
+        "description": "Subscribe to real-time exchange rate updates via Server-Sent Events (SSE). The connection remains open and pushes rate updates as they occur.",
+        "tags": [
+          "Rates",
+          "Streaming"
+        ],
+        "parameters": [
+          {
+            "name": "base",
+            "in": "query",
+            "required": true,
+            "description": "The source currency code",
+            "schema": {
+              "type": "string",
+              "example": "NGN"
+            }
+          },
+          {
+            "name": "quote",
+            "in": "query",
+            "required": true,
+            "description": "The target currency code (e.g., GHS).",
+            "schema": {
+              "type": "string",
+              "example": "GHS"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully established SSE connection. Rate updates will be pushed continuously.",
             "content": {
               "text/event-stream": {
                 "schema": {
@@ -1659,7 +2089,7 @@
               }
             }
           },
-      "400": {
+          "400": {
             "description": "Bad request - Invalid or missing parameters",
             "content": {
               "application/json": {
@@ -1682,84 +2112,121 @@
                 }
               }
             }
-          }
-    }
-  }
-},
-    "/partners/marketplace/listings": {
-  "get": {
-    "description": "Get marketplace listings for the authenticated client",
-    "parameters": [
-      {
-        "name": "page",
-        "in": "query",
-        "required": false,
-        "schema": {
-          "type": "integer"
-        },
-        "description": "Page number (0‑indexed)"
-      },
-      {
-        "name": "size",
-        "in": "query",
-        "required": false,
-        "schema": {
-          "type": "integer"
-        },
-        "description": "Page size"
-      }
-    ],
-    "responses": {
-      "200": {
-        "description": "Returns a paginated list of marketplace listings",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "content": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MarketplaceListing"
-                  }
-                },
-                "pageNumber": {
-                  "type": "integer"
-                },
-                "pageSize": {
-                  "type": "integer"
-                },
-                "totalElements": {
-                  "type": "integer"
-                },
-                "totalPages": {
-                  "type": "integer"
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
-              },
-              "required": [
-                "content",
-                "pageNumber",
-                "pageSize",
-                "totalElements",
-                "totalPages"
-              ]
-            }
-          }
-        }
-      },
-      "400": {
-        "description": "Bad request or validation error",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
+              }
             }
           }
         }
       }
-    }
-  }
-},
+    },
+    "/partners/marketplace/listings": {
+      "servers": [
+        {
+          "url": "https://api.hyperrails.io/exchange/api/v1",
+          "description": "Exchange service (marketplace listings and express quotes)"
+        }
+      ],
+      "get": {
+        "description": "Get marketplace listings for the authenticated client",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Page number (0‑indexed)"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Page size"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a paginated list of marketplace listings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "content": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/MarketplaceListing"
+                      }
+                    },
+                    "pageNumber": {
+                      "type": "integer"
+                    },
+                    "pageSize": {
+                      "type": "integer"
+                    },
+                    "totalElements": {
+                      "type": "integer"
+                    },
+                    "totalPages": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "content",
+                    "pageNumber",
+                    "pageSize",
+                    "totalElements",
+                    "totalPages"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request or validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid secret key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "summary": "List Marketplace Listings"
+      }
+    },
     "/trade-pairs": {
       "get": {
         "description": "Get trade for exchange",
@@ -1784,8 +2251,29 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid secret key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "List Trade Pairs"
       },
       "post": {
         "description": "This endpoint creates a new trade preference for a given currency",
@@ -1807,7 +2295,11 @@
                   },
                   "rateConfigurationType": {
                     "type": "string",
-                    "enum": ["manual", "percentage", "plus"],
+                    "enum": [
+                      "manual",
+                      "percentage",
+                      "plus"
+                    ],
                     "example": "manual",
                     "description": "Type of rate configuration - manual or automatic"
                   },
@@ -1871,8 +2363,29 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid secret key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Create Trade Pair"
       }
     },
     "/trade-pairs/{id}": {
@@ -1899,8 +2412,29 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid secret key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Get Trade Pair by ID"
       }
     },
     "/trade-pairs/supported/chain": {
@@ -1927,8 +2461,29 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid secret key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "List Supported Chains"
       }
     },
     "/trade-pairs/supported/currencies/stables": {
@@ -1955,8 +2510,29 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid secret key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "List Supported Stablecoins"
       }
     },
     "/trade-pairs/supported/currencies/fiat": {
@@ -1983,8 +2559,29 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid secret key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "List Supported Fiat Currencies"
       }
     },
     "/trade-pairs/currency": {
@@ -2030,8 +2627,29 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid secret key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "Get Trade Pairs by Currency"
       }
     },
     "/trade-pairs/supported": {
@@ -2058,11 +2676,31 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized - missing or invalid secret key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
-        }
+        },
+        "summary": "List Supported Currencies"
       }
     },
-
     "/accounts": {
       "post": {
         "description": "This endpoint is used to create a dynamic virtual account to receive payments.",
@@ -2106,8 +2744,23 @@
                     "type": "number",
                     "format": "int32",
                     "description": "This is optional to add. By default, the time it takes for a virtual account to expire is 30 mins. However, you can customize the time to lesser as you desire."
+                  },
+                  "parentAccountId": {
+                    "type": "string",
+                    "example": "bbbbb514-21b5-467a-a517-40a7ed346b1c",
+                    "description": "The accountId of the currency balance this virtual account settles into. Send it on every request: omitting it returns 404 not_found."
+                  },
+                  "accountTag": {
+                    "type": "string",
+                    "example": "sub-account",
+                    "description": "Your own label for the account. Defaults to sub-account. You can filter by it when listing accounts."
                   }
-                }
+                },
+                "required": [
+                  "accountName",
+                  "currency",
+                  "parentAccountId"
+                ]
               }
             }
           }
@@ -2123,6 +2776,16 @@
               }
             }
           },
+          "400": {
+            "description": "Not Found - No subscriptions found for the given plan ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Unauthorized - Invalid or missing authentication token.",
             "content": {
@@ -2133,17 +2796,18 @@
               }
             }
           },
-          "400": {
-            "description": "Not Found - No subscriptions found for the given plan ID.",
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error400"
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
           }
-        }
+        },
+        "summary": "Create Virtual Account"
       },
       "get": {
         "description": "This retrieves and lists all the active dynamic accounts you created.",
@@ -2175,6 +2839,16 @@
               }
             }
           },
+          "400": {
+            "description": "Not Found - No subscriptions found for the given plan ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Unauthorized - Invalid or missing authentication token.",
             "content": {
@@ -2185,17 +2859,18 @@
               }
             }
           },
-          "400": {
-            "description": "Not Found - No subscriptions found for the given plan ID.",
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error400"
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
           }
-        }
+        },
+        "summary": "List Virtual Accounts"
       }
     },
     "/accounts/{id}": {
@@ -2236,6 +2911,16 @@
               }
             }
           },
+          "400": {
+            "description": "Not Found - No subscriptions found for the given plan ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error400"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Unauthorized - Invalid or missing authentication token.",
             "content": {
@@ -2246,17 +2931,18 @@
               }
             }
           },
-          "400": {
-            "description": "Not Found - No subscriptions found for the given plan ID.",
+          "429": {
+            "description": "Too Many Requests - rate limit exceeded. Retry after the number of seconds in the Retry-After header",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error400"
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
           }
-        }
+        },
+        "summary": "Get Virtual Account"
       }
     }
   },
@@ -2359,7 +3045,6 @@
           "type": "string"
         }
       },
-
       "RateConfigurationResponse": {
         "type": "object",
         "properties": {
@@ -2442,7 +3127,10 @@
           },
           "mode": {
             "type": "string",
-            "enum": ["live", "test"],
+            "enum": [
+              "live",
+              "test"
+            ],
             "example": "live"
           },
           "lifeCycle": {
@@ -2541,60 +3229,64 @@
           }
         }
       },
-"GetRateResponse": {
-  "type": "object",
-  "description": "Represents the current exchange rate and consensus metadata between two currencies.",
-  "required": [
-    "from",
-    "to",
-    "rate",
-    "source",
-    "timestamp"
-  ],
-  "properties": {
-    "from": {
-      "type": "string",
-      "description": "The source currency code.",
-      "example": "usdt"
-    },
-    "to": {
-      "type": "string",
-      "description": "The target currency code.",
-      "example": "NGN"
-    },
-    "chain": {
-      "type": "string",
-      "description": "The blockchain network or settlement chain.",
-      "example": "ethereum"
-    },
-    "rate": {
-      "type": "number",
-      "format": "double",
-      "description": "The conversion rate/multiplier.",
-      "example": 0.0006
-    },
-    "source": {
-      "type": "string",
-      "description": "The mechanism used to determine the rate (e.g., CONSENSUS, ADMIN_OVERRIDE, MARKET_MAKER, SPOT).",
-      "example": "CONSENSUS"
-    },
-    "timestamp": {
-      "type": "string",
-      "format": "date-time",
-      "description": "The UTC timestamp of the rate generation.",
-      "example": "2026-04-01T14:13:28.306083501Z"
-    }
-  }
-},
-
-"StreamRateEvent": {
+      "GetRateResponse": {
+        "type": "object",
+        "description": "Represents the current exchange rate and consensus metadata between two currencies.",
+        "required": [
+          "from",
+          "to",
+          "rate",
+          "source",
+          "timestamp"
+        ],
+        "properties": {
+          "from": {
+            "type": "string",
+            "description": "The source currency code.",
+            "example": "usdt"
+          },
+          "to": {
+            "type": "string",
+            "description": "The target currency code.",
+            "example": "NGN"
+          },
+          "chain": {
+            "type": "string",
+            "description": "The blockchain network or settlement chain.",
+            "example": "ethereum"
+          },
+          "rate": {
+            "type": "number",
+            "format": "double",
+            "description": "The conversion rate/multiplier.",
+            "example": 0.0006
+          },
+          "source": {
+            "type": "string",
+            "description": "The mechanism used to determine the rate (e.g., CONSENSUS, ADMIN_OVERRIDE, MARKET_MAKER, SPOT).",
+            "example": "CONSENSUS"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The UTC timestamp of the rate generation.",
+            "example": "2026-04-01T14:13:28.306083501Z"
+          }
+        }
+      },
+      "StreamRateEvent": {
         "type": "object",
         "description": "Individual rate update event in the SSE stream",
         "properties": {
           "event": {
             "type": "string",
             "description": "Event type",
-            "enum": ["rate_update", "heartbeat", "error", "connection_closed"],
+            "enum": [
+              "rate_update",
+              "heartbeat",
+              "error",
+              "connection_closed"
+            ],
             "example": "rate_update"
           },
           "data": {
@@ -2646,7 +3338,6 @@
           }
         }
       },
-
       "MarketplaceListing": {
         "type": "object",
         "properties": {
@@ -2691,8 +3382,8 @@
             "type": "string",
             "example": "funded or unfunded"
           }
-              },
-              "required": [
+        },
+        "required": [
           "id",
           "clientId",
           "name",
@@ -2704,10 +3395,15 @@
           "poolType"
         ]
       },
-
-"PayoutRequest": {
+      "PayoutRequest": {
         "type": "object",
-        "required": ["reference", "chain", "asset", "amount", "toAddress"],
+        "required": [
+          "reference",
+          "chain",
+          "asset",
+          "amount",
+          "toAddress"
+        ],
         "properties": {
           "reference": {
             "type": "string",
@@ -2720,13 +3416,22 @@
             "type": "string",
             "description": "Blockchain network for the withdrawal",
             "example": "ethereum",
-            "enum": ["ethereum", "polygon", "base", "arbitrum", "optimism"]
+            "enum": [
+              "ethereum",
+              "polygon",
+              "base",
+              "arbitrum",
+              "optimism"
+            ]
           },
           "asset": {
             "type": "string",
             "description": "Token/asset to withdraw",
             "example": "usdc",
-            "enum": ["usdc", "usdt"]
+            "enum": [
+              "usdc",
+              "usdt"
+            ]
           },
           "amount": {
             "type": "number",
@@ -2748,7 +3453,7 @@
           }
         }
       },
-"PayoutResponse": {
+      "PayoutResponse": {
         "type": "object",
         "properties": {
           "reference": {
@@ -2772,13 +3477,22 @@
             "type": "string",
             "description": "Blockchain network",
             "example": "ethereum",
-            "enum": ["ethereum", "polygon", "base", "arbitrum", "optimism"]
+            "enum": [
+              "ethereum",
+              "polygon",
+              "base",
+              "arbitrum",
+              "optimism"
+            ]
           },
           "token": {
             "type": "string",
             "description": "Token being withdrawn",
             "example": "usdc",
-            "enum": ["usdc", "usdt"]
+            "enum": [
+              "usdc",
+              "usdt"
+            ]
           },
           "amount": {
             "type": "number",
@@ -2798,7 +3512,13 @@
           "status": {
             "type": "string",
             "description": "Withdrawal status",
-            "enum": ["PENDING", "PROCESSING", "COMPLETED", "FAILED", "CANCELLED"],
+            "enum": [
+              "PENDING",
+              "PROCESSING",
+              "COMPLETED",
+              "FAILED",
+              "CANCELLED"
+            ],
             "example": "PENDING"
           },
           "transactionHash": {
@@ -2821,9 +3541,14 @@
           }
         }
       },
-"BankWithdrawalRequest":{
-  "type": "object",
-        "required": ["reference", "amount", "currency", "destination"],
+      "BankWithdrawalRequest": {
+        "type": "object",
+        "required": [
+          "reference",
+          "amount",
+          "currency",
+          "destination"
+        ],
         "properties": {
           "reference": {
             "type": "string",
@@ -2867,21 +3592,25 @@
         }
       },
       "Bank": {
-  "type": "object",
-  "properties": {
-    "bankCode": {
-      "type": "string",
-      "example": "SPB-17646"
-    },
-    "bankName": {
-      "type": "string",
-      "example": "Nombank"
-    }
-  }
-},
+        "type": "object",
+        "properties": {
+          "bankCode": {
+            "type": "string",
+            "example": "SPB-17646"
+          },
+          "bankName": {
+            "type": "string",
+            "example": "Nombank"
+          }
+        }
+      },
       "BankDestination": {
         "type": "object",
-        "required": ["accountNumber", "accountName", "bankCode"],
+        "required": [
+          "accountNumber",
+          "accountName",
+          "bankCode"
+        ],
         "properties": {
           "accountNumber": {
             "type": "string",
@@ -2935,7 +3664,10 @@
             "type": "string",
             "description": "Currency code",
             "example": "NGN",
-            "enum": ["NGN", "GHS"]
+            "enum": [
+              "NGN",
+              "GHS"
+            ]
           },
           "destination": {
             "$ref": "#/components/schemas/BankDestinationResponse"
@@ -2948,7 +3680,13 @@
           "status": {
             "type": "string",
             "description": "Payout status",
-            "enum": ["initiated", "processing", "completed", "failed", "reversed"],
+            "enum": [
+              "initiated",
+              "processing",
+              "completed",
+              "failed",
+              "reversed"
+            ],
             "example": "initiated"
           }
         }
@@ -2977,12 +3715,17 @@
             "example": "001"
           }
         }
-},
+      },
       "WithdrawalRequest": {
-  "type": "object",
-  "required": ["reference", "amount", "currency", "destination"],
-  "properties": {
-    "reference": {
+        "type": "object",
+        "required": [
+          "reference",
+          "amount",
+          "currency",
+          "destination"
+        ],
+        "properties": {
+          "reference": {
             "type": "string",
             "description": "Unique idempotency reference for this payout. Used to prevent duplicate transfers.",
             "example": "payout-li",
@@ -2990,9 +3733,9 @@
             "maxLength": 100
           },
           "amount": {
-      "type": "number",
-      "example": 100
-    },
+            "type": "number",
+            "example": 100
+          },
           "currency": {
             "type": "string",
             "description": "Currency code for the transfer",
@@ -3001,52 +3744,67 @@
           "destination": {
             "$ref": "#/components/schemas/BankDestination"
           },
-    "narration": {
-      "type": "string",
-      "example": ".."
-    }
-  }
-},
-"WithdrawalResponse": {
-  "type": "object",
-  "properties": {
-    "amount": {
-      "type": "number",
-      "format": "double",
-      "example": 100.00
-    },
-    "currency": {
-      "type": "string",
-      "example": "NGN"
-    },
-    "destination": {
-      "type": "object",
-      "properties": {
-        "accountNumber": { "type": "string", "example": "8083233781" },
-        "accountName": { "type": "string", "example": "John Doe" },
-        "bankCode": { "type": "string", "example": "SPB-17646" }
-      }
-    },
-    "providerStatus": {
-      "type": "string",
-      "description": "Status of the transaction with the upstream provider.",
-      "example": "PROCESSING"
-    },
-    "reference": {
-      "type": "string",
-      "description": "Unique transaction reference.",
-      "example": "TRF-a633516c526a40c4b2ebc6e3c249c5f5"
-    },
-    "status": {
-      "type": "string",
-      "description": "Internal processing status.",
-      "example": "PROCESSING"
-    }
-  }
-},
+          "narration": {
+            "type": "string",
+            "example": ".."
+          }
+        }
+      },
+      "WithdrawalResponse": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "format": "double",
+            "example": 100.0
+          },
+          "currency": {
+            "type": "string",
+            "example": "NGN"
+          },
+          "destination": {
+            "type": "object",
+            "properties": {
+              "accountNumber": {
+                "type": "string",
+                "example": "8083233781"
+              },
+              "accountName": {
+                "type": "string",
+                "example": "John Doe"
+              },
+              "bankCode": {
+                "type": "string",
+                "example": "SPB-17646"
+              }
+            }
+          },
+          "providerStatus": {
+            "type": "string",
+            "description": "Status of the transaction with the upstream provider.",
+            "example": "PROCESSING"
+          },
+          "reference": {
+            "type": "string",
+            "description": "Unique transaction reference.",
+            "example": "TRF-a633516c526a40c4b2ebc6e3c249c5f5"
+          },
+          "status": {
+            "type": "string",
+            "description": "Internal processing status.",
+            "example": "PROCESSING"
+          }
+        }
+      },
       "MultiProviderQuoteRequest": {
         "type": "object",
-        "required": ["sourceCurrency", "destinationCurrency", "totalAmount", "fulfillmentType", "providers"],
+        "required": [
+          "sourceCurrency",
+          "destinationCurrency",
+          "totalAmount",
+          "fulfillmentType",
+          "providers"
+        ],
         "properties": {
           "sourceCurrency": {
             "type": "string",
@@ -3076,10 +3834,10 @@
             }
           },
           "sourceChain": {
-          "type": "string",
-          "description": "Blockchain network for sourcing funds. Required for on-ramp transactions (fiat → crypto) i.e. when sourceCurrency is a fiat currency (NGN, GHS) and destinationCurrency is a crypto asset.",
-          "example": "BASE"
-},
+            "type": "string",
+            "description": "Blockchain network for sourcing funds. Required for on-ramp transactions (fiat → crypto) i.e. when sourceCurrency is a fiat currency (NGN, GHS) and destinationCurrency is a crypto asset.",
+            "example": "BASE"
+          },
           "destinationChain": {
             "type": "string",
             "description": "The blockchain network the funds are being settled to. Required for off-ramp transactions (crypto → fiat), i.e. when sourceCurrency is a crypto asset and destinationCurrency is a fiat currency (NGN, GHS).",
@@ -3089,7 +3847,12 @@
       },
       "ExpressQuoteRequest": {
         "type": "object",
-        "required": ["sourceCurrency", "destinationCurrency", "amount"],
+        "required": [
+          "sourceCurrency",
+          "destinationCurrency",
+          "amount",
+          "sourceChain"
+        ],
         "properties": {
           "sourceCurrency": {
             "type": "string",
@@ -3106,12 +3869,19 @@
             "description": "Amount to exchange",
             "example": 50000,
             "minimum": 1
+          },
+          "sourceChain": {
+            "type": "string",
+            "description": "Source chain code (base_sepolia, ethereum_sepolia)",
+            "example": "ethereum_sepolia"
           }
         }
       },
       "ProviderAllocation": {
         "type": "object",
-        "required": ["poolId"],
+        "required": [
+          "poolId"
+        ],
         "properties": {
           "poolId": {
             "type": "string",
@@ -3128,64 +3898,90 @@
           "amountDirection": {
             "type": "string",
             "description": "Direction of amount (BUY/SELL)",
-            "enum": ["BUY", "SELL", "string"],
+            "enum": [
+              "BUY",
+              "SELL",
+              "string"
+            ],
             "example": "BUY"
           }
         }
       },
       "AcceptQuoteRequest": {
-  "type": "object",
-  "required": ["accountId", "destination"],
-  "properties": {
-    "accountId": {
-      "type": "string",
-      "format": "uuid",
-      "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-    },
-    "destination": {
-      "type": "object",
-      "properties": {
-        "bank": {
-          "type": "object",
-          "properties": {
-            "accountName": { "type": "string", "example": "John Doe" },
-            "accountNumber": { "type": "string", "example": "8037592839" },
-            "bankCode": { "type": "string", "example": "39838" }
-          }
-        },
-        "blockChain": {
-          "type": "object",
-          "properties": {
-            "address": { "type": "string", "example": "0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5" }
+        "type": "object",
+        "required": [
+          "accountId",
+          "destination"
+        ],
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "destination": {
+            "type": "object",
+            "properties": {
+              "bank": {
+                "type": "object",
+                "properties": {
+                  "accountName": {
+                    "type": "string",
+                    "example": "John Doe"
+                  },
+                  "accountNumber": {
+                    "type": "string",
+                    "example": "8037592839"
+                  },
+                  "bankCode": {
+                    "type": "string",
+                    "example": "39838"
+                  }
+                }
+              },
+              "blockChain": {
+                "type": "object",
+                "properties": {
+                  "address": {
+                    "type": "string",
+                    "example": "0x95222290dd7278aa3ddd389cc1e1d165cc4bafe5"
+                  }
+                }
+              }
+            }
           }
         }
-      }
-    }
-  }
       },
       "AddPoolRequest": {
-  "type": "object",
-  "required": ["poolId", "amount", "amountDirection"],
-  "properties": {
-    "poolId": {
-      "type": "string",
-      "format": "uuid",
-      "description": "The unique identifier of the liquidity pool.",
-      "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-    },
-    "amount": {
-      "type": "number",
-      "description": "The amount to be allocated.",
-      "example": 0
-    },
-    "amountDirection": {
-      "type": "string",
-      "enum": ["source", "destination"],
-      "description": "Specifies if the amount refers to the source or destination currency.",
-      "example": "source"
-    }
-  }
-},
+        "type": "object",
+        "required": [
+          "poolId",
+          "amount",
+          "amountDirection"
+        ],
+        "properties": {
+          "poolId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The unique identifier of the liquidity pool.",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "amount": {
+            "type": "number",
+            "description": "The amount to be allocated.",
+            "example": 0
+          },
+          "amountDirection": {
+            "type": "string",
+            "enum": [
+              "source",
+              "destination"
+            ],
+            "description": "Specifies if the amount refers to the source or destination currency.",
+            "example": "source"
+          }
+        }
+      },
       "QuoteResponse": {
         "type": "object",
         "properties": {
@@ -3198,7 +3994,13 @@
           "status": {
             "type": "string",
             "description": "Quote status",
-            "enum": ["pending", "awaiting_payment", "completed", "expired", "cancelled"],
+            "enum": [
+              "pending",
+              "awaiting_payment",
+              "completed",
+              "expired",
+              "cancelled"
+            ],
             "example": "pending"
           },
           "source": {
@@ -3239,13 +4041,16 @@
           "mode": {
             "type": "string",
             "description": "Operating mode",
-            "enum": ["live", "sandbox"],
+            "enum": [
+              "live",
+              "sandbox"
+            ],
             "example": "live"
           },
           "ttl": {
             "type": "integer",
-            "description": "Time to live in seconds",
-            "example": 300
+            "description": "Seconds left before the quote expires. Quotes are valid for 30 minutes (1800 seconds)",
+            "example": 1800
           },
           "allocationResult": {
             "$ref": "#/components/schemas/AllocationResult"
@@ -3269,7 +4074,7 @@
           "weightedAverageRate": {
             "type": "number",
             "description": "Weighted average exchange rate",
-            "example": 1580.50
+            "example": 1580.5
           },
           "totalDestinationAmount": {
             "type": "number",
@@ -3321,7 +4126,7 @@
           "rate": {
             "type": "number",
             "description": "Exchange rate for this allocation",
-            "example": 1580.50
+            "example": 1580.5
           },
           "reference": {
             "type": "string",
@@ -3345,6 +4150,12 @@
           },
           "cryptoPayIn": {
             "$ref": "#/components/schemas/CryptoPayInDetails"
+          },
+          "mobileMoneyPayIn": {
+            "$ref": "#/components/schemas/MobileMoneyPayInDetails"
+          },
+          "transactionFee": {
+            "$ref": "#/components/schemas/TransactionFee"
           }
         }
       },
@@ -3413,7 +4224,11 @@
           "status": {
             "type": "string",
             "description": "Address status",
-            "enum": ["active", "pending", "expired"],
+            "enum": [
+              "active",
+              "pending",
+              "expired"
+            ],
             "example": "active"
           },
           "createdAt": {
@@ -3497,7 +4312,10 @@
           },
           "rateConfigurationType": {
             "type": "string",
-            "enum": ["manual", "auto"],
+            "enum": [
+              "manual",
+              "auto"
+            ],
             "example": "manual"
           },
           "rate": {
@@ -3567,7 +4385,10 @@
         }
       },
       "Error": {
-        "required": ["code", "message"],
+        "required": [
+          "code",
+          "message"
+        ],
         "type": "object",
         "properties": {
           "code": {
@@ -3584,6 +4405,77 @@
             "type": "object",
             "description": "Additional error details",
             "additionalProperties": true
+          }
+        }
+      },
+      "MobileMoneyPayInDetails": {
+        "type": "object",
+        "description": "Mobile money pay-in details, present after a quote is accepted with a mobile money payment",
+        "properties": {
+          "provider": {
+            "type": "string",
+            "example": "mtn",
+            "description": "Provider code (lowercase)"
+          },
+          "providerName": {
+            "type": "string",
+            "example": "MTN"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "0244123456"
+          },
+          "attemptReference": {
+            "type": "string",
+            "example": "ref-02ec23bc404c4fa1842b01509be7a08f"
+          },
+          "authorizationMode": {
+            "type": "string",
+            "example": "otp",
+            "description": "What the provider needs next, for example otp"
+          },
+          "status": {
+            "type": "string",
+            "example": "inProgress",
+            "description": "Pay-in status, for example inProgress or successful"
+          },
+          "message": {
+            "type": "string",
+            "example": "Please enter the one time password sent to your phone."
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TransactionFee": {
+        "type": "object",
+        "description": "Transaction fee applied on the destination side",
+        "properties": {
+          "feeType": {
+            "type": "string",
+            "example": "flat"
+          },
+          "currency": {
+            "type": "string",
+            "example": "NGN"
+          },
+          "flatFee": {
+            "type": "number",
+            "example": 20.0
+          },
+          "percentageRate": {
+            "type": "number",
+            "example": 0.0
+          },
+          "appliedAmount": {
+            "type": "number",
+            "example": 578.0
+          },
+          "calculatedFee": {
+            "type": "number",
+            "example": 20.0
           }
         }
       }

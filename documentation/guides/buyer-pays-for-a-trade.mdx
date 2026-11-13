@@ -1,8 +1,7 @@
 ---
-title: Let a Buyer Pay for a Trade
-sidebarTitle: Buyer Pays for a Trade
-description: Take a buyer from a price quote to a settled trade, paying by mobile money.
-icon: "money-bill-transfer"
+title: "Let a Buyer Pay for a Trade"
+description: "Take a buyer from a price quote to a settled trade, paying by mobile money."
+icon: "mobile-screen"
 ---
 
 This guide walks one trade from start to finish. A buyer agrees a rate, pays with
@@ -14,21 +13,15 @@ the call before it.
 
 ## What you'll need
 
-- Your **secret key**. Every call in this guide authenticates with it.
-- An account in the currency you are buying, to settle into. See
+* Your **secret key**. Every call in this guide authenticates with it.
+* An account in the currency you are buying, to settle into. See
   [Get Balances](/api-reference/hyperrail-wallet/get).
-- A buyer's mobile money number on a supported provider.
+* A buyer's mobile money number on a supported provider.
 
 <Info>
-Use test mode while you follow this guide. No real money moves and no real phone is
-charged.
+  Use test mode while you follow this guide. No real money moves and no real phone is
+  charged.
 </Info>
-
-<Warning>
-These endpoints take a **secret key**, not a dashboard token. A JWT returns
-`403 Forbidden` with the message
-`This endpoint requires one of the following authentication types: [SECRET_KEY]`.
-</Warning>
 
 ## The shape of the flow
 
@@ -36,21 +29,25 @@ These endpoints take a **secret key**, not a dashboard token. A JWT returns
   <Step title="Create an intent">
     You say what you want to trade and at what rate. You get a quote back.
   </Step>
+
   <Step title="Pick a mobile money provider">
     You look up which providers work for the buyer's currency.
   </Step>
+
   <Step title="Accept the quote with the buyer's payment details">
     This locks the trade and charges the buyer's phone in one call.
   </Step>
+
   <Step title="Authorize with the OTP">
     The buyer gets a code and you pass it back.
   </Step>
+
   <Step title="Watch the payment, then complete the trade">
     You poll until the payment succeeds, then finalise.
   </Step>
 </Steps>
 
----
+***
 
 ## Step 1: Create a marketplace intent
 
@@ -58,12 +55,12 @@ An intent is your side of the deal: the two currencies, how much, and the rate.
 
 Check the rate first:
 
-```bash
+```bash theme={"dark"}
 curl "https://api.hyperrails.io/api/v1/partners/rates?base=GHS&quote=NGN" \
   -H "Authorization: Bearer YOUR_SECRET_KEY"
 ```
 
-```json
+```json theme={"dark"}
 {
   "base": "GHS",
   "inverseRate": 0.0077657840,
@@ -75,12 +72,12 @@ curl "https://api.hyperrails.io/api/v1/partners/rates?base=GHS&quote=NGN" \
 ```
 
 <Note>
-The parameters are `base` and `quote`, not `source` and `destination`.
+  The parameters are `base` and `quote`, not `source` and `destination`.
 </Note>
 
 Then create the intent:
 
-```bash
+```bash theme={"dark"}
 curl -X POST https://api.hyperrails.io/api/v1/partners/marketplace/intent \
   -H "Authorization: Bearer YOUR_SECRET_KEY" \
   -H "Content-Type: application/json" \
@@ -93,15 +90,15 @@ curl -X POST https://api.hyperrails.io/api/v1/partners/marketplace/intent \
   }'
 ```
 
-| Field | Required | What it is |
-|---|---|---|
-| `sourceCurrency` | yes | What the buyer pays in |
-| `destinationCurrency` | yes | What you receive |
-| `amount` | yes | How much |
-| `amountDirection` | yes | Whether `amount` counts the source or destination side. One of `source`, `destination` |
-| `rate` | yes | The rate you are trading at |
+| Field                 | Required | What it is                                                                             |
+| --------------------- | -------- | -------------------------------------------------------------------------------------- |
+| `sourceCurrency`      | yes      | What the buyer pays in                                                                 |
+| `destinationCurrency` | yes      | What you receive                                                                       |
+| `amount`              | yes      | How much                                                                               |
+| `amountDirection`     | yes      | Whether `amount` counts the source or destination side. One of `source`, `destination` |
+| `rate`                | yes      | The rate you are trading at                                                            |
 
-```json
+```json theme={"dark"}
 {
   "quoteId": "e1f9ed4a-d32b-4525-9608-9bd29aeaa076",
   "status": "PENDING",
@@ -113,7 +110,7 @@ curl -X POST https://api.hyperrails.io/api/v1/partners/marketplace/intent \
   "fee": 0.17301038,
   "feeCurrency": "GHS",
   "mode": "test",
-  "ttl": 899,
+  "ttl": 1800,
   "allocationResult": {
     "allocations": [
       {
@@ -135,42 +132,42 @@ Keep the `quoteId` — every later call needs it.
 
 Two things to read carefully:
 
-- **`allocationResult` shows who is filling your trade.** `fullAllocation: true` means
+* **`allocationResult` shows who is filling your trade.** `fullAllocation: true` means
   the whole amount was matched. The rate you get is `weightedAverageRate`, which comes
   from the liquidity available and can differ from the rate you asked for.
-- **`ttl` is how many seconds the quote lives.** Here, 899.
+* **`ttl` is how many seconds the quote has left.** Quotes are valid for 30 minutes, so it starts at 1800.
 
 <Warning>
-If no liquidity provider covers your pair, this returns **400** with
-`"No providers available for the given intent configuration"` — even when a rate
-exists for that pair. A rate is not the same as someone offering to trade.
+  If no liquidity provider covers your pair, this returns **400** with
+  `"No providers available for the given intent configuration"` — even when a rate
+  exists for that pair. A rate is not the same as someone offering to trade.
 </Warning>
 
 Reference: [Create Payment Intent](/api-reference/hyperrail-quote/create-payment-intent)
 
----
+***
 
 ## Step 2: Find the buyer's mobile money provider
 
 Check which currencies can be paid by mobile money:
 
-```bash
+```bash theme={"dark"}
 curl https://api.hyperrails.io/api/v1/partners/marketplace/mobile-money/currencies \
   -H "Authorization: Bearer YOUR_SECRET_KEY"
 ```
 
-```json
+```json theme={"dark"}
 [{ "currency": "GHS", "countryCodes": ["GH"] }]
 ```
 
 Then list the providers for that currency:
 
-```bash
+```bash theme={"dark"}
 curl "https://api.hyperrails.io/api/v1/partners/marketplace/mobile-money/providers?currency=GHS" \
   -H "Authorization: Bearer YOUR_SECRET_KEY"
 ```
 
-```json
+```json theme={"dark"}
 [
   { "code": "mtn", "name": "MTN" },
   { "code": "airtel", "name": "Airtel" },
@@ -181,21 +178,21 @@ curl "https://api.hyperrails.io/api/v1/partners/marketplace/mobile-money/provide
 The `code` is what you pass in the next step. Codes are lowercase.
 
 <Warning>
-`currency` is required. Asking for a currency mobile money does not support returns
-**400** `unsupported_currency`.
+  `currency` is required. Asking for a currency mobile money does not support returns
+  **400** `unsupported_currency`.
 </Warning>
 
 References: [List Mobile Money Currencies](/api-reference/hyperrail-quote/get-mmo-currencies) ·
 [List Mobile Money Providers](/api-reference/hyperrail-quote/get-mmo-providers)
 
----
+***
 
 ## Step 3: Accept the quote and charge the buyer
 
 This one call does two things: it locks in the trade, and it starts the mobile money
 charge on the buyer's phone.
 
-```bash
+```bash theme={"dark"}
 curl -X PUT https://api.hyperrails.io/api/v1/partners/marketplace/quote/QUOTE_ID/accept \
   -H "Authorization: Bearer YOUR_SECRET_KEY" \
   -H "Content-Type: application/json" \
@@ -212,16 +209,16 @@ curl -X PUT https://api.hyperrails.io/api/v1/partners/marketplace/quote/QUOTE_ID
   }'
 ```
 
-| Field | Required | What it is |
-|---|---|---|
-| `accountId` | yes | The account the trade settles into, in the destination currency |
-| `balanceId` | no | A specific balance under that account |
-| `payment.channel` | — | `mobile_money` for this flow |
-| `payment.countryCode` | — | The buyer's country |
-| `payment.mobileMoney.code` | yes | The provider code from Step 2 |
-| `payment.mobileMoney.phoneNumber` | yes | The buyer's number |
+| Field                             | Required | What it is                                                      |
+| --------------------------------- | -------- | --------------------------------------------------------------- |
+| `accountId`                       | yes      | The account the trade settles into, in the destination currency |
+| `balanceId`                       | no       | A specific balance under that account                           |
+| `payment.channel`                 | —        | `mobile_money` for this flow                                    |
+| `payment.countryCode`             | —        | The buyer's country                                             |
+| `payment.mobileMoney.code`        | yes      | The provider code from Step 2                                   |
+| `payment.mobileMoney.phoneNumber` | yes      | The buyer's number                                              |
 
-```json
+```json theme={"dark"}
 {
   "quoteId": "c258fdae-a8af-4ff7-96f0-010c1db359d1",
   "status": "AWAITING_PAYMENT",
@@ -231,7 +228,7 @@ curl -X PUT https://api.hyperrails.io/api/v1/partners/marketplace/quote/QUOTE_ID
   "totalDestinationAmount": 11560.0,
   "fee": 0.17301038,
   "mode": "test",
-  "ttl": 3599,
+  "ttl": 1800,
   "metadata": {
     "mobileMoneyPayIn": {
       "provider": "mtn",
@@ -251,18 +248,18 @@ The quote moves to `AWAITING_PAYMENT` and the buyer gets a prompt on their phone
 `authorizationMode` tells you what the provider wants next — `otp` here.
 
 <Note>
-`ttl` resets on accept. It was 899 seconds on the quote; now it is 3599.
+  The quote is valid for 30 minutes. Complete the payment and the trade before `ttl` reaches 0.
 </Note>
 
 Reference: [Accept Quote](/api-reference/hyperrail-quote/accept-quote)
 
----
+***
 
 ## Step 4: Authorize with the OTP
 
 The buyer reads the code off their phone and gives it to you.
 
-```bash
+```bash theme={"dark"}
 curl -X PUT https://api.hyperrails.io/api/v1/partners/marketplace/quote/QUOTE_ID/payment/authorize \
   -H "Authorization: Bearer YOUR_SECRET_KEY" \
   -H "Content-Type: application/json" \
@@ -272,7 +269,7 @@ curl -X PUT https://api.hyperrails.io/api/v1/partners/marketplace/quote/QUOTE_ID
 The response is the full quote again. What changes is the message inside
 `metadata.mobileMoneyPayIn`:
 
-```json
+```json theme={"dark"}
 {
   "status": "AWAITING_PAYMENT",
   "metadata": {
@@ -293,18 +290,18 @@ this again.
 
 Reference: [Authorize Quote Payment](/api-reference/hyperrail-quote/authorize-quote-payment)
 
----
+***
 
 ## Step 5: Watch the payment
 
 Poll until the payment settles.
 
-```bash
+```bash theme={"dark"}
 curl https://api.hyperrails.io/api/v1/partners/marketplace/quote/QUOTE_ID/payment/status \
   -H "Authorization: Bearer YOUR_SECRET_KEY"
 ```
 
-```json
+```json theme={"dark"}
 {
   "status": "AWAITING_PAYMENT",
   "metadata": {
@@ -321,24 +318,24 @@ status moves `inProgress` → `successful` while the quote itself stays on
 `AWAITING_PAYMENT` until you complete it in the next step.
 
 <Note>
-In test mode the payment settles in a few seconds. Poll every few seconds rather than
-in a tight loop.
+  In test mode the payment settles in a few seconds. Poll every few seconds rather than
+  in a tight loop.
 </Note>
 
 Reference: [Get Order Status](/api-reference/hyperrail-quote/get-order-status)
 
----
+***
 
 ## Step 6: Complete the trade
 
 Once the payment reads `successful`, finalise it.
 
-```bash
+```bash theme={"dark"}
 curl -X PUT https://api.hyperrails.io/api/v1/partners/marketplace/quote/QUOTE_ID/complete \
   -H "Authorization: Bearer YOUR_SECRET_KEY"
 ```
 
-```json
+```json theme={"dark"}
 {
   "quoteId": "c258fdae-a8af-4ff7-96f0-010c1db359d1",
   "status": "SUCCESSFUL",
@@ -376,24 +373,23 @@ GHS 14997994888.08  -> 14997994787.91     -100.17
 
 Reference: [Get Complete Quote](/api-reference/hyperrail-quote/get-complete-quote-id)
 
----
+***
 
 ## When things go wrong
 
-| What you see | What it means | What to do |
-|---|---|---|
-| **403** `requires [SECRET_KEY]` | You used a dashboard token | Use your secret key |
-| **400** `No providers available` | No liquidity for that pair | Try another pair, or check the marketplace listings |
-| **400** `unsupported_currency` | Mobile money does not cover that currency | Check Step 2's currency list |
-| **400** on accept | The quote expired | Create a new intent |
-| **400** on authorize | Wrong or expired OTP | Have the buyer request a new code |
-| `payIn` stuck on `inProgress` | The buyer has not approved on their phone | Wait, watching `ttl` |
-| **400** on complete | The payment has not settled | Poll Step 5 until `successful` |
+| What you see                     | What it means                             | What to do                                          |
+| -------------------------------- | ----------------------------------------- | --------------------------------------------------- |
+| **400** `No providers available` | No liquidity for that pair                | Try another pair, or check the marketplace listings |
+| **400** `unsupported_currency`   | Mobile money does not cover that currency | Check Step 2's currency list                        |
+| **400** on accept                | The quote expired                         | Create a new intent                                 |
+| **400** on authorize             | Wrong or expired OTP                      | Have the buyer request a new code                   |
+| `payIn` stuck on `inProgress`    | The buyer has not approved on their phone | Wait, watching `ttl`                                |
+| **400** on complete              | The payment has not settled               | Poll Step 5 until `successful`                      |
 
 See [Error Codes](/api-reference/error-codes) for the full list.
 
 ## What to do next
 
-- [Take a quote in one call](/api-reference/hyperrail-quote/create-express-quote) — skip the separate intent step
-- [Get Balances](/api-reference/hyperrail-wallet/get) — confirm the trade landed
-- [Pay out to a bank](/api-reference/payout/withdrawal) — move the proceeds on
+* [Take a quote in one call](/api-reference/hyperrail-quote/create-express-quote) — skip the separate intent step
+* [Get Balances](/api-reference/hyperrail-wallet/get) — confirm the trade landed
+* [Pay out to a bank](/api-reference/payout/withdrawal) — move the proceeds on

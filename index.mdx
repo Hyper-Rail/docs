@@ -1,0 +1,293 @@
+---
+title: "HyperRails Documentation"
+sidebarTitle: "Home"
+description: "Guides, API Reference and tools for building with HyperRails: fiat accounts, stablecoin wallets, exchange, liquidity, pay-ins and payouts."
+mode: "custom"
+---
+
+export const Product = ({ icon, title, children, links }) => (
+  <div className="hr-card">
+    <div className="hr-card-head">
+      <span className="hr-icon"><Icon icon={icon} size={16} color="var(--hr-accent)" /></span>
+      <h3 className="hr-card-title">{title}</h3>
+    </div>
+    <p className="hr-card-text">{children}</p>
+    <div className="hr-card-links">
+      {links.map(([label, href]) => (
+        <a key={href} href={href}>{label}<span>→</span></a>
+      ))}
+    </div>
+  </div>
+);
+
+export const TaskCol = ({ icon, title, tasks }) => (
+  <div className="hr-taskcol">
+    <p className="hr-taskcol-title"><Icon icon={icon} size={14} color="var(--hr-accent)" />{title}</p>
+    {tasks.map(([label, href]) => (
+      <a key={href} href={href} className="hr-task">{label}</a>
+    ))}
+  </div>
+);
+
+export const TRY_ITEMS = [
+  {
+    label: "Get an exchange rate",
+    method: "GET",
+    path: "/partners/rates",
+    href: "/api-reference/rate/get-rate",
+    code: 'curl "https://api.hyperrails.io/api/v1/partners/rates?base=GHS&quote=NGN" \\\n  -H "Authorization: Bearer sk_test_..."',
+  },
+  {
+    label: "List available liquidity",
+    method: "GET",
+    path: "/partners/marketplace/listings",
+    href: "/api-reference/listings/liquidity-providers",
+    code: 'curl "https://api.hyperrails.io/exchange/api/v1/partners/marketplace/listings?page=0&size=10" \\\n  -H "Authorization: Bearer sk_test_..."',
+  },
+  {
+    label: "Price an express quote",
+    method: "POST",
+    path: "/partners/marketplace/express/quote",
+    href: "/api-reference/hyperrail-quote/create-express-quote",
+    code: 'curl -X POST https://api.hyperrails.io/exchange/api/v1/partners/marketplace/express/quote \\\n  -H "Authorization: Bearer sk_test_..." \\\n  -H "Content-Type: application/json" \\\n  -d \'{\n    "sourceCurrency": "GHS",\n    "destinationCurrency": "NGN",\n    "amount": 5,\n    "amountDirection": "source",\n    "accountId": "YOUR_NGN_ACCOUNT_ID"\n  }\'',
+  },
+  {
+    label: "Create a virtual account",
+    method: "POST",
+    path: "/accounts",
+    href: "/api-reference/dynamic-accounts/create-dynamic-account",
+    code: 'curl -X POST https://api.hyperrails.io/api/v1/accounts \\\n  -H "Authorization: Bearer sk_test_..." \\\n  -H "Content-Type: application/json" \\\n  -d \'{\n    "accountName": "Eden Ali",\n    "currency": "GHS",\n    "parentAccountId": "YOUR_GHS_ACCOUNT_ID"\n  }\'',
+  },
+  {
+    label: "Pay out to a bank",
+    method: "POST",
+    path: "/partners/payouts",
+    href: "/api-reference/payout/withdrawal",
+    code: 'curl -X POST https://api.hyperrails.io/api/v1/partners/payouts \\\n  -H "Authorization: Bearer sk_test_..." \\\n  -H "Content-Type: application/json" \\\n  -d \'{\n    "reference": "payout-001",\n    "amount": 10000,\n    "currency": "NGN",\n    "destination": {\n      "accountNumber": "0123456789",\n      "accountName": "Jane Doe",\n      "bankCode": "058"\n    }\n  }\'',
+  },
+  {
+    label: "Send stablecoins",
+    method: "POST",
+    path: "/partners/wallets/payouts",
+    href: "/api-reference/payout/wallet-payout",
+    code: 'curl -X POST https://api.hyperrails.io/api/v1/partners/wallets/payouts \\\n  -H "Authorization: Bearer sk_test_..." \\\n  -H "Content-Type: application/json" \\\n  -d \'{\n    "reference": "wallet-payout-001",\n    "chain": "base",\n    "asset": "usdc",\n    "amount": 100,\n    "toAddress": "0x742d35Cc6634C0532925a3b844Bc9e7595f0be"\n  }\'',
+  },
+];
+
+export const TryIt = () => {
+  const [active, setActive] = useState(0);
+  const item = TRY_ITEMS[active];
+  return (
+    <div className="hr-try">
+      <div className="hr-try-list" role="tablist">
+        {TRY_ITEMS.map((it, i) => (
+          <button
+            key={it.label}
+            role="tab"
+            aria-selected={i === active}
+            className={i === active ? "hr-try-item hr-try-item-active" : "hr-try-item"}
+            onClick={() => setActive(i)}
+          >
+            {it.label}
+          </button>
+        ))}
+      </div>
+      <div className="hr-code hr-try-code">
+        <div className="hr-code-bar">
+          <span style={{ display: "flex", alignItems: "center" }}>
+            <span className="hr-dots"><span /><span /><span /></span>
+            <span className="hr-method">{item.method}</span>{item.path}
+          </span>
+          <span>test mode</span>
+        </div>
+        <div className="hr-pre">
+          {item.code.split("\n").map((line, i) => (
+            <div key={i} className="hr-line">{line}</div>
+          ))}
+        </div>
+        <div className="hr-try-foot">
+          <a href={item.href} className="hr-link">Open in the API playground →</a>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const L = ({ children }) => <div className="hr-line">{children}</div>;
+export const K = ({ children }) => <span className="hr-k">{children}</span>;
+export const S = ({ children }) => <span className="hr-s">{children}</span>;
+export const N = ({ children }) => <span className="hr-n">{children}</span>;
+
+export const Row = ({ href, title, meta }) => (
+  <a href={href} className="hr-row"><span>{title}</span><span className="hr-meta">{meta}</span></a>
+);
+
+<div className="hr-home">
+
+  <section className="hr-hero">
+    <div className="hr-container">
+      <div className="hr-hero-grid">
+        <div>
+          <p className="hr-eyebrow">HyperRails Docs</p>
+          <h1 className="hr-title">Move money across fiat and stablecoin rails.</h1>
+          <p className="hr-lede">
+            Fiat accounts, multi-chain stablecoin wallets, Instant trade, liquidity, pay-ins and payouts for financial institutions and fintechs. One API, one dashboard.
+          </p>
+          <div className="hr-actions">
+            <a href="/quickstart" className="hr-btn hr-btn-primary">Start the quickstart</a>
+            <a href="/api-reference/introduction" className="hr-btn hr-btn-secondary">API reference</a>
+            <a href="/use-cases/overview" className="hr-btn hr-btn-ghost">Find your use case →</a>
+          </div>
+        </div>
+
+        <div className="hr-code">
+          <div className="hr-code-bar">
+            <span style={{ display: "flex", alignItems: "center" }}>
+              <span className="hr-dots"><span /><span /><span /></span>
+              <span className="hr-method">GET</span>/partners/rates
+            </span>
+            <span>test mode</span>
+          </div>
+          <div className="hr-pre">
+            <L><K>curl</K> <S>{'"https://api.hyperrails.io/api/v1/partners/rates?base=GHS&quote=NGN"'}</S> {"\\"}</L>
+            <L>{"  "}-H <S>{'"Authorization: Bearer sk_test_..."'}</S></L>
+          </div>
+          <div className="hr-code-divider"><span className="hr-status" />200 OK</div>
+          <div className="hr-pre">
+            <L>{"{"}</L>
+            <L>{"  "}<K>{'"base"'}</K>: <S>{'"GHS"'}</S>,</L>
+            <L>{"  "}<K>{'"quote"'}</K>: <S>{'"NGN"'}</S>,</L>
+            <L>{"  "}<K>{'"rate"'}</K>: <N>128.77</N>,</L>
+            <L>{"  "}<K>{'"inverseRate"'}</K>: <N>0.0077657840</N>,</L>
+            <L>{"  "}<K>{'"weight"'}</K>: <S>{'"QUOTE"'}</S></L>
+            <L>{"}"}</L>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section className="hr-section hr-section-tight">
+    <div className="hr-container">
+      <div className="hr-tasks">
+        <TaskCol icon="coins" title="Stablecoins" tasks={[["Accept stablecoin deposits", "/documentation/guides/receive-stablecoins"], ["Send stablecoins to a wallet", "/documentation/guides/send-stablecoins"], ["Hold USDT and USDC", "/documentation/guides/stablecoin-wallets"]]} />
+        <TaskCol icon="bolt" title="Exchange" tasks={[["Price a quote in one call", "/documentation/guides/take-a-quote-in-one-call"], ["Take a mobile money payment", "/documentation/guides/buyer-pays-for-a-trade"], ["Request a quote at your rate", "/documentation/guides/request-for-quote"]]} />
+        <TaskCol icon="building-columns" title="Accounts and Payouts" tasks={[["Create a virtual account", "/documentation/guides/give-a-customer-an-account"], ["Pay out to a bank account", "/documentation/features/fiat-payout-process"], ["Check your balances", "/documentation/guides/read-your-balances"]]} />
+        <TaskCol icon="code" title="Developers" tasks={[["Set up test mode", "/documentation/testing/test-mode-overview"], ["Verify webhook signatures", "/documentation/webhooks/validator"], ["Build with AI", "/api-reference/ai/llms"]]} />
+      </div>
+    </div>
+  </section>
+
+  <section className="hr-section">
+    <div className="hr-container">
+      <div className="hr-head">
+        <div>
+          <h2 className="hr-h2">Try it out</h2>
+          <p className="hr-sub">Pick a task to see the request, then send it for real from the API playground with your test key.</p>
+        </div>
+        <a href="/api-reference/introduction" className="hr-link">API Reference →</a>
+      </div>
+      <TryIt />
+    </div>
+  </section>
+
+  <section className="hr-section">
+    <div className="hr-container">
+      <div className="hr-head">
+        <div>
+          <h2 className="hr-h2">Start Building</h2>
+          <p className="hr-sub">From test key to your first priced quote in three steps.</p>
+        </div>
+        <a href="/quickstart" className="hr-link">Open the Quickstart →</a>
+      </div>
+      <div className="hr-grid hr-grid-3">
+        <a href="/get-started/concepts/environments" className="hr-step">
+          <span className="hr-step-num">01</span>
+          <p className="hr-step-title">Get your test key</p>
+          <p className="hr-step-text">Switch to test mode and copy your sk_test_ key. It's shown once, so store it safely.</p>
+        </a>
+        <a href="/quickstart" className="hr-step">
+          <span className="hr-step-num">02</span>
+          <p className="hr-step-title">Make your first call</p>
+          <p className="hr-step-text">Read a rate, check liquidity and price a quote.</p>
+        </a>
+        <a href="/documentation/guides/integration-security" className="hr-step">
+          <span className="hr-step-num">03</span>
+          <p className="hr-step-title">Go Live</p>
+          <p className="hr-step-text">Verify webhooks, then swap in your live key.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section className="hr-section">
+    <div className="hr-container">
+      <div className="hr-head">
+        <div>
+          <h2 className="hr-h2">Products</h2>
+          <p className="hr-sub">Everything you can build with HyperRails.</p>
+        </div>
+        <a href="/get-started/platform-overview" className="hr-link">Platform Overview →</a>
+      </div>
+      <div className="hr-grid hr-grid-products">
+        <Product icon="building-columns" title="Fiat Accounts" links={[["Coverage", "/documentation/coverage"], ["Read your balances", "/documentation/guides/read-your-balances"]]}>
+          Local and global currency accounts, from NGN, GHS and KES to USD, GBP and EUR.
+        </Product>
+        <Product icon="wallet" title="Stablecoin Wallets" links={[["Wallets", "/documentation/guides/stablecoin-wallets"], ["Receive stablecoins", "/documentation/guides/receive-stablecoins"], ["Send stablecoins", "/documentation/guides/send-stablecoins"]]}>
+          Multi-asset, multi-chain USDT and USDC wallets with gasless transactions.
+        </Product>
+        <Product icon="bolt" title="Instant Trade" links={[["Take a quote in one call", "/documentation/guides/take-a-quote-in-one-call"], ["On-ramp and off-ramp", "/use-cases/on-off-ramp"]]}>
+          On-ramp, off-ramp and fiat exchange in one flow, at a listed rate.
+        </Product>
+        <Product icon="droplet" title="Liquidity" links={[["Liquidity Listings", "/documentation/guides/find-a-liquidity-provider"], ["Request for quote", "/documentation/guides/request-for-quote"]]}>
+          Trade requests, liquidity listings, aggregation and dynamic quotes.
+        </Product>
+        <Product icon="money-bill-transfer" title="Pay-in and payout" links={[["Bank payouts", "/documentation/features/fiat-payout-process"], ["Mobile money pay-in", "/documentation/guides/buyer-pays-for-a-trade"]]}>
+          Pay in and pay out across multiple currencies, by bank, mobile money or stablecoin.
+        </Product>
+        <Product icon="hashtag" title="Virtual Accounts" links={[["Create an account", "/documentation/guides/give-a-customer-an-account"], ["Dynamic accounts API", "/api-reference/dynamic-accounts/create-dynamic-account"]]}>
+          Dedicated account numbers for each customer, across a number of currencies.
+        </Product>
+      </div>
+    </div>
+  </section>
+
+  <section className="hr-section">
+    <div className="hr-container">
+      <div className="hr-lists">
+        <div>
+          <h2 className="hr-h2">Popular Guides</h2>
+          <div className="hr-list">
+            <Row href="/get-started/how-it-works" title="How HyperRails works" meta="concept" />
+            <Row href="/get-started/transaction-lifecycle" title="Transaction Lifecycle" meta="concept" />
+            <Row href="/documentation/guides/buyer-pays-for-a-trade" title="Let a buyer pay for a trade" meta="guide" />
+            <Row href="/documentation/guides/request-for-quote" title="Request for Quote" meta="guide" />
+            <Row href="/documentation/guides/recipes" title="Recipes" meta="code" />
+          </div>
+        </div>
+        <div>
+          <h2 className="hr-h2">Developer Tools</h2>
+          <div className="hr-list">
+            <Row href="/api-reference/introduction" title="API Reference and Playground" meta="REST · JSON" />
+            <Row href="/documentation/webhooks/validator" title="Webhook Validator" meta="tool" />
+            <Row href="/documentation/testing/funding-in-test-mode" title="Funding Simulator" meta="test mode" />
+            <Row href="/api-reference/ai/llms" title="Docs for LLMs" meta="llms.txt" />
+            <Row href="/changelog/introduction" title="Changelog" meta="releases" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section className="hr-section">
+    <div className="hr-container">
+      <div className="hr-help">
+        <p>Need help? <a href="/documentation/support-channel/help-support">Contact Support</a>.</p>
+        <p>New on HyperRails? <a href="/changelog/introduction">Read the changelog</a>.</p>
+        <p>Common questions? <a href="/documentation/support-channel/faq">See the FAQs</a>.</p>
+        <p>LLM? <a href="https://docs.hyperrails.io/llms.txt">Read llms.txt</a>.</p>
+      </div>
+    </div>
+  </section>
+
+</div>

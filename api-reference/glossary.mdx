@@ -1,0 +1,51 @@
+---
+title: "Glossary"
+description: "Definitions of the terms used across the HyperRails dashboard, API and documentation."
+icon: "book"
+---
+
+| Term | Definition |
+|---|---|
+| **Accept** | The call that locks a quote and starts payment. Moves the quote to `AWAITING_PAYMENT` |
+| **Account** | A fiat balance in one currency, identified by an `accountId`. Trades settle into it and payouts debit it |
+| **Allocation** | One pool's share of a quote: the pool, the amount and the rate. Listed in `allocationResult.allocations` |
+| **Amount direction** | `amountDirection`: whether an amount counts the `source` or the `destination` side of a trade |
+| **Available balance** | `availableBalance`: what you can spend now. Can be lower than `balance` while activity is pending. On a listing, it's how much the pool can fill |
+| **Base and quote** | The two currencies in a rate. `rate` is units of `quote` per unit of `base` |
+| **Bridge** | Converting between a currency and its matching stablecoin, for example USD to USDT |
+| **Chain** | The blockchain network a stablecoin moves on, such as Base, Ethereum, Polygon, Stellar or Tron |
+| **Complete** | The final call on a quote once its payment has settled. Moves it to `SUCCESSFUL` |
+| **Corridor** | A route between a source and destination currency or market |
+| **Financial institutions and fintechs** | The businesses HyperRails serves. They convert currencies, on-ramp, off-ramp, pay in and pay out, and can supply liquidity |
+| **Express quote** | A quote priced in one call, at the best available rate. Used by Instant Trade |
+| **Fee** | The source-side charge on a quote. `totalSourceAmount` = `amount` + `fee` |
+| **Funded pool** | A pool with money added right away |
+| **Instant Trade** | The dashboard flow for buying at a listed rate in one step. Previously called Express Buy |
+| **Intent** | A request to trade at a rate you propose. Returns a quote valid for 30 minutes |
+| **Inverse rate** | `inverseRate`: the exact inverse of `rate`. Not the same as the rate for the reverse pair |
+| **ISO 20022** | The international standard for payment messages. HyperRails can send and receive ISO 20022 XML |
+| **Liquidity aggregation** | Filling one order from several pools |
+| **Liquidity Listings** | Where pools are listed by currency pair, under trading aliases |
+| **Liquidity pool** | Money a liquidity provider sets aside to trade one currency pair at their rate |
+| **Live mode** | The production environment. Real money, `sk_live_` keys |
+| **Mode** | `test` or `live`. Returned on most objects |
+| **Multi-provider quote** | A quote where you choose which pools fill the trade |
+| **Negotiation limit** | `negotiationLimit` on a listing. `0` means the rate is take-it-or-leave-it |
+| **Off-ramp** | Converting stablecoins into fiat currency |
+| **On-ramp** | Converting fiat currency into stablecoins |
+| **Pay-in** | The payer's side of a trade: by balance, bank transfer, mobile money or stablecoin deposit. Details appear in the quote's `metadata` |
+| **Payout** | Sending money out, to a bank account (fiat payout) or a wallet address (wallet payout) |
+| **Quote** | A priced, allocated trade with a `quoteId` and a status |
+| **Reference** | Your unique ID on a payout. Also its idempotency key |
+| **Secret key** | Your long-lived API key (`sk_test_…` or `sk_live_…`). Server-side only |
+| **Sub-merchant** | A business a liquidity provider invites and manages |
+| **Sub-wallet** | A wallet under your main wallet with its own balances |
+| **Swap** | Moving money from a balance in one currency to a balance in another |
+| **Test mode** | The sandbox environment. Simulated money, `sk_test_` keys, and the Funding Simulator |
+| **Trading alias** | The name a pool shows on the marketplace instead of the business name |
+| **TTL** | `ttl`: the seconds a quote has left before it expires. Quotes are valid for 30 minutes |
+| **Unfunded pool** | A pool approved by an admin first |
+| **Virtual account** | A real, payable bank account number for a customer, sitting under one of your currency balances |
+| **Wallet** | Where stablecoins are held. Your main wallet is created with your account |
+| **Webhook** | A signed HTTP request HyperRails sends to your server when an event happens |
+| **Weighted average rate** | `weightedAverageRate`: the blended rate across all of a quote's allocations. The rate you actually get |
