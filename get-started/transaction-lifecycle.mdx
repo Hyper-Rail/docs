@@ -55,7 +55,7 @@ sequenceDiagram
   HR-->>You: Webhook order.successful
 ```
 
-## Quote validity (time to live)
+## Quote Validity (time to live)
 
 Every quote is valid for **30 minutes**. Its `ttl` field shows the seconds it has left, starting at `1800`, and a completed quote reports a `ttl` of `0`.
 
@@ -65,7 +65,7 @@ On the dashboard, the same countdown appears as the timer on the payment page of
   Give up against `ttl`, not against a fixed number of retries. When it reaches zero, the quote expires and you'll receive `quote.expired`.
 </Warning>
 
-## Watching the payment
+## Watching the Payment
 
 While a quote is `AWAITING_PAYMENT`, the pay-in has its own status inside `metadata`. For mobile money, that's `metadata.mobileMoneyPayIn.status`, which moves from `inProgress` to `successful`.
 

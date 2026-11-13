@@ -17,7 +17,7 @@ This guide creates one, reads it back, and lists what you already have.
 * The `accountId` of the currency balance the account should sit under. Get it
   from [Read Your Balances](/documentation/guides/read-your-balances).
 
-## The shape of the flow
+## The Shape of the Flow
 
 <Steps>
   <Step title="Find the parent account">
@@ -39,7 +39,7 @@ This guide creates one, reads it back, and lists what you already have.
 
 ***
 
-## Step 1: Find the parent account
+## Step 1: Find the Parent Account
 
 Every virtual account hangs off a currency balance. Get that balance's ID:
 
@@ -61,7 +61,7 @@ That `accountId` is the `parentAccountId` for the next step.
 
 ***
 
-## Step 2: Create the account
+## Step 2: Create the Account
 
 ```bash theme={"dark"}
 curl -X POST https://api.hyperrails.io/api/v1/accounts \

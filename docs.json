@@ -74,7 +74,7 @@
             ]
           },
           {
-            "group": "What we support",
+            "group": "What we Support",
             "icon": "globe",
             "pages": [
               "documentation/supported-currencies",
@@ -107,7 +107,7 @@
             ]
           },
           {
-            "group": "Accounts and wallets",
+            "group": "Accounts and Wallets",
             "icon": "wallet",
             "pages": [
               "documentation/guides/read-your-balances",
@@ -151,7 +151,7 @@
             ]
           },
           {
-            "group": "Using the dashboard",
+            "group": "Using the Dashboard",
             "icon": "browser",
             "pages": [
               "documentation/features/onramp-transaction",

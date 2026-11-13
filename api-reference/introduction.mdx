@@ -9,7 +9,7 @@ The **HyperRails API** lets partners build HyperRails into their own products: r
 
 API access is granted per partner during onboarding. Contact [support@hyperrails.io](mailto:support@hyperrails.io) to enable it on your account.
 
-## API conventions
+## API Conventions
 
 ### Base URLs
 
@@ -30,7 +30,7 @@ Authorization: Bearer sk_test_...
 
 Use `sk_test_` keys in test mode and `sk_live_` keys in live mode. See [Authentication](/api-reference/authentication).
 
-### Requests and responses
+### Requests and Responses
 
 - **HTTPS only.** Plain HTTP requests are rejected.
 - **JSON.** Send `Content-Type: application/json`, except for file uploads. Responses are JSON unless you [request ISO 20022 XML](/api-reference/iso20022/content-negotiation).
@@ -70,7 +70,7 @@ The current API version is **v1**, and it's part of every path (`/api/v1`). See 
 
 Each endpoint in this reference lists its authentication, path and query parameters, request body, and every documented status code with an example response. Use the **Try it** playground on any endpoint page to send a request with your **test** secret key and inspect the live response in your browser. Code samples switch between cURL, JavaScript, Python, Go, PHP and Java.
 
-### More conventions
+### More Conventions
 
 <CardGroup cols={3}>
   <Card title="Idempotency" icon="repeat" href="/api-reference/idempotency">

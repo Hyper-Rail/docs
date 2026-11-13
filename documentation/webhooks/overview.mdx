@@ -31,7 +31,7 @@ Every webhook request includes:
 * `x-hyperrails-webhook-timestamp` – Unix timestamp (seconds) when the webhook was signed.
 * `x-hyperrails-signature` – HMAC-SHA512 signature, hex-encoded.
 
-### Signed content
+### Signed Content
 
 The signature is computed over the following string (fields joined by a
 single period, no extra whitespace): {webhook_id}.{timestamp}.{raw_request_body} 
@@ -40,7 +40,7 @@ Keys → Webhooks**) as the HMAC key. Test and live mode each have their own
 webhook secret and webhook URL — configure both independently if you run
 staging and production listeners.
 
-### Verification example (Node.js)
+### Verification Example (Node.js)
 
 ```javascript
 const crypto = require('crypto');

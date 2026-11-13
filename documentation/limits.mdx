@@ -1,5 +1,5 @@
 ---
-title: "Transaction limits"
+title: "Transaction Limits"
 description: "The limits that apply to trades, payouts and API usage on HyperRails."
 icon: "gauge-high"
 ---
@@ -12,24 +12,24 @@ icon: "gauge-high"
 
 | Limit | Value | What happens |
 |---|---|---|
-| Trade size | Up to the `availableBalance` of the pools filling it | Larger requests fail with `Unable to fulfill requested volume at the moment.` See [Find a Liquidity Provider](/documentation/guides/find-a-liquidity-provider) |
-| Quote validity (`ttl`) | 30 minutes (1800 seconds) | The quote expires and you receive `quote.expired` |
-| Order timer | Shown on the payment page of every order | Users are notified about their order time and any extension |
+| Trade Size | Up to the `availableBalance` of the pools filling it | Larger requests fail with `Unable to fulfill requested volume at the moment.` See [Find a Liquidity Provider](/documentation/guides/find-a-liquidity-provider) |
+| Quote Validity (`ttl`) | 30 minutes (1800 seconds) | The quote expires and you receive `quote.expired` |
+| Order Timer | Shown on the payment page of every order | Users are notified about their order time and any extension |
 
 ## Payouts
 
 | Limit | Value | What happens |
 |---|---|---|
-| Endpoint minimums | Vary by endpoint and currency | Amounts below the minimum return `422 AMOUNT_TOO_LOW` |
-| Wallet payout minimum | 10 token units | See [Create Wallet Payout](/api-reference/payout/wallet-payout) |
-| Provider per-transaction limits | Set by the payout provider | HyperRails splits larger payouts into smaller parts and pays them out automatically |
+| Endpoint Minimums | Vary by endpoint and currency | Amounts below the minimum return `422 AMOUNT_TOO_LOW` |
+| Wallet Payout Minimum | 10 token units | See [Create Wallet Payout](/api-reference/payout/wallet-payout) |
+| Provider per-transaction Limits | Set by the payout provider | HyperRails splits larger payouts into smaller parts and pays them out automatically |
 
-## API usage
+## API Usage
 
 | Scope | Limit |
 |---|---|
-| Standard endpoints | 100 requests per minute, per secret key |
-| Rate stream (`GET /partners/marketplace/rates/stream`) | 5 concurrent connections |
-| Bulk transfers (`POST /transfers/bulk`) | 10 requests per minute. File size limits also apply |
+| Standard Endpoints | 100 requests per minute, per secret key |
+| Rate Stream (`GET /partners/marketplace/rates/stream`) | 5 concurrent connections |
+| Bulk Transfers (`POST /transfers/bulk`) | 10 requests per minute. File size limits also apply |
 
 When you're rate-limited you'll receive `429 Too Many Requests`. Back off for the number of seconds in the `Retry-After` header before retrying. See [Rate limits](/documentation/rate-limits).

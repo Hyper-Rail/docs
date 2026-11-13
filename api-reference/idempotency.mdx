@@ -10,12 +10,12 @@ HyperRails doesn't use an `Idempotency-Key` header. Instead, idempotency depends
 
 | Operation | Safe to retry? | How |
 |---|---|---|
-| [Fiat payout](/api-reference/payout/withdrawal) | **Yes** | Send the same `reference`. A duplicate returns `DUPLICATE_REFERENCE` instead of paying twice |
-| [Wallet payout](/api-reference/payout/wallet-payout) | **Yes** | Send the same `reference` |
-| [Complete quote](/api-reference/hyperrail-quote/get-complete-quote-id) | **Yes** | Completing twice returns `SUCCESSFUL` again with no double credit |
-| [Create intent](/api-reference/hyperrail-quote/create-payment-intent) | No | Each call creates a new quote |
-| [Create express quote](/api-reference/hyperrail-quote/create-express-quote) | No | `externalReference` isn't an idempotency key. Each call creates a new quote |
-| [Create virtual account](/documentation/guides/give-a-customer-an-account) | No | Each call creates a new account number, even with identical input |
+| [Fiat Payout](/api-reference/payout/withdrawal) | **Yes** | Send the same `reference`. A duplicate returns `DUPLICATE_REFERENCE` instead of paying twice |
+| [Wallet Payout](/api-reference/payout/wallet-payout) | **Yes** | Send the same `reference` |
+| [Complete Quote](/api-reference/hyperrail-quote/get-complete-quote-id) | **Yes** | Completing twice returns `SUCCESSFUL` again with no double credit |
+| [Create Intent](/api-reference/hyperrail-quote/create-payment-intent) | No | Each call creates a new quote |
+| [Create Express Quote](/api-reference/hyperrail-quote/create-express-quote) | No | `externalReference` isn't an idempotency key. Each call creates a new quote |
+| [Create Virtual Account](/documentation/guides/give-a-customer-an-account) | No | Each call creates a new account number, even with identical input |
 
 ## Payouts: use your `reference`
 
@@ -63,7 +63,7 @@ Sending the same `reference` again returns:
   Never generate a new `reference` to retry a payout whose outcome you don't know. That's how money gets sent twice.
 </Warning>
 
-## Quotes and accounts: track what you create
+## Quotes and Accounts: track what you create
 
 Because creating a quote or a virtual account isn't idempotent:
 

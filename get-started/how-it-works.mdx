@@ -1,5 +1,5 @@
 ---
-title: "How HyperRails works"
+title: "How HyperRails Works"
 description: "The parties, the money flow, and the building blocks behind every trade on HyperRails."
 icon: "diagram-project"
 ---
@@ -9,10 +9,10 @@ HyperRails is a marketplace for currency exchange built for **financial institut
 ## The parties
 
 <CardGroup cols={3}>
-  <Card title="Financial institutions and fintechs" icon="building-columns">
+  <Card title="Financial Institutions and Fintechs" icon="building-columns">
     On-ramp, off-ramp, exchange currencies, pay in and pay out, using the liquidity on the marketplace.
   </Card>
-  <Card title="Liquidity providers" icon="droplet">
+  <Card title="Liquidity Providers" icon="droplet">
     Financial institutions and fintechs that supply liquidity for currency pairs, set their own rates, and earn on executed trades.
   </Card>
   <Card title="HyperRails" icon="arrows-to-circle">
@@ -20,21 +20,21 @@ HyperRails is a marketplace for currency exchange built for **financial institut
   </Card>
 </CardGroup>
 
-## The money flow
+## The Money Flow
 
 ```mermaid
 flowchart TB
-  EC["Liquidity provider<br/>supplies liquidity, sets a rate"] --> MKT["Liquidity Listings"]
+  EC["Liquidity provider<br/>supplies liquidity, sets a rate"] --> MKT["Liquidity Marketplace"]
   M["Financial institution or fintech<br/>requests a quote and pays in"] --> HR{{"HyperRails<br/>prices, allocates, collects, settles"}}
   MKT --> HR
   HR --> BAL["Your balance"]
-  BAL --> BANK["Bank account"]
-  BAL --> WAL["Stablecoin wallet"]
+  BAL --> BANK["Bank Account"]
+  BAL --> WAL["Stablecoin Wallet"]
 ```
 
 <Steps>
   <Step title="Liquidity is supplied">
-    A liquidity provider creates a trade request for a currency pair, either **funded** (money added right away) or **unfunded** (approved by an admin first), and sets the rate they will trade at. Each one appears on liquidity listings under a trading alias, so business names stay hidden.
+    A liquidity provider creates a trade request for a currency pair, either **funded** (money added right away) or **unfunded** (approved by an admin first), and sets the rate they will trade at. Each one appears on the liquidity marketplace under a trading alias, so business names stay hidden.
   </Step>
   <Step title="A quote is priced">
     You ask to trade a pair. HyperRails allocates the trade across one or more liquidity providers and returns a quote showing who is filling it and at what `weightedAverageRate`. See [Quotes](/get-started/concepts/quotes).
@@ -56,15 +56,15 @@ flowchart TB
 |---|---|---|
 | Who it's for | Teams operating day to day | Platforms integrating HyperRails into their product |
 | Where | [app.hyperrails.io](https://app.hyperrails.io) | `https://api.hyperrails.io` |
-| Get access | Sign up and complete onboarding | Granted per partner during onboarding. Contact [support@hyperrails.io](mailto:support@hyperrails.io) |
-| Start here | [Onboard with us](/documentation/onboarding) | [API introduction](/api-reference/introduction) |
+| Get Access | Sign Up and Complete Onboarding | Granted per partner during onboarding. Contact [support@hyperrails.io](mailto:support@hyperrails.io) |
+| Start Here | [Onboard With Us](/documentation/onboarding) | [API introduction](/api-reference/introduction) |
 
 Most businesses start on the dashboard and move to the API as their volume grows.
 
-## Core concepts
+## Core Concepts
 
 <CardGroup cols={2}>
-  <Card title="Accounts and balances" icon="scale-balanced" href="/get-started/concepts/accounts-and-balances">
+  <Card title="Accounts and Balances" icon="scale-balanced" href="/get-started/concepts/accounts-and-balances">
     Currency balances, virtual accounts and stablecoin wallets.
   </Card>
   <Card title="Liquidity" icon="droplet" href="/get-started/concepts/liquidity">
@@ -73,10 +73,10 @@ Most businesses start on the dashboard and move to the API as their volume grows
   <Card title="Quotes" icon="file-invoice-dollar" href="/get-started/concepts/quotes">
     Intents, express quotes, allocations and time to live.
   </Card>
-  <Card title="Environments and credentials" icon="key" href="/get-started/concepts/environments">
+  <Card title="Environments and Credentials" icon="key" href="/get-started/concepts/environments">
     Test and live mode, and your API keys.
   </Card>
-  <Card title="Transaction lifecycle" icon="arrows-spin" href="/get-started/transaction-lifecycle">
+  <Card title="Transaction Lifecycle" icon="arrows-spin" href="/get-started/transaction-lifecycle">
     Every status a trade passes through, and the webhook for each.
   </Card>
 </CardGroup>

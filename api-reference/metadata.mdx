@@ -46,7 +46,7 @@ Which keys appear depends on how the quote is paid.
 
 Each allocation in `allocationResult.allocations` can also carry its own `metadata` object with extra details about that allocation.
 
-## Chat metadata
+## Chat Metadata
 
 Quotes agreed through chat on the dashboard carry a separate top-level `chatMetadata` object, alongside `metadata`:
 
@@ -60,7 +60,7 @@ Quotes agreed through chat on the dashboard carry a separate top-level `chatMeta
 | `quoteSentAt` | When the quote was sent |
 | `acceptedAt` | When the quote was accepted |
 
-## In webhooks
+## In Webhooks
 
 Webhook payloads use snake_case and carry pay-in instructions as `payment_instruction` (with `type`, `account_name`, `account_number`, `bank_name` and `reference`) rather than `metadata`. See [Webhook payloads](/documentation/webhooks/payloads).
 

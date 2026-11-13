@@ -1,5 +1,5 @@
 ---
-title: "Accounts and balances"
+title: "Accounts and Balances"
 description: "How fiat balances, virtual accounts and stablecoin wallets fit together on HyperRails."
 icon: "scale-balanced"
 ---
@@ -8,18 +8,18 @@ HyperRails keeps fiat money and stablecoins in two separate systems, each with i
 
 ```mermaid
 flowchart TB
-  subgraph Fiat["Fiat: balances"]
-    B1["GHS balance<br/>(accountId)"] --- VA1["Virtual account<br/>for a customer"]
-    B2["NGN balance<br/>(accountId)"]
-    B3["USD balance<br/>(accountId)"]
+  subgraph Fiat["Fiat: Balances"]
+    B1["GHS Balance<br/>(accountId)"] --- VA1["Virtual account<br/>for a customer"]
+    B2["NGN Balance<br/>(accountId)"]
+    B3["USD Balance<br/>(accountId)"]
   end
-  subgraph Crypto["Stablecoins: wallets"]
-    W["Main wallet"] --- SW["Sub-wallets"]
+  subgraph Crypto["Stablecoins: Wallets"]
+    W["Main Wallet"] --- SW["Sub-wallets"]
     W --- DA["Deposit addresses<br/>per chain"]
   end
 ```
 
-## Fiat balances
+## Fiat Balances
 
 Each fiat currency you hold has its own **account**, identified by an `accountId`. That ID is what trades settle into and what payouts debit.
 
@@ -28,7 +28,7 @@ Each fiat currency you hold has its own **account**, identified by an `accountId
 
 Guide: [Read Your Balances](/documentation/guides/read-your-balances)
 
-## Virtual accounts
+## Virtual Accounts
 
 A virtual account is a real, payable bank account number you give to a customer. They pay into it by normal bank transfer, and the money lands in the currency balance it sits under (its `parentAccountId`).
 
@@ -37,7 +37,7 @@ A virtual account is a real, payable bank account number you give to a customer.
 
 Guide: [Give a Customer an Account](/documentation/guides/give-a-customer-an-account)
 
-## Stablecoin wallets
+## Stablecoin Wallets
 
 Wallets hold stablecoins such as USDT and USDC, along with the on-chain addresses money arrives on.
 
@@ -57,5 +57,5 @@ Guide: [Check What a Wallet Holds](/documentation/guides/check-what-a-wallet-hol
 | Convert one fiat balance to another | [Fiat exchange](/documentation/features/currency-exchange-fiat) or swap on the dashboard |
 | Turn fiat into stablecoins | [On-ramp](/documentation/features/onramp-transaction) |
 | Turn stablecoins into fiat | [Off-ramp](/documentation/features/offramp-transaction) |
-| Send fiat to a bank account | [Fiat payout](/documentation/features/fiat-payout-process) |
-| Send stablecoins to an address | [Wallet payout](/api-reference/payout/wallet-payout) |
+| Send fiat to a bank account | [Fiat Payout](/documentation/features/fiat-payout-process) |
+| Send stablecoins to an address | [Wallet Payout](/api-reference/payout/wallet-payout) |

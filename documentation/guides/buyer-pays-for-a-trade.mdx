@@ -1,8 +1,7 @@
 ---
-title: Let a Buyer Pay for a Trade
-sidebarTitle: Buyer Pays for a Trade
-description: Take a buyer from a price quote to a settled trade, paying by mobile money.
-icon: "money-bill-transfer"
+title: "Let a Buyer Pay for a Trade"
+description: "Take a buyer from a price quote to a settled trade, paying by mobile money."
+icon: "mobile-screen"
 ---
 
 This guide walks one trade from start to finish. A buyer agrees a rate, pays with
@@ -14,14 +13,14 @@ the call before it.
 
 ## What you'll need
 
-- Your **secret key**. Every call in this guide authenticates with it.
-- An account in the currency you are buying, to settle into. See
+* Your **secret key**. Every call in this guide authenticates with it.
+* An account in the currency you are buying, to settle into. See
   [Get Balances](/api-reference/hyperrail-wallet/get).
-- A buyer's mobile money number on a supported provider.
+* A buyer's mobile money number on a supported provider.
 
 <Info>
-Use test mode while you follow this guide. No real money moves and no real phone is
-charged.
+  Use test mode while you follow this guide. No real money moves and no real phone is
+  charged.
 </Info>
 
 ## The shape of the flow
@@ -30,15 +29,19 @@ charged.
   <Step title="Create an intent">
     You say what you want to trade and at what rate. You get a quote back.
   </Step>
+
   <Step title="Pick a mobile money provider">
     You look up which providers work for the buyer's currency.
   </Step>
+
   <Step title="Accept the quote with the buyer's payment details">
     This locks the trade and charges the buyer's phone in one call.
   </Step>
+
   <Step title="Authorize with the OTP">
     The buyer gets a code and you pass it back.
   </Step>
+
   <Step title="Watch the payment, then complete the trade">
     You poll until the payment succeeds, then finalise.
   </Step>
@@ -69,7 +72,7 @@ curl "https://api.hyperrails.io/api/v1/partners/rates?base=GHS&quote=NGN" \
 ```
 
 <Note>
-The parameters are `base` and `quote`, not `source` and `destination`.
+  The parameters are `base` and `quote`, not `source` and `destination`.
 </Note>
 
 Then create the intent:
@@ -370,23 +373,23 @@ GHS 14997994888.08  -> 14997994787.91     -100.17
 
 Reference: [Get Complete Quote](/api-reference/hyperrail-quote/get-complete-quote-id)
 
----
+***
 
 ## When things go wrong
 
-| What you see | What it means | What to do |
-|---|---|---|
-| **400** `No providers available` | No liquidity for that pair | Try another pair, or check the marketplace listings |
-| **400** `unsupported_currency` | Mobile money does not cover that currency | Check Step 2's currency list |
-| **400** on accept | The quote expired | Create a new intent |
-| **400** on authorize | Wrong or expired OTP | Have the buyer request a new code |
-| `payIn` stuck on `inProgress` | The buyer has not approved on their phone | Wait, watching `ttl` |
-| **400** on complete | The payment has not settled | Poll Step 5 until `successful` |
+| What you see                     | What it means                             | What to do                                          |
+| -------------------------------- | ----------------------------------------- | --------------------------------------------------- |
+| **400** `No providers available` | No liquidity for that pair                | Try another pair, or check the marketplace listings |
+| **400** `unsupported_currency`   | Mobile money does not cover that currency | Check Step 2's currency list                        |
+| **400** on accept                | The quote expired                         | Create a new intent                                 |
+| **400** on authorize             | Wrong or expired OTP                      | Have the buyer request a new code                   |
+| `payIn` stuck on `inProgress`    | The buyer has not approved on their phone | Wait, watching `ttl`                                |
+| **400** on complete              | The payment has not settled               | Poll Step 5 until `successful`                      |
 
 See [Error Codes](/api-reference/error-codes) for the full list.
 
 ## What to do next
 
-- [Take a quote in one call](/api-reference/hyperrail-quote/create-express-quote) — skip the separate intent step
-- [Get Balances](/api-reference/hyperrail-wallet/get) — confirm the trade landed
-- [Pay out to a bank](/api-reference/payout/withdrawal) — move the proceeds on
+* [Take a quote in one call](/api-reference/hyperrail-quote/create-express-quote) — skip the separate intent step
+* [Get Balances](/api-reference/hyperrail-wallet/get) — confirm the trade landed
+* [Pay out to a bank](/api-reference/payout/withdrawal) — move the proceeds on
