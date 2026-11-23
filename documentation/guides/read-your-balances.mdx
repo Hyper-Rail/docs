@@ -40,7 +40,7 @@ currency by code, and the list of currencies you could hold.
 ## Step 1: List every balance
 
 ```bash theme={"dark"}
-curl https://api.hyperrails.io/api/v1/balances \
+curl https://api.hyperrails.io/api/v1/partners/balances \
   -H "Authorization: Bearer YOUR_SECRET_KEY"
 ```
 
@@ -50,8 +50,8 @@ The response is a **plain array**, not a paged object:
 [
   { "accountId": "4e797fbe-7248-421c-bfe1-2a773ae80512", "availableBalance": 5000000000.00, "balance": 5000000000.00, "currency": "UGX" },
   { "accountId": "d01d6101-b65d-4807-86f7-4638ca510718", "availableBalance": 5000000000.00, "balance": 5000000000.00, "currency": "KES" },
-  { "accountId": "bbbbb514-21b5-467a-a517-40a7ed346b1c", "availableBalance": 14997994788.91, "balance": 14997994788.91, "currency": "GHS" },
-  { "accountId": "0eb2090c-c046-4609-8fcc-0b7ef4dde30f", "availableBalance": 5000124342.75, "balance": 5000124342.75, "currency": "NGN" },
+  { "accountId": "22222222-2222-4222-8222-222222222222", "availableBalance": 14997994788.91, "balance": 14997994788.91, "currency": "GHS" },
+  { "accountId": "11111111-1111-4111-8111-111111111111", "availableBalance": 5000124342.75, "balance": 5000124342.75, "currency": "NGN" },
   { "accountId": "175d783d-5b27-4952-bcce-de49b3b55f97", "availableBalance": 818999980000.00, "balance": 818999980000.00, "currency": "USD" },
   { "accountId": "5a1f93b3-d367-47cf-a091-fc7f0e7a48a9", "availableBalance": 0.00, "balance": 0.00, "currency": "EUR" },
   { "accountId": "ec74b73a-dec3-41fa-9e90-2922698f680c", "availableBalance": 0.00, "balance": 0.00, "currency": "CNY" }
@@ -86,13 +86,13 @@ missing account.
 ## Step 2: Read one account by ID
 
 ```bash theme={"dark"}
-curl https://api.hyperrails.io/api/v1/balances/ACCOUNT_ID \
+curl https://api.hyperrails.io/api/v1/partners/balances/ACCOUNT_ID \
   -H "Authorization: Bearer YOUR_SECRET_KEY"
 ```
 
 ```json theme={"dark"}
 {
-  "accountId": "bbbbb514-21b5-467a-a517-40a7ed346b1c",
+  "accountId": "22222222-2222-4222-8222-222222222222",
   "availableBalance": 14997994788.91,
   "balance": 14997994788.91,
   "currency": "GHS"
@@ -109,13 +109,13 @@ account after a trade rather than pulling the whole list.
 If you know the currency but not the ID, look it up directly:
 
 ```bash theme={"dark"}
-curl https://api.hyperrails.io/api/v1/balances/currency/GHS \
+curl https://api.hyperrails.io/api/v1/partners/partners/balances/currency/GHS \
   -H "Authorization: Bearer YOUR_SECRET_KEY"
 ```
 
 ```json theme={"dark"}
 {
-  "accountId": "bbbbb514-21b5-467a-a517-40a7ed346b1c",
+  "accountId": "22222222-2222-4222-8222-222222222222",
   "availableBalance": 14997994788.91,
   "balance": 14997994788.91,
   "currency": "GHS"
@@ -126,8 +126,8 @@ Identical to Step 2's response, including the same `accountId`. These are two
 routes to one account.
 
 <Note>
-  The currency code is **case-insensitive**. `/balances/currency/ghs` and
-  `/balances/currency/GHS` both work and both return `"currency": "GHS"` —
+  The currency code is **case-insensitive**. `/partners/balances/currency/ghs` and
+  `/partners/balances/currency/GHS` both work and both return `"currency": "GHS"` —
   the response always uppercases it.
 </Note>
 
@@ -137,14 +137,11 @@ between test and live.
 
 ***
 
-## Step 4: List the supported currencies
+## Step 4: Supported currencies
 
-This is the catalogue — what HyperRails supports, not what you hold.
-
-```bash theme={"dark"}
-curl "https://api.hyperrails.io/api/v1/balances/currency-list?mode=test" \
-  -H "Authorization: Bearer YOUR_SECRET_KEY"
-```
+<Note>
+  `GET /api/v1/balances/currency-list` is a dashboard-only endpoint (it requires a dashboard login token and rejects API secret keys with `401 Invalid JWT token format.`). To see the currencies provisioned on your account via API key, use `GET /api/v1/partners/balances` in Step 1, or see [Supported Currencies](/documentation/supported-currencies).
+</Note>
 
 <Warning>
   **`mode` is required**, and it is easy to miss — it is a query parameter with no

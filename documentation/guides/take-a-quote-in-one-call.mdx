@@ -70,7 +70,7 @@ curl -X POST https://api.hyperrails.io/exchange/api/v1/partners/marketplace/expr
     "destinationCurrency": "NGN",
     "amount": 5,
     "amountDirection": "source",
-    "accountId": "0eb2090c-c046-4609-8fcc-0b7ef4dde30f"
+    "accountId": "11111111-1111-4111-8111-111111111111"
   }'
 ```
 
@@ -183,7 +183,7 @@ curl -X PUT https://api.hyperrails.io/exchange/api/v1/partners/marketplace/quote
   -H "Authorization: Bearer YOUR_SECRET_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "accountId": "0eb2090c-c046-4609-8fcc-0b7ef4dde30f",
+    "accountId": "11111111-1111-4111-8111-111111111111",
     "payment": {
       "channel": "mobile_money",
       "countryCode": "GH",
@@ -233,7 +233,7 @@ Now the quote is `AWAITING_PAYMENT`, `mobileMoneyPayIn` has appeared, and `ttl`
 shows the time left in the quote's 30-minute validity window.
 
 <Note>
-  Mobile money on dev is **GHS only**, and provider codes are **lowercase** —
+  Mobile money in test mode is **GHS only**, and provider codes are **lowercase** —
   `mtn`, `airtel`, `telecel`.
 </Note>
 

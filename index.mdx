@@ -63,14 +63,14 @@ export const TRY_ITEMS = [
     method: "POST",
     path: "/partners/payouts",
     href: "/api-reference/payout/withdrawal",
-    code: 'curl -X POST https://api.hyperrails.io/api/v1/partners/payouts \\\n  -H "Authorization: Bearer sk_test_..." \\\n  -H "Content-Type: application/json" \\\n  -d \'{\n    "reference": "payout-001",\n    "amount": 10000,\n    "currency": "NGN",\n    "destination": {\n      "accountNumber": "0123456789",\n      "accountName": "Jane Doe",\n      "bankCode": "058"\n    }\n  }\'',
+    code: 'curl -X POST https://api.hyperrails.io/api/v1/partners/payouts \\\n  -H "Authorization: Bearer sk_test_..." \\\n  -H "Content-Type: application/json" \\\n  -d \'{\n    "reference": "payout-001",\n    "amount": 10000,\n    "currency": "NGN",\n    "destination": {\n      "accountNumber": "0123456789",\n      "accountName": "Jane Doe",\n      "bankCode": "SPB-68245"\n    }\n  }\'',
   },
   {
     label: "Send stablecoins",
     method: "POST",
     path: "/partners/wallets/payouts",
     href: "/api-reference/payout/wallet-payout",
-    code: 'curl -X POST https://api.hyperrails.io/api/v1/partners/wallets/payouts \\\n  -H "Authorization: Bearer sk_test_..." \\\n  -H "Content-Type: application/json" \\\n  -d \'{\n    "reference": "wallet-payout-001",\n    "chain": "base",\n    "asset": "usdc",\n    "amount": 100,\n    "toAddress": "0x742d35Cc6634C0532925a3b844Bc9e7595f0be"\n  }\'',
+    code: 'curl -X POST https://api.hyperrails.io/api/v1/partners/wallets/payouts \\\n  -H "Authorization: Bearer sk_test_..." \\\n  -H "Content-Type: application/json" \\\n  -d \'{\n    "reference": "wallet-payout-001",\n    "chain": "base",\n    "asset": "usdc",\n    "amount": 100,\n    "toAddress": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0"\n  }\'',
   },
 ];
 
