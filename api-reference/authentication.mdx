@@ -6,8 +6,7 @@ description: 'Secure authentication is crucial for protecting your account and e
 # Authentication
 
 > All API requests require authentication with your secret key, included in
-> the `Authorization` header. Requests must also include a service-identifying
-> header. Missing either will result in a `401` or `400` response.
+> the `Authorization` header. Missing or invalid credentials return `401 Unauthorized`.
 
 ## Base URL
 https://api.hyperrails.io/api/v1
@@ -26,7 +25,7 @@ and live mode.
 |---|---|---|---|
 | **Public Key** | `pk_test_…` / `pk_live_…` | Identifying your integration in client-side or read-only contexts (e.g. widget embeds, rate display). Safe to expose in frontend code. | Not sent as a header — used only where explicitly documented (e.g. client-side widgets). |
 | **Secret Key** | `sk_test_…` / `sk_live_…` | All server-to-server API calls. Grants full account access. **Never expose client-side.** | `Authorization: Bearer sk_live_...` header |
-| **Encryption Key** | `enc_test_…` / `enc_live_…` | Encrypting sensitive fields (e.g. bank account numbers, blockchain destination addresses) before sending them in request bodies that require field-level encryption. See [Field Encryption](/api-reference/field-encryption). | Used locally in your integration to encrypt payload fields — never transmitted as a header. |
+| **Encryption Key** | `enc_test_…` / `enc_live_…` | Encrypting sensitive fields (e.g. bank account numbers, blockchain destination addresses) before sending them in request bodies that require field-level encryption. | Used locally in your integration to encrypt payload fields — never transmitted as a header. |
 
 <Warning>
   **Your secret key, public key and encryption key are shown only once.** After you view a key, HyperRails stores it hashed for security, so neither you nor HyperRails can see it again. Copy it straight into a secrets manager or environment variable and keep it safe. If you lose a key, generate a new one. The old key stops working immediately.
@@ -36,9 +35,9 @@ and live mode.
 
 Every request must include:
 
-```yaml theme={"dark"}
+```json theme={"dark"}
 {
-  "Authorization": "Bearer sk_test_6988f8d1539a48ab945764ec361fa3eb",
+  "Authorization": "Bearer sk_test_xxxxx",
   "Content-Type": "application/json",
   "x-service-source": "YourAppName"
 }
@@ -48,14 +47,13 @@ Every request must include:
 |---|---|---|
 | `Authorization` | Yes | `Bearer <secret_key>`. |
 | `Content-Type` | Yes | Must be `application/json` (except file-upload endpoints, which use `multipart/form-data`). |
-| `x-service-source` | Yes | A free-text identifier for the calling service/application. Requests without this header are rejected with `400 Bad Request`. |
+| `x-service-source` | No | Optional free-text identifier for the calling service/application. |
 
 ## Authentication Process
 
 * **HTTPS is mandatory.** Requests over plain HTTP are rejected.
 * **Test vs. live mode** is determined entirely by which secret key prefix you use — `sk_test_` keys only affect test-mode data, `sk_live_` keys only affect live data.
 * **Authentication failure** returns `401 Unauthorized`.
-* **Missing `x-service-source`** returns `400 Bad Request`.
 
 ## Rotating Keys
 

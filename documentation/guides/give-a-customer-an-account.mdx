@@ -44,13 +44,13 @@ This guide creates one, reads it back, and lists what you already have.
 Every virtual account hangs off a currency balance. Get that balance's ID:
 
 ```bash theme={"dark"}
-curl https://api.hyperrails.io/api/v1/balances/currency/GHS \
+curl https://api.hyperrails.io/api/v1/partners/balances/currency/GHS \
   -H "Authorization: Bearer YOUR_SECRET_KEY"
 ```
 
 ```json theme={"dark"}
 {
-  "accountId": "bbbbb514-21b5-467a-a517-40a7ed346b1c",
+  "accountId": "22222222-2222-4222-8222-222222222222",
   "availableBalance": 14997994788.91,
   "balance": 14997994788.91,
   "currency": "GHS"
@@ -70,7 +70,7 @@ curl -X POST https://api.hyperrails.io/api/v1/accounts \
   -d '{
     "accountName": "Eden Ali",
     "currency": "GHS",
-    "parentAccountId": "bbbbb514-21b5-467a-a517-40a7ed346b1c"
+    "parentAccountId": "22222222-2222-4222-8222-222222222222"
   }'
 ```
 
@@ -87,7 +87,7 @@ curl -X POST https://api.hyperrails.io/api/v1/accounts \
 {
   "id": "a1d74d07-7dce-44b3-b0a4-fba6989aecbb",
   "accountName": "Eden Ali",
-  "parentAccountId": "bbbbb514-21b5-467a-a517-40a7ed346b1c",
+  "parentAccountId": "22222222-2222-4222-8222-222222222222",
   "autoSweep": false,
   "currency": "GHS",
   "mode": "test",
@@ -200,7 +200,7 @@ curl https://api.hyperrails.io/api/v1/accounts/ACCOUNT_ID \
 {
   "id": "345d409c-91a3-4c63-a5f1-2b52a5d8756e",
   "accountName": "Eden Ali GHS",
-  "parentAccountId": "bbbbb514-21b5-467a-a517-40a7ed346b1c",
+  "parentAccountId": "22222222-2222-4222-8222-222222222222",
   "autoSweep": false,
   "currency": "GHS",
   "mode": "test",

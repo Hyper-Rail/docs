@@ -23,7 +23,7 @@ A wallet payout sends stablecoins from your HyperRails wallet to an external add
         "chain": "base",
         "asset": "usdc",
         "amount": 100,
-        "toAddress": "0x742d35Cc6634C0532925a3b844Bc9e7595f0be",
+        "toAddress": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0",
         "memo": "Payment to supplier"
       }'
     ```
@@ -31,7 +31,7 @@ A wallet payout sends stablecoins from your HyperRails wallet to an external add
     | Field | Required | What it is |
     |---|---|---|
     | `reference` | yes | Your unique ID for this payout. Reusing it is blocked, so a retry can't pay twice |
-    | `chain` | yes | The network to send on. See [Create Wallet Payout](/api-reference/payout/wallet-payout) for accepted values |
+    | `chain` | yes | The network to send on (use testnet names such as `base_sepolia` in test mode). See [Create Wallet Payout](/api-reference/payout/wallet-payout) for accepted values |
     | `asset` | yes | `usdc` or `usdt` |
     | `amount` | yes | In token units, not subunits. Minimum: 10 |
     | `toAddress` | yes | The recipient's address on that chain |
